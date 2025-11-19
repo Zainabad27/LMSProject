@@ -1,0 +1,62 @@
+# .gitignore file created for free with Tower (https://www.git-tower.com/)
+# For suggestions or improvements please contact us using support@git-tower.com
+# Generated on 2025-11-19
+# Includes: csharp, dotnet
+
+### Universal ###
+# Common files that should be ignored in all projects
+
+# Logs
+*.log
+# Temporary files
+*.tmp
+*~
+
+*.bak
+# Environment files (containing secrets, API keys, credentials)
+.env
+*.env
+.env.*
+
+# Local configuration that shouldn't be shared
+*.local
+
+### Csharp ###
+# csharp specific files
+
+bin/
+obj/
+*.user
+*.suo
+
+### Dotnet ###
+# .NET build outputs and development files
+
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+
+.vs/
+*_i.c
+*_p.c
+*.ncb
+*.suo
+
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+
+*.log
+*.lib
+*.sbr
+*.sdf
+packages/
+
+TestResults/
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/

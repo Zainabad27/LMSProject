@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LmsApp2.Api", "LmsApp2.Api.csproj", "{9E9AF76A-E2B4-4E5F-A7C8-159DEB62BB06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E9AF76A-E2B4-4E5F-A7C8-159DEB62BB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E9AF76A-E2B4-4E5F-A7C8-159DEB62BB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E9AF76A-E2B4-4E5F-A7C8-159DEB62BB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E9AF76A-E2B4-4E5F-A7C8-159DEB62BB06}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF4A20A2-D215-4CF5-A727-38CCB66935A8}
+	EndGlobalSection
+EndGlobal

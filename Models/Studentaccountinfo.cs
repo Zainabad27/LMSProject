@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace LmsApp2.Api.Models;
+
+public partial class Studentaccountinfo
+{
+    public int Accountid { get; set; }
+
+    public string Username { get; set; } = null!;
+
+    public string Password { get; set; } = null!;
+
+    public string Emailorguardianemail { get; set; } = null!;
+
+    public int? Studentid { get; set; }
+
+    public DateTime? Createdat { get; set; }
+
+    public virtual Student? Student { get; set; }
+
+    public virtual ICollection<Studentsession> Studentsessions { get; set; } = new List<Studentsession>();
+}
