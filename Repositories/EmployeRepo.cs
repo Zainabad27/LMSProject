@@ -9,16 +9,16 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
-        public async Task<int> AddEmployee(EmployeeDto emp, int SchoolId,string SchoolName)
+        public async Task<int> AddEmployee(EmployeeDto emp, int SchoolId, string SchoolName)
         {
             Employee employee = emp.To_DbModel(SchoolId);
-            
 
-            var EmployeeSavedInDatabase=await dbcontext.Employees.AddAsync(employee);  
 
-           await  dbcontext.SaveChangesAsync();
+            var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
 
-            Employee emp2=EmployeeSavedInDatabase.Entity;
+            await dbcontext.SaveChangesAsync();
+
+            Employee emp2 = EmployeeSavedInDatabase.Entity;
             return emp2.Employeeid;
 
 
@@ -28,13 +28,13 @@ namespace LmsApp2.Api.Repositories
         {
             Employeedocument EmpDocs = new Employeedocument()
             {
-                Employeeid=EmpId,
-                Cnicfront=CnicFrontPath,
-                Cnicback=CnicBackPath,
-                Photo=PhotoPath,
-                Createdat=DateTime.Now,
+                Employeeid = EmpId,
+                Cnicfront = CnicFrontPath,
+                Cnicback = CnicBackPath,
+                Photo = PhotoPath,
+                Createdat = DateTime.Now,
             };
-            var DocsSavedInDatabse=await dbcontext.Employeedocuments.AddAsync(EmpDocs);
+            var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
             await dbcontext.SaveChangesAsync();
 
             return DocsSavedInDatabse.Entity.Documentid;
@@ -42,13 +42,53 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<int> AuthorizeEmployeeAsAdmin(string email, string pass)
+        {
+            var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
+            if (Employee == null) { throw new Exception("No User Found for this Email."); }
+
+            bool CorrectPassword=pass.VerifyHashedPassword(Employee.Password);
+            if (!CorrectPassword) {
+                throw new Exception("Invalid Password");
+            }
+
+
+            var EmployeeId = Employee.Employeeid;
+            if (EmployeeId < 1)
+            {
+                throw new Exception("Invalid Credentials");
+            }
+
+            var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
+            if (UserInDatabase == null)
+            {
+                throw new Exception("User does not exists");
+            }
+            if (UserInDatabase?.Isactive != true)
+            {
+                throw new Exception("User Account Deleted");
+            }
+            if (UserInDatabase.Employeedesignation != "Admin")
+            {
+                throw new Exception("User Is not an Admin");
+            }
+
+
+            return UserInDatabase.Employeeid;
+
+
+
+
+        }
+
         public async Task<bool> EmployeeEmailAlreadyExists(string email)
         {
-            string EmailExists=await dbcontext.Employeeaccountinfos.Where(emp=>emp.Email==email).Select(emp=>emp.Email).FirstOrDefaultAsync();
-            if (EmailExists == null) {
+            var EmailExists = await dbcontext.Employeeaccountinfos.Where(emp => emp.Email == email).Select(emp => emp.Email).FirstOrDefaultAsync();
+            if (EmailExists == null)
+            {
                 return false;
-            
-            
+
+
             }
             return true;
 
@@ -56,13 +96,13 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<int> MakeEmployeeUserAccount(EmployeeDto emp, int EmployeeIdOnEmployeesTable)
         {
-            Employeeaccountinfo EmpAcc=new Employeeaccountinfo()
+            Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
             {
-                Email=emp.Email,
-                Username= (EmployeeIdOnEmployeesTable.ToString()+"_"+emp.EmployeeName),
-                Password =emp.Password.GetHashedPassword(),
-                Createdat=DateTime.Now,
-                Employeeid= EmployeeIdOnEmployeesTable,
+                Email = emp.Email,
+                Username = (EmployeeIdOnEmployeesTable.ToString() + "_" + emp.EmployeeName),
+                Password = emp.Password.GetHashedPassword(),
+                Createdat = DateTime.Now,
+                Employeeid = EmployeeIdOnEmployeesTable,
 
 
 

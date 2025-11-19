@@ -14,6 +14,9 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<int> AddEmployeeDocuments(int EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
 
 
+        public Task<int> AuthorizeEmployeeAsAdmin(string email,string password);
+
+
 
     }
 }
