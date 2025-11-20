@@ -11,7 +11,14 @@
 # Temporary files
 *.tmp
 *~
+# env files 
+########################
+appsettings.Development.json
+appsettings.json
 
+
+
+#######################################
 *.bak
 # Environment files (containing secrets, API keys, credentials)
 .env
