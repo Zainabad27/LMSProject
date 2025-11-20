@@ -1,7 +1,10 @@
 ﻿using LmsApp2.Api.Repositories;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.Services;
+using LmsApp2.Api.Services.AuthServices;
 using LmsApp2.Api.ServicesInterfaces;
+using LmsApp2.Api.Utilities;
+using LmsApp2.Api.UtilitiesInterfaces;
 
 namespace LmsApp2.Api
 {
@@ -13,6 +16,9 @@ namespace LmsApp2.Api
             services.AddScoped<ISchoolRepo, SchoolRepo>();
             services.AddScoped<IEmployeeRepo, EmployeRepo>();
             services.AddScoped<IEmployeeService, EmployeeServices>();
+            services.AddScoped<IJwtServices, JwtServices>();
+            services.AddScoped<ILoginService, LoginService>();
+
 
 
 
