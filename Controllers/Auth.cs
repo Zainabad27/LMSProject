@@ -16,12 +16,13 @@ namespace LmsApp2.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var context = HttpContext;
 
-            string token = await LoginService.AdminLogin(request);
+            int EmployeeId = await LoginService.AdminLogin(request, context);
 
 
 
-            return Ok(token);
+            return Ok("Employee Logged in successfully.");
 
         }
     }

@@ -1,11 +1,18 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace LmsApp2.Api.UtilitiesInterfaces
 {
     public interface IJwtServices
     {
-        public string GenerateAccessTokes(int UserId, string Designation);
+        public string GenerateAccessToken(int UserId, string Designation, string email);
 
-        
+        public string GenerateRefreshToken();
+
+        public (ClaimsPrincipal principal, SecurityToken validateToken) VerifyJwtToken(string token);
+
+
+
+        public DateTime JwtTokenExpiresAt(string Token);
     }
 }

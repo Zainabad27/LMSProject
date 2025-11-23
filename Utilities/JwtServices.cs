@@ -1,41 +1,82 @@
 ﻿using LmsApp2.Api.UtilitiesInterfaces;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace LmsApp2.Api.Utilities
 {
-    public class JwtServices(IConfiguration config): IJwtServices
+    public class JwtServices(IConfiguration config) : IJwtServices
     {
-        public string GenerateAccessTokes(int UserId, string Designation)
+        public string GenerateAccessToken(int UserId, string Designation, string email)
         {
             var claims = new List<Claim> {
 
-                    new Claim(ClaimTypes.Role,Designation),
-                    new Claim(ClaimTypes.NameIdentifier,UserId.ToString()),
+                    new Claim("Role",Designation),
+                    new Claim("Id",UserId.ToString()),
+                    new Claim("Email",email.ToString())
+
+
 
             };
 
-            string AccessToken = TokenGenerationForJwt(claims,3);
+            string AccessToken = TokenGenerationForJwt(claims, 1);
 
             return AccessToken;
         }
-        public string GenerateRefreshTokes(int UserId, string Designation)
+        public string GenerateRefreshToken()
         {
-            var claims = new List<Claim> {
 
-                    new Claim(ClaimTypes.Role,Designation),
-                    new Claim(ClaimTypes.NameIdentifier,UserId.ToString()),
+
+            string refreshToken = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+
+
+            return refreshToken;
+        }
+
+
+
+        public (ClaimsPrincipal principal,SecurityToken validateToken) VerifyJwtToken(string token)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForAdmin:Token")));
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+
+            var validationParams = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+
+                ValidateIssuer = false,     // set to true if you want strict issuer check
+                ValidateAudience = true,   // set to true if you want strict audience check
+
+                ValidateLifetime = false,    // checks expiry
 
             };
 
-            string AccessToken = TokenGenerationForJwt(claims,15);
 
-            return AccessToken;
+
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParams, out SecurityToken validatedToken);
+
+
+
+            return (principal, validatedToken);
         }
 
-        private string TokenGenerationForJwt(List<Claim> claims,int TokenExpiry)
+
+        public DateTime JwtTokenExpiresAt(string Token)
+        {
+            var TokenHandler= new JwtSecurityTokenHandler();
+
+            SecurityToken DecodedToken = TokenHandler.ReadToken(Token);
+
+
+            return DecodedToken.ValidTo;
+
+        }
+
+        private string TokenGenerationForJwt(List<Claim> claims, int TokenExpiry)
         {
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForAdmin:Token")));

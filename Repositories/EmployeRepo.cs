@@ -32,7 +32,7 @@ namespace LmsApp2.Api.Repositories
                 Cnicfront = CnicFrontPath,
                 Cnicback = CnicBackPath,
                 Photo = PhotoPath,
-                Createdat = DateTime.Now,
+                Createdat = DateTime.UtcNow,
             };
             var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
             await dbcontext.SaveChangesAsync();
@@ -42,13 +42,14 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> AuthorizeEmployeeAsAdmin(string email, string pass)
+        public async Task<(int EmployeeAccountId,int EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
 
-            bool CorrectPassword=pass.VerifyHashedPassword(Employee.Password);
-            if (!CorrectPassword) {
+            bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
+            if (!CorrectPassword)
+            {
                 throw new Exception("Invalid Password");
             }
 
@@ -74,7 +75,7 @@ namespace LmsApp2.Api.Repositories
             }
 
 
-            return UserInDatabase.Employeeid;
+            return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
 
 
 
@@ -94,6 +95,12 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+
+
+
+
+
+
         public async Task<int> MakeEmployeeUserAccount(EmployeeDto emp, int EmployeeIdOnEmployeesTable)
         {
             Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
@@ -101,8 +108,9 @@ namespace LmsApp2.Api.Repositories
                 Email = emp.Email,
                 Username = (EmployeeIdOnEmployeesTable.ToString() + "_" + emp.EmployeeName),
                 Password = emp.Password.GetHashedPassword(),
-                Createdat = DateTime.Now,
+                Createdat = DateTime.UtcNow,
                 Employeeid = EmployeeIdOnEmployeesTable,
+
 
 
 
@@ -117,6 +125,38 @@ namespace LmsApp2.Api.Repositories
 
 
 
+        }
+
+        public async Task<int> PopulateEmployeeSession(int employeeAccountId, string refreshToken, HttpContext Context)
+        {
+            if (employeeAccountId < 1 || String.IsNullOrEmpty(refreshToken))
+            {
+                throw new Exception("Invalid Employee Id or Invalid refresh Token");
+
+            }
+
+            
+            Employeesession Session = new()
+            {
+
+                Employeeaccountid = employeeAccountId,
+                Refreshtoken = refreshToken,
+                Expiresat = DateTime.UtcNow.AddDays(10),
+                Createdat = DateTime.UtcNow,
+
+
+            };
+            var SessionSavedInDatabase = await dbcontext.Employeesessions.AddAsync(Session);
+            await dbcontext.SaveChangesAsync();
+
+            return SessionSavedInDatabase.Entity.Sessionid;
+
+
+        }
+
+        public Task<int> ValidateEmployeeRefreshToken(int EmpId, string refreshToken)
+        {
+            dbcontext.Employeeaccountinfos.Where(empAcc=>empAcc.Employeeid== EmpId).
         }
     }
 }

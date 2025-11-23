@@ -31,7 +31,7 @@ namespace LmsApp2.Api.Mappers
 
                 Nationality = emp.Nationality,
 
-                Createdat = DateTime.Now,
+                Createdat = DateTime.UtcNow,
             };
         }
 

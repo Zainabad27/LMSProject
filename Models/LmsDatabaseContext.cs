@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Models;
 
@@ -63,9 +65,9 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Studentsession> Studentsessions { get; set; }
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        //=> optionsBuilder.UseNpgsql("");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=LMS_Database;Username=postgres;Password=27135789");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,11 +81,8 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Classid).HasColumnName("classid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Deadline)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("deadline");
+            entity.Property(e => e.Deadline).HasColumnName("deadline");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
             entity.Property(e => e.Subject)
                 .HasMaxLength(100)
@@ -116,7 +115,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("content");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
 
@@ -144,7 +142,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("contentpath");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Marksscored)
                 .HasPrecision(6, 2)
@@ -183,7 +180,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Courseid).HasColumnName("courseid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
 
             entity.HasOne(d => d.Course).WithMany(p => p.Books)
@@ -208,7 +204,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Courseid).HasColumnName("courseid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Schoolid).HasColumnName("schoolid");
 
@@ -241,7 +236,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.CourseName).HasMaxLength(150);
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
         });
 
@@ -262,7 +256,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("contact");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Employeedesignation)
                 .HasMaxLength(100)
@@ -302,7 +295,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Accountid).HasColumnName("accountid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Email)
                 .HasMaxLength(150)
@@ -330,7 +322,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Documentid).HasColumnName("documentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Documentpath)
                 .HasMaxLength(255)
@@ -357,7 +348,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Attendanceid).HasColumnName("attendanceid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
@@ -388,7 +378,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("cnicfront");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
             entity.Property(e => e.Photo)
@@ -421,7 +410,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("bonuses");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Dueonemployee)
                 .HasPrecision(12, 2)
@@ -442,9 +430,7 @@ public partial class LmsDatabaseContext : DbContext
                 .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("overtimepay");
-            entity.Property(e => e.Paiddate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("paiddate");
+            entity.Property(e => e.Paiddate).HasColumnName("paiddate");
             entity.Property(e => e.Paidmethod)
                 .HasMaxLength(50)
                 .HasColumnName("paidmethod");
@@ -454,7 +440,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("taxdeduction");
             entity.Property(e => e.Updatedat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("updatedat");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.Employeefinances)
@@ -472,18 +457,9 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Sessionid).HasColumnName("sessionid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Device)
-                .HasMaxLength(100)
-                .HasColumnName("device");
             entity.Property(e => e.Employeeaccountid).HasColumnName("employeeaccountid");
-            entity.Property(e => e.Expiresat)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("expiresat");
-            entity.Property(e => e.Ipaddress)
-                .HasMaxLength(50)
-                .HasColumnName("ipaddress");
+            entity.Property(e => e.Expiresat).HasColumnName("expiresat");
             entity.Property(e => e.Refreshtoken)
                 .HasMaxLength(255)
                 .HasColumnName("refreshtoken");
@@ -504,10 +480,9 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Classid).HasColumnName("classid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Examdate)
-                .HasColumnType("timestamp without time zone")
+                .HasMaxLength(200)
                 .HasColumnName("examdate");
             entity.Property(e => e.Examtype)
                 .HasMaxLength(50)
@@ -543,7 +518,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("contentpath");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Examid).HasColumnName("examid");
 
@@ -562,7 +536,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Enrollmentid).HasColumnName("enrollmentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Examid).HasColumnName("examid");
             entity.Property(e => e.Studentid).HasColumnName("studentid");
@@ -589,7 +562,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Resultid).HasColumnName("resultid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Enrollmentid).HasColumnName("enrollmentid");
             entity.Property(e => e.Marksscored)
@@ -616,7 +588,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("address");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Schoolname)
                 .HasMaxLength(255)
@@ -640,7 +611,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Classid).HasColumnName("classid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Gender)
                 .HasMaxLength(10)
@@ -691,7 +661,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Accountid).HasColumnName("accountid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Emailorguardianemail)
                 .HasMaxLength(255)
@@ -719,7 +688,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Documentid).HasColumnName("documentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Documentpath)
                 .HasMaxLength(255)
@@ -746,7 +714,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Attendanceid).HasColumnName("attendanceid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.Status)
@@ -777,7 +744,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("cnicfrontorbform");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Photo)
                 .HasMaxLength(255)
@@ -811,7 +777,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("coursefee");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Examinationfee)
                 .HasPrecision(10, 2)
@@ -820,7 +785,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Issuedby).HasColumnName("issuedby");
             entity.Property(e => e.Issueddate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("issueddate");
             entity.Property(e => e.Month)
                 .HasMaxLength(20)
@@ -832,9 +796,7 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Otherchargesreasons)
                 .HasMaxLength(255)
                 .HasColumnName("otherchargesreasons");
-            entity.Property(e => e.Paiddate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("paiddate");
+            entity.Property(e => e.Paiddate).HasColumnName("paiddate");
             entity.Property(e => e.Paidmethod)
                 .HasMaxLength(150)
                 .HasColumnName("paidmethod");
@@ -852,7 +814,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("tuitionfee");
             entity.Property(e => e.Updatedat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("updatedat");
 
             entity.HasOne(d => d.IssuedbyNavigation).WithMany(p => p.Studentfinances)
@@ -875,14 +836,11 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Sessionid).HasColumnName("sessionid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.Device)
                 .HasMaxLength(100)
                 .HasColumnName("device");
-            entity.Property(e => e.Expiresat)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("expiresat");
+            entity.Property(e => e.Expiresat).HasColumnName("expiresat");
             entity.Property(e => e.Ipaddress)
                 .HasMaxLength(50)
                 .HasColumnName("ipaddress");

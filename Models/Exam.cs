@@ -7,7 +7,7 @@ public partial class Exam
 {
     public int Examid { get; set; }
 
-    public DateTime Examdate { get; set; }
+    public string Examdate { get; set; } = null!;
 
     public decimal? Totalmarks { get; set; }
 

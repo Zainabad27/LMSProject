@@ -4,6 +4,6 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface ILoginService
     {
-        public Task<string> AdminLogin(LoginDto LoginData);
+        public Task<int> AdminLogin(LoginDto LoginData,HttpContext context);
     }
 }

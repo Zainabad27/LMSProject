@@ -13,7 +13,7 @@ namespace LmsApp2.Api.Mappers
             {
                 Schoolname = School.SchoolName,
                 Address = School.SchoolAddress,
-                Createdat = DateTime.Now
+                Createdat = DateTime.UtcNow
             };
 
 
