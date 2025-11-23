@@ -1,5 +1,6 @@
 using LmsApp2.Api;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Middlewares;
 using LmsApp2.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/Employees/AddEmployee"), appBuilder =>
+{
+    appBuilder.UseMiddleware<IsAdmin>();
+});
+
 
 app.UseExceptionHandler(_ => { });
 

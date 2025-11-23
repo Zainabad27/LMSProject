@@ -19,5 +19,5 @@ public partial class Employeeaccountinfo
 
     public virtual Employee? Employee { get; set; }
 
-    public virtual ICollection<Employeesession> Employeesessions { get; set; } = new List<Employeesession>();
+    public virtual Employeesession? Employeesession { get; set; }
 }

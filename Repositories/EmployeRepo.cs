@@ -42,7 +42,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<(int EmployeeAccountId,int EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
+        public async Task<(int EmployeeAccountId, int EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
@@ -135,7 +135,7 @@ namespace LmsApp2.Api.Repositories
 
             }
 
-            
+
             Employeesession Session = new()
             {
 
@@ -154,9 +154,65 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public Task<int> ValidateEmployeeRefreshToken(int EmpId, string refreshToken)
+        public async Task<int> UpdateEmployeeSession(int EmployeeId, string refreshToken)
         {
-            dbcontext.Employeeaccountinfos.Where(empAcc=>empAcc.Employeeid== EmpId).
+            int SessionId=await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession!=null?x.Employeesession.Sessionid:0).FirstOrDefaultAsync();
+
+
+            if (SessionId < 1)
+            {
+                throw new Exception("Employee Account Not Found");
+            }
+
+            var sessionData=await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
+
+            if (sessionData == null)
+            {
+                throw new Exception("Employee Session Data Was not found in the database.");
+            }
+
+            sessionData.Refreshtoken=refreshToken;
+            sessionData.Expiresat=DateTime.UtcNow.AddDays(10);
+
+            return SessionId;
+
+
+
+
+
+        }
+
+        public async Task<bool> ValidateEmployeeRefreshToken(int EmpId, string refreshToken)
+        {
+            var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
+            {
+
+                refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.UtcNow.AddDays(-3),
+                refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : "No refreshToken"
+
+
+            }).FirstOrDefaultAsync();
+
+
+            if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
+            {
+                throw new Exception("Invalid refresh Token");
+            }
+
+            if (data.refreshTokenIndataBase != refreshToken)
+            {
+                throw new Exception("Invalid Refresh Token");
+            }
+
+
+            if (data.refreshTokenExpiry < DateTime.UtcNow)
+            {
+                throw new Exception("Refresh Token Expired.");
+            }
+
+
+            return true;
+             
         }
     }
 }

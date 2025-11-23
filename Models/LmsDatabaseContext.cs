@@ -454,6 +454,8 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeesessions");
 
+            entity.HasIndex(e => e.Employeeaccountid, "uq_employeesession_employeeaccountid").IsUnique();
+
             entity.Property(e => e.Sessionid).HasColumnName("sessionid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -464,8 +466,8 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("refreshtoken");
 
-            entity.HasOne(d => d.Employeeaccount).WithMany(p => p.Employeesessions)
-                .HasForeignKey(d => d.Employeeaccountid)
+            entity.HasOne(d => d.Employeeaccount).WithOne(p => p.Employeesession)
+                .HasForeignKey<Employeesession>(d => d.Employeeaccountid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("employeesessions_employeeaccountid_fkey");
         });

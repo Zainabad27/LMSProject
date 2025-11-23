@@ -1,14 +1,12 @@
-﻿using LmsApp2.Api.Repositories;
-using LmsApp2.Api.RepositoriesInterfaces;
+﻿using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.UtilitiesInterfaces;
-using System.Security.Claims;
 
 namespace LmsApp2.Api.Middlewares
 {
-    public class IsAdmin(RequestDelegate next, IJwtServices JwtServices, IEmployeeRepo emprepo)
+    public class IsAdmin(RequestDelegate next)
     {
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IJwtServices JwtServices)
         {
             var accessToken = context.Request.Cookies["AccessToken"];
             var refreshToken = context.Request.Cookies["RefreshToken"];
@@ -24,7 +22,7 @@ namespace LmsApp2.Api.Middlewares
             var Email = principal.FindFirst("Email")?.Value;
             var id = principal.FindFirst("Id")?.Value;
 
-            if(id==null||!(int.TryParse(id,out int Employeeid)))
+            if (id == null || !(int.TryParse(id, out int Employeeid)))
             {
                 throw new Exception("No Employee Id was given in AccessToken");
 
@@ -32,7 +30,7 @@ namespace LmsApp2.Api.Middlewares
 
             if (role != "Admin")
             {
-                    throw new Exception("Unauthorized Access,User Is not An admin");
+                throw new Exception("Unauthorized Access,User Is not An admin");
             }
 
             if (Email == null)
@@ -40,7 +38,7 @@ namespace LmsApp2.Api.Middlewares
                 throw new Exception("No Email inside ");
             }
 
-        
+
 
 
 
@@ -57,28 +55,7 @@ namespace LmsApp2.Api.Middlewares
             }
 
 
-
-          int IsRefreshTokenValid= await emprepo.ValidateEmployeeRefreshToken(Employeeid, refreshToken);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            throw new Exception("Access Token Expired,Unauthorized Access.");
 
 
 
