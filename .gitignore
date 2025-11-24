@@ -16,7 +16,7 @@
 appsettings.Development.json
 appsettings.json
 
-
+wwwroot
 
 #######################################
 *.bak

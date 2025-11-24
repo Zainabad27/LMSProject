@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Middlewares
 
             if (String.IsNullOrEmpty(accessToken) || String.IsNullOrEmpty(refreshToken))
             {
-                throw new InvalidOperationException("UnAuthorized Request");
+                throw new InvalidOperationException("No Token,Unauthorized Access");
             }
 
             var (principal, Validatetoken) = JwtServices.VerifyJwtToken(accessToken);
@@ -39,23 +39,23 @@ namespace LmsApp2.Api.Middlewares
             }
 
 
+            await next(context);
+    
+            //DateTime ExpiryDate = JwtServices.JwtTokenExpiresAt(accessToken);
 
 
+            //if (ExpiryDate > DateTime.UtcNow)
+            //{
 
-            DateTime ExpiryDate = JwtServices.JwtTokenExpiresAt(accessToken);
+            //    context.User = principal;
 
+            //    await next(context);
+            //    return;
 
-            if (ExpiryDate > DateTime.UtcNow)
-            {
-
-                context.User = principal;
-
-                await next(context);
-
-            }
+            //}
 
 
-            throw new Exception("Access Token Expired,Unauthorized Access.");
+            //throw new Exception("Access Token Expired,Unauthorized Access.");
 
 
 

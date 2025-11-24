@@ -16,7 +16,7 @@ namespace LmsApp2.Api.Repositories
 
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
 
-            await dbcontext.SaveChangesAsync();
+            //await dbcontext.SaveChangesAsync();
 
             Employee emp2 = EmployeeSavedInDatabase.Entity;
             return emp2.Employeeid;
@@ -35,7 +35,7 @@ namespace LmsApp2.Api.Repositories
                 Createdat = DateTime.UtcNow,
             };
             var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
-            await dbcontext.SaveChangesAsync();
+            //await dbcontext.SaveChangesAsync();
 
             return DocsSavedInDatabse.Entity.Documentid;
 
@@ -118,7 +118,7 @@ namespace LmsApp2.Api.Repositories
             };
 
             var EmployeeAccountSavedInDatabase = await dbcontext.Employeeaccountinfos.AddAsync(EmpAcc);
-            await dbcontext.SaveChangesAsync();
+            //await dbcontext.SaveChangesAsync();
 
 
             return EmployeeAccountSavedInDatabase.Entity.Accountid;
@@ -134,7 +134,18 @@ namespace LmsApp2.Api.Repositories
                 throw new Exception("Invalid Employee Id or Invalid refresh Token");
 
             }
+            // if session exists already so we just have to update it 
 
+            var session = await dbcontext.Employeesessions.FirstOrDefaultAsync(e => e.Employeeaccountid == employeeAccountId);
+            if (session != null)
+            {
+                session.Expiresat = DateTime.UtcNow.AddDays(10);
+                session.Refreshtoken = refreshToken;
+                //await dbcontext.SaveChangesAsync();
+
+
+                return session.Sessionid;
+            }
 
             Employeesession Session = new()
             {
@@ -147,16 +158,21 @@ namespace LmsApp2.Api.Repositories
 
             };
             var SessionSavedInDatabase = await dbcontext.Employeesessions.AddAsync(Session);
-            await dbcontext.SaveChangesAsync();
+            //await dbcontext.SaveChangesAsync();
 
             return SessionSavedInDatabase.Entity.Sessionid;
 
 
         }
 
+        public async Task SaveChanges()
+        {
+           await dbcontext.SaveChangesAsync();
+        }
+
         public async Task<int> UpdateEmployeeSession(int EmployeeId, string refreshToken)
         {
-            int SessionId=await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession!=null?x.Employeesession.Sessionid:0).FirstOrDefaultAsync();
+            int SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : 0).FirstOrDefaultAsync();
 
 
             if (SessionId < 1)
@@ -164,15 +180,15 @@ namespace LmsApp2.Api.Repositories
                 throw new Exception("Employee Account Not Found");
             }
 
-            var sessionData=await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
+            var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
 
             if (sessionData == null)
             {
                 throw new Exception("Employee Session Data Was not found in the database.");
             }
 
-            sessionData.Refreshtoken=refreshToken;
-            sessionData.Expiresat=DateTime.UtcNow.AddDays(10);
+            sessionData.Refreshtoken = refreshToken;
+            sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
 
             return SessionId;
 
@@ -212,7 +228,7 @@ namespace LmsApp2.Api.Repositories
 
 
             return true;
-             
+
         }
     }
 }

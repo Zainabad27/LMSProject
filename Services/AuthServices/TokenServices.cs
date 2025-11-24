@@ -20,7 +20,7 @@ namespace LmsApp2.Api.Services.AuthServices
                string NewRefreshToken= JwtServices.GenerateRefreshToken();
 
                 await empRepo.UpdateEmployeeSession(EmployeeId, NewRefreshToken);
-
+                await empRepo.SaveChanges();
 
                 context.Response.Cookies.Append("AccessToken", NewAccessToken, new CookieOptions
                 {

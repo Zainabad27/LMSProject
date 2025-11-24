@@ -8,5 +8,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<int> AddSchool(SchoolDto sch);
 
         public Task<int> GetSchoolByName(string name);
+
+
+        public Task SaveChanges();
     }
 }

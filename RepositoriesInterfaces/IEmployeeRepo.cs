@@ -27,6 +27,9 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<bool> ValidateEmployeeRefreshToken(int EmployeeId,string refreshToken);
 
 
+        public Task SaveChanges();
+
+
 
     }
 }

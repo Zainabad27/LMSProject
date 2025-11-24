@@ -22,7 +22,10 @@ namespace LmsApp2.Api.Controllers
 
             int addedEmployeeId=await employeeServices.AddEmployee(emp);
 
+            var context = HttpContext;
 
+
+            Console.WriteLine(context);
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }

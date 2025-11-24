@@ -11,12 +11,12 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<int> AddSchool(SchoolDto sch)
         {
-            
 
-            var res=await dbcontext.Schools.AddAsync(sch.To_DbModel());
-            await dbcontext.SaveChangesAsync();
 
-            School Schoolsaved=res.Entity;
+            var res = await dbcontext.Schools.AddAsync(sch.To_DbModel());
+            //await dbcontext.SaveChangesAsync();
+
+            School Schoolsaved = res.Entity;
 
             return Schoolsaved.Schoolid;
 
@@ -29,10 +29,15 @@ namespace LmsApp2.Api.Repositories
 
 
             return await dbcontext.Schools.Where(sch => sch.Schoolname == name).Select(sch => sch.Schoolid).FirstOrDefaultAsync();
-           
 
 
 
+
+        }
+
+        public async Task SaveChanges()
+        {
+            await dbcontext.SaveChangesAsync();
         }
     }
 }

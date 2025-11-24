@@ -6,7 +6,7 @@ using System.IO;
 
 namespace LmsApp2.Api.Services
 {
-    public class EmployeeServices(IEmployeeRepo employeerepo, ISchoolRepo schoolrepo,IWebHostEnvironment env) : IEmployeeService
+    public class EmployeeServices(IEmployeeRepo employeerepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
         public async Task<int> AddEmployee(EmployeeDto emp)
         {
@@ -24,7 +24,7 @@ namespace LmsApp2.Api.Services
             if (UserEmailAlreadyExists)
             {
 
-                throw new Exception("This Email is Already in use Please Enter a different email.");
+                throw new Exception("This Email is Already in use, Please Enter a different email.");
             }
             int EmployeeAccountId = await employeerepo.MakeEmployeeUserAccount(emp, ReturnedEmpId);
 
@@ -32,17 +32,17 @@ namespace LmsApp2.Api.Services
 
             // now we have to upload the necessary documents of Employee and also save it too Server
 
-            var DirectoryPath = Path.Combine(env.WebRootPath,"Documents");
+            var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
             Console.WriteLine($"{DirectoryPath}");
 
-            string PhotoFilePathOnServer=await emp.photo.UploadToServer(DirectoryPath);
-            string CnicFrontFilePathOnServer=await emp.photo.UploadToServer(DirectoryPath);
-            string CnicBackFilePathOnServer=await emp.photo.UploadToServer(DirectoryPath);
+            string PhotoFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
+            string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
+            string CnicBackFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
 
-           int DocumentId= await employeerepo.AddEmployeeDocuments(ReturnedEmpId, PhotoFilePathOnServer, CnicFrontFilePathOnServer,CnicBackFilePathOnServer);
+            int DocumentId = await employeerepo.AddEmployeeDocuments(ReturnedEmpId, PhotoFilePathOnServer, CnicFrontFilePathOnServer, CnicBackFilePathOnServer);
 
-            
-                return ReturnedEmpId;
+            await employeerepo.SaveChanges();
+            return ReturnedEmpId;
 
 
 

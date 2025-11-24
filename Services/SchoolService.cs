@@ -13,6 +13,9 @@ namespace LmsApp2.Api.Services
 
             int SchoolId=await schoolrepo.AddSchool(SchoolData);
 
+
+
+
            return SchoolId;
 
 

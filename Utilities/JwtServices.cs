@@ -48,10 +48,15 @@ namespace LmsApp2.Api.Utilities
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
 
-                ValidateIssuer = false,     // set to true if you want strict issuer check
+
+                ValidIssuer = config["AppSettingsForAdmin:Issuer"],
+                ValidateIssuer = true,     // set to true if you want strict issuer check
+
+
+                ValidAudience = config["AppSettingsForAdmin:Audience"],
                 ValidateAudience = true,   // set to true if you want strict audience check
 
-                ValidateLifetime = false,    // checks expiry
+                ValidateLifetime = true,    // checks expiry
 
             };
 

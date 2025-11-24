@@ -35,13 +35,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
+app.UseExceptionHandler(_ => { });
+
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/Employees/AddEmployee"), appBuilder =>
 {
     appBuilder.UseMiddleware<IsAdmin>();
 });
 
 
-app.UseExceptionHandler(_ => { });
+
 
 app.UseHttpsRedirection();
 
