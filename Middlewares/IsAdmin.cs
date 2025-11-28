@@ -38,8 +38,11 @@ namespace LmsApp2.Api.Middlewares
                 throw new Exception("No Email inside ");
             }
 
-
+            context.User = principal;
             await next(context);
+
+
+            return;
     
             //DateTime ExpiryDate = JwtServices.JwtTokenExpiresAt(accessToken);
 
