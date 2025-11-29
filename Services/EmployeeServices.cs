@@ -15,6 +15,7 @@ namespace LmsApp2.Api.Services
             {
                 throw new Exception("School You are Registering For was not found in the Database.");
             }
+            
 
 
             int ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId, emp.SchoolName);

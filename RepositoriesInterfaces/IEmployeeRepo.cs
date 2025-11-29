@@ -18,13 +18,16 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
 
 
-        public Task<int> PopulateEmployeeSession(int employeeId,string refreshToken,HttpContext context);
+        public Task<int> PopulateEmployeeSession(int employeeId,string refreshToken);
 
         public Task<int> UpdateEmployeeSession(int EmployeeId,string refreshToken);
 
 
 
         public Task<bool> ValidateEmployeeRefreshToken(int EmployeeId,string refreshToken);
+
+
+        public Task<(int EmployeeAccountId, int EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass);
 
 
         public Task SaveChanges();

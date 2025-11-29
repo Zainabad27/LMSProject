@@ -5,19 +5,19 @@ using LmsApp2.Api.UtilitiesInterfaces;
 
 namespace LmsApp2.Api.Services.AuthServices
 {
-    public class TokenServices(IEmployeeRepo empRepo,IJwtServices JwtServices) : ITokenServices
+    public class TokenServices(IEmployeeRepo empRepo, IJwtServices JwtServices) : ITokenServices
     {
-        public async Task<int> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData,HttpContext context)
+        public async Task<int> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context)
         {
-           var (AccountId,EmployeeId)= await empRepo.AuthorizeEmployeeAsAdmin(RefreshTokenData.Email, RefreshTokenData.Password);
+            var (AccountId, EmployeeId) = await empRepo.AuthorizeEmployeeAsAdmin(RefreshTokenData.Email, RefreshTokenData.Password);
 
-          bool ValidToken= await empRepo.ValidateEmployeeRefreshToken(EmployeeId,RefreshTokenData.RefreshToken);
+            bool ValidToken = await empRepo.ValidateEmployeeRefreshToken(EmployeeId, RefreshTokenData.RefreshToken);
 
 
             if (ValidToken)
             {
-               string NewAccessToken= JwtServices.GenerateAccessToken(EmployeeId,"Admin",RefreshTokenData.Email);
-               string NewRefreshToken= JwtServices.GenerateRefreshToken();
+                string NewAccessToken = JwtServices.GenerateAccessToken(EmployeeId, "Admin", RefreshTokenData.Email);
+                string NewRefreshToken = JwtServices.GenerateRefreshToken();
 
                 await empRepo.UpdateEmployeeSession(EmployeeId, NewRefreshToken);
                 await empRepo.SaveChanges();
@@ -40,19 +40,22 @@ namespace LmsApp2.Api.Services.AuthServices
 
                 });
 
+
+                return EmployeeId;
+
+
             }
-            else
-            {
-                throw new Exception("Invalid Refresh Token");
-            }
+
+
+            throw new Exception("Invalid Refresh Token");
 
 
 
-            return EmployeeId;
 
 
 
-          
+
+
 
 
         }

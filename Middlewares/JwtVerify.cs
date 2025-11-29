@@ -1,11 +1,9 @@
-﻿//using LmsApp2.Api.RepositoriesInterfaces;
-//using LmsApp2.Api.UtilitiesInterfaces;
+﻿//using LmsApp2.Api.UtilitiesInterfaces;
 
 //namespace LmsApp2.Api.Middlewares
 //{
-//    public class IsAdmin(RequestDelegate next)
+//    public class JwtVerify(RequestDelegate next)
 //    {
-
 //        public async Task InvokeAsync(HttpContext context, IJwtServices JwtServices)
 //        {
 //            var accessToken = context.Request.Cookies["AccessToken"];
@@ -17,8 +15,8 @@
 //                throw new InvalidOperationException("No Token,Unauthorized Access");
 //            }
 
-//            var (principal, Validatedtoken) = JwtServices.VerifyJwtToken(accessToken);
-//            var role = principal.FindFirst("Role")?.Value;
+//            var (principal, Validatetoken) = JwtServices.VerifyJwtToken(accessToken);
+
 //            var Email = principal.FindFirst("Email")?.Value;
 //            var id = principal.FindFirst("Id")?.Value;
 
@@ -28,10 +26,6 @@
 
 //            }
 
-//            if (role != "Admin")
-//            {
-//                throw new Exception("Unauthorized Access,User Is not An admin");
-//            }
 
 //            if (Email == null)
 //            {
@@ -41,14 +35,6 @@
 //            context.User = principal;
 //            await next(context);
 
-
-//            return;
-
-
-
 //        }
-
-
-
 //    }
 //}

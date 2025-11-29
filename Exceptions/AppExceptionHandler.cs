@@ -9,7 +9,7 @@ namespace LmsApp2.Api.Exceptions
             Console.WriteLine(exception);
             Console.WriteLine(httpContext);
 
-            await httpContext.Response.WriteAsJsonAsync(exception.Message+" <= This is the Eror Message",cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(exception.Message+" <= Error Message",cancellationToken);
 
             return true;
         }

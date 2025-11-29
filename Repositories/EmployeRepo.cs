@@ -81,6 +81,45 @@ namespace LmsApp2.Api.Repositories
 
 
         }
+        public async Task<(int EmployeeAccountId, int EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass)
+        {
+            var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
+            if (Employee == null) { throw new Exception("No User Found for this Email."); }
+
+            bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
+            if (!CorrectPassword)
+            {
+                throw new Exception("Invalid Password");
+            }
+
+
+            var EmployeeId = Employee.Employeeid;
+            if (EmployeeId < 1)
+            {
+                throw new Exception("Invalid Credentials");
+            }
+
+            var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
+            if (UserInDatabase == null)
+            {
+                throw new Exception("User does not exists");
+            }
+            if (UserInDatabase?.Isactive != true)
+            {
+                throw new Exception("User Account Deleted");
+            }
+            if (UserInDatabase.Employeedesignation != "Teacher")
+            {
+                throw new Exception("User Is not a Teacher");
+            }
+
+
+            return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
+
+
+
+
+        }
 
         public async Task<bool> EmployeeEmailAlreadyExists(string email)
         {
@@ -94,12 +133,6 @@ namespace LmsApp2.Api.Repositories
             return true;
 
         }
-
-
-
-
-
-
 
         public async Task<int> MakeEmployeeUserAccount(EmployeeDto emp, int EmployeeIdOnEmployeesTable)
         {
@@ -127,7 +160,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> PopulateEmployeeSession(int employeeAccountId, string refreshToken, HttpContext Context)
+        public async Task<int> PopulateEmployeeSession(int employeeAccountId, string refreshToken)
         {
             if (employeeAccountId < 1 || String.IsNullOrEmpty(refreshToken))
             {
@@ -167,7 +200,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task SaveChanges()
         {
-           await dbcontext.SaveChangesAsync();
+            await dbcontext.SaveChangesAsync();
         }
 
         public async Task<int> UpdateEmployeeSession(int EmployeeId, string refreshToken)

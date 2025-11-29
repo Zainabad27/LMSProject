@@ -11,17 +11,43 @@ namespace LmsApp2.Api.Utilities
     {
         public string GenerateAccessToken(int UserId, string Designation, string email)
         {
+            String GeneratingTokenFor = Designation + "s";
+            string AccessToken = null;
             var claims = new List<Claim> {
 
-                    new Claim("Role",Designation),
+                    new Claim(ClaimTypes.Role,Designation),
                     new Claim("Id",UserId.ToString()),
                     new Claim("Email",email.ToString())
 
 
 
             };
+            if (GeneratingTokenFor == "Admins")
+            {
+                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
 
-            string AccessToken = TokenGenerationForJwt(claims, 1);
+
+            }
+            else if (GeneratingTokenFor == "Teachers")
+            {
+                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
+
+
+            }
+            else if (GeneratingTokenFor == "Students")
+            {
+                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
+
+
+            }
+
+
+            if (AccessToken == null)
+            {
+                throw new Exception("No Valid Audience was given for Generating AccessToken in JWT Services.");
+            }
+
+
 
             return AccessToken;
         }
@@ -37,9 +63,9 @@ namespace LmsApp2.Api.Utilities
 
 
 
-        public (ClaimsPrincipal principal,SecurityToken validateToken) VerifyJwtToken(string token)
+        public (ClaimsPrincipal principal, SecurityToken validateToken) VerifyJwtToken(string token)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForAdmin:Token")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")));
             var tokenHandler = new JwtSecurityTokenHandler();
 
 
@@ -49,12 +75,11 @@ namespace LmsApp2.Api.Utilities
                 IssuerSigningKey = key,
 
 
-                ValidIssuer = config["AppSettingsForAdmin:Issuer"],
+                ValidIssuer = config["AppSettingsForJWT:Issuer"],
                 ValidateIssuer = true,     // set to true if you want strict issuer check
 
 
-                ValidAudience = config["AppSettingsForAdmin:Audience"],
-                ValidateAudience = true,   // set to true if you want strict audience check
+                ValidateAudience = false,   // set to true if you want strict audience check
 
                 ValidateLifetime = true,    // checks expiry
 
@@ -72,7 +97,7 @@ namespace LmsApp2.Api.Utilities
 
         public DateTime JwtTokenExpiresAt(string Token)
         {
-            var TokenHandler= new JwtSecurityTokenHandler();
+            var TokenHandler = new JwtSecurityTokenHandler();
 
             SecurityToken DecodedToken = TokenHandler.ReadToken(Token);
 
@@ -81,15 +106,15 @@ namespace LmsApp2.Api.Utilities
 
         }
 
-        private string TokenGenerationForJwt(List<Claim> claims, int TokenExpiry)
+        private string TokenGenerationForJwt(List<Claim> claims, int TokenExpiry, string Audience)
         {
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForAdmin:Token")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var TokenDescriptor = new JwtSecurityToken(
-                issuer: config.GetValue<string>("AppSettingsForAdmin:Issuer"),
-                audience: config.GetValue<string>("AppSettingsForAdmin:Audience"),
+                issuer: config.GetValue<string>("AppSettingsForJWT:Issuer"),
+                audience: Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(TokenExpiry),
                 signingCredentials: creds

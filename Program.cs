@@ -1,10 +1,42 @@
 using LmsApp2.Api;
 using LmsApp2.Api.Exceptions;
-using LmsApp2.Api.Middlewares;
+//using LmsApp2.Api.Middlewares;
 using LmsApp2.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+builder.Logging.AddFilter("Microsoft.AspNetCore.Watch", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+
+builder.Logging.AddFilter("Default", LogLevel.Warning);
+
+
+
+
+
+
+
+// setting IForm Upload options
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartHeadersLengthLimit = 1024 * 1024; // 1 MB
+});
+
+
+
 
 // Add services to the container.
 
@@ -14,8 +46,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// Injecting Dependencies
-builder.Services.AddDI();
+
 
 
 // Connecting to Database.
@@ -23,6 +54,41 @@ builder.Services.AddDI();
 builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+var JwtIssuer = builder.Configuration["AppSettingsForJWT:Issuer"];
+var JwtKey = builder.Configuration["AppSettingsForJWT:Token"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = JwtIssuer,
+
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey))
+    };
+
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Cookies["AccessToken"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
+
+
+// Injecting Dependencies
+
+builder.Services.AddDI();
 
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
@@ -39,18 +105,37 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler(_ => { });
 
-app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/Employees/AddEmployee"), appBuilder =>
-{
-    appBuilder.UseMiddleware<IsAdmin>();
-});
+//app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/Employees/AddEmployee"), appBuilder =>
+//{
+//    appBuilder.UseMiddleware<IsAdmin>();
+//});
 
+
+app.UseRouting();
+//app.UseAuthentication();
+
+//app.UseWhen(context =>
+//    !context.Request.Path.StartsWithSegments("/api/v1/Auth/Login"),
+//    appBuilder =>
+//    {
+//        appBuilder.UseMiddleware<JwtVerify>();
+//    });
+
+
+app.UseAuthentication();
+
+
+//app.UseMiddleware<JwtVerify>(); // your custom JWT validation
+app.UseAuthorization();
 
 
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 
 app.MapControllers();
+
+
+app.StartupLog();
 
 app.Run();
