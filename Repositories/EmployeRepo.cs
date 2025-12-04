@@ -137,6 +137,7 @@ namespace LmsApp2.Api.Repositories
         {
             Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
             {
+                Accountid=Guid.NewGuid(),
                 Email = emp.Email,
                 Password = emp.Password.GetHashedPassword(),
                 Createdat = DateTime.UtcNow,
@@ -177,6 +178,7 @@ namespace LmsApp2.Api.Repositories
 
             Employeesession Session = new()
             {
+                Sessionid = Guid.NewGuid(),
 
                 Employeeaccountid = employeeAccountId,
                 Refreshtoken = refreshToken,
@@ -198,35 +200,31 @@ namespace LmsApp2.Api.Repositories
             await dbcontext.SaveChangesAsync();
         }
 
-        public void test()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<Guid> UpdateEmployeeSession(Guid EmployeeId, string refreshToken)
         {
-            //Guid SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : 0).FirstOrDefaultAsync();
+            Guid SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : Guid.Empty).FirstOrDefaultAsync();
 
 
-            //if (SessionId == null)
-            //{
-            //    throw new Exception("Employee Account Not Found");
-            //}
+            if (SessionId == Guid.Empty)
+            {
+                throw new Exception("Employee Account Not Found");
+            }
 
-            //var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
+            var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
 
-            //if (sessionData == null)
-            //{
-            //    throw new Exception("Employee Session Data Was not found in the database.");
-            //}
+            if (sessionData == null)
+            {
+                throw new Exception("Employee Session Data Was not found in the database.");
+            }
 
-            //sessionData.Refreshtoken = refreshToken;
-            //sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
+            sessionData.Refreshtoken = refreshToken;
+            sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
 
-            //return SessionId;
+            return SessionId;
 
 
-            throw new NotImplementedException();
+
 
 
 
@@ -236,37 +234,35 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
         {
-            //var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
-            //{
+            var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
+            {
 
-            //    refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.UtcNow.AddDays(-3),
-            //    refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : "No refreshToken"
-
-
-            //}).FirstOrDefaultAsync();
+                refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.MinValue,
+                refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : null
 
 
-            //if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
-            //{
-            //    throw new Exception("Invalid refresh Token");
-            //}
-
-            //if (data.refreshTokenIndataBase != refreshToken)
-            //{
-            //    throw new Exception("Invalid Refresh Token");
-            //}
+            }).FirstOrDefaultAsync();
 
 
-            //if (data.refreshTokenExpiry < DateTime.UtcNow)
-            //{
-            //    throw new Exception("Refresh Token Expired.");
-            //}
+            if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
+            {
+                throw new Exception("Invalid refresh Token");
+            }
+
+            if (data.refreshTokenIndataBase != refreshToken)
+            {
+                throw new Exception("Invalid Refresh Token");
+            }
 
 
-            //return true;
+            if (data.refreshTokenExpiry == DateTime.MinValue || data.refreshTokenExpiry < DateTime.UtcNow)
+            {
+                throw new Exception("Refresh Token Expired.");
+            }
 
 
-            throw new NotImplementedException();
+            return true;
+
 
         }
     }

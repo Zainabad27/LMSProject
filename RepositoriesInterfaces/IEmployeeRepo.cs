@@ -4,7 +4,6 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IEmployeeRepo
     {
-        public void test();
         public Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId);
 
         public Task<Guid> MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable);

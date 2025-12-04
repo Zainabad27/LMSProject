@@ -24,6 +24,9 @@ namespace LmsApp2.Api.Services.AuthServices
 
             Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
 
+            await empRepo.SaveChanges();
+
+
 
             var CookiesOptions = new CookieOptions
             {
@@ -38,8 +41,9 @@ namespace LmsApp2.Api.Services.AuthServices
             context.Response.Cookies.Append("AccessToken", AccessToken, CookiesOptions);
             context.Response.Cookies.Append("RefreshToken", RefreshToken, CookiesOptions);
 
-            Logger.LogWarning("Request Cookies: {cookies}",
-            string.Join(", ", context.Request.Cookies.Select(c => $"{c.Key}={c.Value}")));
+            // Was debugging
+            //Logger.LogWarning("Request Cookies: {cookies}",
+            //string.Join(", ", context.Request.Cookies.Select(c => $"{c.Key}={c.Value}")));
 
 
 
@@ -60,6 +64,9 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
             Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
+
+
+            await empRepo.SaveChanges();
 
             var CookiesOptions = new CookieOptions
             {

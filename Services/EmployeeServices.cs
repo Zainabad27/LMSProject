@@ -2,7 +2,6 @@
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
-using System.IO;
 
 namespace LmsApp2.Api.Services
 {
@@ -34,7 +33,7 @@ namespace LmsApp2.Api.Services
             // now we have to upload the necessary documents of Employee and also save it too Server
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
-            Console.WriteLine($"{DirectoryPath}");
+         
 
             string PhotoFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
             string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);

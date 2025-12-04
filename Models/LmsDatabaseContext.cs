@@ -460,6 +460,8 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeesessions");
 
+            entity.HasIndex(e => e.Employeeaccountid, "employeesessions_employeeaccountid_key").IsUnique();
+
             entity.Property(e => e.Sessionid)
                 .ValueGeneratedNever()
                 .HasColumnName("sessionid");
@@ -472,9 +474,9 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("refreshtoken");
 
-            entity.HasOne(d => d.Employeeaccount).WithMany(p => p.Employeesessions)
-                .HasForeignKey(d => d.Employeeaccountid)
-                .HasConstraintName("fk_employeesession_employeeaccount");
+            entity.HasOne(d => d.Employeeaccount).WithOne(p => p.Employeesession)
+                .HasForeignKey<Employeesession>(d => d.Employeeaccountid)
+                .HasConstraintName("employeesessions_employeeaccountid_fkey");
         });
 
         modelBuilder.Entity<Exam>(entity =>
