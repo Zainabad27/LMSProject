@@ -5,7 +5,7 @@ namespace LmsApp2.Api.Models;
 
 public partial class Book
 {
-    public long Bookid { get; set; }
+    public Guid Bookid { get; set; }
 
     public string BookTitle { get; set; } = null!;
 
@@ -15,7 +15,7 @@ public partial class Book
 
     public DateTime? Createdat { get; set; }
 
-    public int? Courseid { get; set; }
+    public Guid? Courseid { get; set; }
 
     public virtual Course? Course { get; set; }
 }

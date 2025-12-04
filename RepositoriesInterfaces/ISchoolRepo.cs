@@ -5,9 +5,9 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface ISchoolRepo
     {
-        public Task<int> AddSchool(SchoolDto sch);
+        public Task<Guid> AddSchool(SchoolDto sch);
 
-        public Task<int> GetSchoolByName(string name);
+        public Task<Guid> GetSchoolByName(string name);
 
 
         public Task SaveChanges();

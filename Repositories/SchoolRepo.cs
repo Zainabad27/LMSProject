@@ -9,7 +9,7 @@ namespace LmsApp2.Api.Repositories
 {
     public class SchoolRepo(LmsDatabaseContext dbcontext) : ISchoolRepo
     {
-        public async Task<int> AddSchool(SchoolDto sch)
+        public async Task<Guid> AddSchool(SchoolDto sch)
         {
 
 
@@ -24,7 +24,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> GetSchoolByName(string name)
+        public async Task<Guid> GetSchoolByName(string name)
         {
 
 

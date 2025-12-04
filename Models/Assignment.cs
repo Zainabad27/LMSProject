@@ -5,19 +5,17 @@ namespace LmsApp2.Api.Models;
 
 public partial class Assignment
 {
-    public int Assignmentid { get; set; }
+    public Guid Assignmentid { get; set; }
 
-    public int? Employeeid { get; set; }
+    public Guid? Employeeid { get; set; }
 
-    public int? Classid { get; set; }
+    public Guid? Classid { get; set; }
 
     public DateTime Deadline { get; set; }
 
     public decimal? Totalmarks { get; set; }
 
     public DateTime? Createdat { get; set; }
-
-    public string Subject { get; set; } = null!;
 
     public virtual ICollection<Assignmentquestion> Assignmentquestions { get; set; } = new List<Assignmentquestion>();
 

@@ -5,11 +5,11 @@ namespace LmsApp2.Api.Models;
 
 public partial class Examcontent
 {
-    public int Examcontentid { get; set; }
+    public Guid Examcontentid { get; set; }
 
     public string Contentpath { get; set; } = null!;
 
-    public int? Examid { get; set; }
+    public Guid? Examid { get; set; }
 
     public DateTime? Createdat { get; set; }
 

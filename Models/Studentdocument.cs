@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Studentdocument
 {
-    public int Documentid { get; set; }
+    public Guid Documentid { get; set; }
 
-    public int? Studentid { get; set; }
+    public Guid? Studentid { get; set; }
 
     public string Cnicfrontorbform { get; set; } = null!;
 

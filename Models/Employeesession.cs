@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Employeesession
 {
-    public int Sessionid { get; set; }
+    public Guid Sessionid { get; set; }
 
-    public int? Employeeaccountid { get; set; }
+    public Guid? Employeeaccountid { get; set; }
 
     public string Refreshtoken { get; set; } = null!;
 

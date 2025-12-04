@@ -5,15 +5,15 @@ namespace LmsApp2.Api.Models;
 
 public partial class Assignmentsubmission
 {
-    public int Assignmentsubmissionid { get; set; }
+    public Guid Assignmentsubmissionid { get; set; }
 
-    public string Contentpath { get; set; } = null!;
+    public string Content { get; set; } = null!;
 
     public decimal? Marksscored { get; set; }
 
-    public int? Studentid { get; set; }
+    public Guid? Studentid { get; set; }
 
-    public int? Assignmentid { get; set; }
+    public Guid? Assignmentid { get; set; }
 
     public DateTime? Createdat { get; set; }
 

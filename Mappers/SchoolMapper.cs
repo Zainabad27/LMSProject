@@ -11,6 +11,7 @@ namespace LmsApp2.Api.Mappers
 
             return new School()
             {
+                Schoolid = Guid.NewGuid(),
                 Schoolname = School.SchoolName,
                 Address = School.SchoolAddress,
                 Createdat = DateTime.UtcNow
@@ -28,7 +29,7 @@ namespace LmsApp2.Api.Mappers
             return new SchoolDto()
             {
                 SchoolName=School.Schoolname,
-                SchoolAddress= School.Address,
+                SchoolAddress= School.Address!,
 
             };
 

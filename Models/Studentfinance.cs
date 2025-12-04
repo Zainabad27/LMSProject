@@ -5,11 +5,11 @@ namespace LmsApp2.Api.Models;
 
 public partial class Studentfinance
 {
-    public int Financeid { get; set; }
+    public Guid Financeid { get; set; }
 
-    public int? Studentid { get; set; }
+    public Guid? Studentid { get; set; }
 
-    public int? Issuedby { get; set; }
+    public Guid? Issuedby { get; set; }
 
     public decimal? Tuitionfee { get; set; }
 
@@ -35,7 +35,7 @@ public partial class Studentfinance
 
     public string? Remarks { get; set; }
 
-    public DateTime? Paiddate { get; set; }
+    public DateOnly? Paiddate { get; set; }
 
     public DateTime? Createdat { get; set; }
 

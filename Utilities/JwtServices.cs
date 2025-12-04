@@ -12,7 +12,7 @@ namespace LmsApp2.Api.Utilities
         public string GenerateAccessToken(int UserId, string Designation, string email)
         {
             String GeneratingTokenFor = Designation + "s";
-            string AccessToken = null;
+            string AccessToken = null!;
             var claims = new List<Claim> {
 
                     new Claim(ClaimTypes.Role,Designation),
@@ -65,7 +65,7 @@ namespace LmsApp2.Api.Utilities
 
         public (ClaimsPrincipal principal, SecurityToken validateToken) VerifyJwtToken(string token)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")!));
             var tokenHandler = new JwtSecurityTokenHandler();
 
 
@@ -109,7 +109,7 @@ namespace LmsApp2.Api.Utilities
         private string TokenGenerationForJwt(List<Claim> claims, int TokenExpiry, string Audience)
         {
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var TokenDescriptor = new JwtSecurityToken(

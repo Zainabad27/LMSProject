@@ -5,7 +5,7 @@ namespace LmsApp2.Api.Models;
 
 public partial class School
 {
-    public int Schoolid { get; set; }
+    public Guid Schoolid { get; set; }
 
     public string Schoolname { get; set; } = null!;
 

@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Employeefinance
 {
-    public int Financeid { get; set; }
+    public Guid Financeid { get; set; }
 
-    public int? Employeeid { get; set; }
+    public Guid? Employeeid { get; set; }
 
     public string Month { get; set; } = null!;
 
@@ -27,7 +27,7 @@ public partial class Employeefinance
 
     public string? Otherdeductionsreasons { get; set; }
 
-    public DateTime? Paiddate { get; set; }
+    public DateOnly Paiddate { get; set; }
 
     public string? Paidmethod { get; set; }
 

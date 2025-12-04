@@ -5,13 +5,13 @@ namespace LmsApp2.Api.Models;
 
 public partial class Student
 {
-    public int Studentid { get; set; }
+    public Guid Studentid { get; set; }
 
     public string Studentname { get; set; } = null!;
 
-    public string Guardianname { get; set; } = null!;
+    public string? Guardianname { get; set; }
 
-    public string Guardiancontact { get; set; } = null!;
+    public string? Guardiancontact { get; set; }
 
     public string? Address { get; set; }
 
@@ -27,9 +27,9 @@ public partial class Student
 
     public int? Age { get; set; }
 
-    public int? Schoolid { get; set; }
+    public Guid? Schoolid { get; set; }
 
-    public int? Classid { get; set; }
+    public Guid? Classid { get; set; }
 
     public DateTime? Createdat { get; set; }
 
@@ -38,6 +38,8 @@ public partial class Student
     public virtual Class? Class { get; set; }
 
     public virtual ICollection<Examenrollment> Examenrollments { get; set; } = new List<Examenrollment>();
+
+    public virtual ICollection<Examresult> Examresults { get; set; } = new List<Examresult>();
 
     public virtual School? School { get; set; }
 

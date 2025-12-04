@@ -67,7 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = JwtIssuer,
 
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey!))
     };
 
 
@@ -81,6 +81,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                 context.Token = token;
             }
             return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            // Skip default logic
+            context.HandleResponse();
+
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+
+            return context.Response.WriteAsync("{\"error\": \"You are not authenticated. Token missing or invalid(Expired).\"}");
+        },
+        OnForbidden = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/json";
+
+            return context.Response.WriteAsync("{\"error\": \"UnAuthorized Access,You are not allowed to access this resource.\"}");
         }
     };
 });

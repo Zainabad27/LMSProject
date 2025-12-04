@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace LmsApp2.Api.Models;
 
 public partial class LmsDatabaseContext : DbContext
 {
+    IConfiguration config;
     public LmsDatabaseContext()
     {
     }
 
-    public LmsDatabaseContext(DbContextOptions<LmsDatabaseContext> options)
+    public LmsDatabaseContext(DbContextOptions<LmsDatabaseContext> options, IConfiguration config)
         : base(options)
     {
+        this.config = config;
     }
 
     public virtual DbSet<Assignment> Assignments { get; set; }
@@ -66,8 +69,8 @@ public partial class LmsDatabaseContext : DbContext
     public virtual DbSet<Studentsession> Studentsessions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=LMS_Database;Username=postgres;Password=27135789");
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql(config["ConnectionStrings:DefaultConnection"]);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -77,16 +80,15 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("assignments");
 
-            entity.Property(e => e.Assignmentid).HasColumnName("assignmentid");
+            entity.Property(e => e.Assignmentid)
+                .ValueGeneratedNever()
+                .HasColumnName("assignmentid");
             entity.Property(e => e.Classid).HasColumnName("classid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
             entity.Property(e => e.Deadline).HasColumnName("deadline");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
-            entity.Property(e => e.Subject)
-                .HasMaxLength(100)
-                .HasColumnName("subject");
             entity.Property(e => e.Totalmarks)
                 .HasPrecision(6, 2)
                 .HasColumnName("totalmarks");
@@ -108,7 +110,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("assignmentquestion");
 
-            entity.Property(e => e.Assignmentquestionid).HasColumnName("assignmentquestionid");
+            entity.Property(e => e.Assignmentquestionid)
+                .ValueGeneratedNever()
+                .HasColumnName("assignmentquestionid");
             entity.Property(e => e.Assignmentid).HasColumnName("assignmentid");
             entity.Property(e => e.Content)
                 .HasMaxLength(255)
@@ -135,11 +139,13 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("assignmentsubmission");
 
-            entity.Property(e => e.Assignmentsubmissionid).HasColumnName("assignmentsubmissionid");
+            entity.Property(e => e.Assignmentsubmissionid)
+                .ValueGeneratedNever()
+                .HasColumnName("assignmentsubmissionid");
             entity.Property(e => e.Assignmentid).HasColumnName("assignmentid");
-            entity.Property(e => e.Contentpath)
+            entity.Property(e => e.Content)
                 .HasMaxLength(255)
-                .HasColumnName("contentpath");
+                .HasColumnName("content");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -167,7 +173,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.BookIsbn, "books_book_isbn_key").IsUnique();
 
-            entity.Property(e => e.Bookid).HasColumnName("bookid");
+            entity.Property(e => e.Bookid)
+                .ValueGeneratedNever()
+                .HasColumnName("bookid");
             entity.Property(e => e.BookAuthor)
                 .HasMaxLength(255)
                 .HasColumnName("book_author");
@@ -194,7 +202,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("class");
 
-            entity.Property(e => e.Classid).HasColumnName("classid");
+            entity.Property(e => e.Classid)
+                .ValueGeneratedNever()
+                .HasColumnName("classid");
             entity.Property(e => e.Classgrade)
                 .HasMaxLength(50)
                 .HasColumnName("classgrade");
@@ -216,11 +226,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasForeignKey(d => d.Schoolid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("class_schoolid_fkey");
-
-            entity.HasOne(d => d.TeacherNavigation).WithMany(p => p.Classes)
-                .HasForeignKey(d => d.Teacher)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("class_Teacher_fkey");
         });
 
         modelBuilder.Entity<Course>(entity =>
@@ -229,11 +234,12 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("course");
 
-            entity.Property(e => e.Courseid).HasColumnName("courseid");
+            entity.Property(e => e.Courseid)
+                .ValueGeneratedNever()
+                .HasColumnName("courseid");
             entity.Property(e => e.Boardordepartment)
                 .HasMaxLength(100)
                 .HasColumnName("boardordepartment");
-            entity.Property(e => e.CourseName).HasMaxLength(150);
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -247,7 +253,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Contact, "employees_contact_key").IsUnique();
 
-            entity.Property(e => e.Employeeid).HasColumnName("employeeid");
+            entity.Property(e => e.Employeeid)
+                .ValueGeneratedNever()
+                .HasColumnName("employeeid");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
@@ -290,9 +298,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Employeeid, "employeeaccountinfo_employeeid_key").IsUnique();
 
-            entity.HasIndex(e => e.Username, "employeeaccountinfo_username_key").IsUnique();
-
-            entity.Property(e => e.Accountid).HasColumnName("accountid");
+            entity.Property(e => e.Accountid)
+                .ValueGeneratedNever()
+                .HasColumnName("accountid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -303,9 +311,6 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
-            entity.Property(e => e.Username)
-                .HasMaxLength(100)
-                .HasColumnName("username");
 
             entity.HasOne(d => d.Employee).WithOne(p => p.Employeeaccountinfo)
                 .HasForeignKey<Employeeaccountinfo>(d => d.Employeeid)
@@ -319,7 +324,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeeadditionaldocs");
 
-            entity.Property(e => e.Documentid).HasColumnName("documentid");
+            entity.Property(e => e.Documentid)
+                .ValueGeneratedNever()
+                .HasColumnName("documentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -343,9 +350,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeeattendance");
 
-            entity.HasIndex(e => new { e.Employeeid, e.Date }, "employeeattendance_employeeid_date_key").IsUnique();
-
-            entity.Property(e => e.Attendanceid).HasColumnName("attendanceid");
+            entity.Property(e => e.Attendanceid)
+                .ValueGeneratedNever()
+                .HasColumnName("attendanceid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -367,9 +374,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeedocuments");
 
-            entity.HasIndex(e => e.Employeeid, "employeedocuments_employeeid_key").IsUnique();
-
-            entity.Property(e => e.Documentid).HasColumnName("documentid");
+            entity.Property(e => e.Documentid)
+                .ValueGeneratedNever()
+                .HasColumnName("documentid");
             entity.Property(e => e.Cnicback)
                 .HasMaxLength(255)
                 .HasColumnName("cnicback");
@@ -384,8 +391,8 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("photo");
 
-            entity.HasOne(d => d.Employee).WithOne(p => p.Employeedocument)
-                .HasForeignKey<Employeedocument>(d => d.Employeeid)
+            entity.HasOne(d => d.Employee).WithMany(p => p.Employeedocuments)
+                .HasForeignKey(d => d.Employeeid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("employeedocuments_employeeid_fkey");
         });
@@ -396,7 +403,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeefinances");
 
-            entity.Property(e => e.Financeid).HasColumnName("financeid");
+            entity.Property(e => e.Financeid)
+                .ValueGeneratedNever()
+                .HasColumnName("financeid");
             entity.Property(e => e.Allowances)
                 .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
@@ -454,9 +463,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employeesessions");
 
-            entity.HasIndex(e => e.Employeeaccountid, "uq_employeesession_employeeaccountid").IsUnique();
-
-            entity.Property(e => e.Sessionid).HasColumnName("sessionid");
+            entity.Property(e => e.Sessionid)
+                .ValueGeneratedNever()
+                .HasColumnName("sessionid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -466,8 +475,8 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("refreshtoken");
 
-            entity.HasOne(d => d.Employeeaccount).WithOne(p => p.Employeesession)
-                .HasForeignKey<Employeesession>(d => d.Employeeaccountid)
+            entity.HasOne(d => d.Employeeaccount).WithMany(p => p.Employeesessions)
+                .HasForeignKey(d => d.Employeeaccountid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("employeesessions_employeeaccountid_fkey");
         });
@@ -478,14 +487,14 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("exam");
 
-            entity.Property(e => e.Examid).HasColumnName("examid");
+            entity.Property(e => e.Examid)
+                .ValueGeneratedNever()
+                .HasColumnName("examid");
             entity.Property(e => e.Classid).HasColumnName("classid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Examdate)
-                .HasMaxLength(200)
-                .HasColumnName("examdate");
+            entity.Property(e => e.Examdate).HasColumnName("examdate");
             entity.Property(e => e.Examtype)
                 .HasMaxLength(50)
                 .HasColumnName("examtype");
@@ -514,7 +523,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("examcontent");
 
-            entity.Property(e => e.Examcontentid).HasColumnName("examcontentid");
+            entity.Property(e => e.Examcontentid)
+                .ValueGeneratedNever()
+                .HasColumnName("examcontentid");
             entity.Property(e => e.Contentpath)
                 .HasMaxLength(255)
                 .HasColumnName("contentpath");
@@ -535,7 +546,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("examenrollments");
 
-            entity.Property(e => e.Enrollmentid).HasColumnName("enrollmentid");
+            entity.Property(e => e.Enrollmentid)
+                .ValueGeneratedNever()
+                .HasColumnName("enrollmentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -561,7 +574,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Enrollmentid, "examresult_enrollmentid_key").IsUnique();
 
-            entity.Property(e => e.Resultid).HasColumnName("resultid");
+            entity.Property(e => e.Resultid)
+                .ValueGeneratedNever()
+                .HasColumnName("resultid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -569,11 +584,17 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Marksscored)
                 .HasPrecision(6, 2)
                 .HasColumnName("marksscored");
+            entity.Property(e => e.Studentid).HasColumnName("studentid");
 
             entity.HasOne(d => d.Enrollment).WithOne(p => p.Examresult)
                 .HasForeignKey<Examresult>(d => d.Enrollmentid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("examresult_enrollmentid_fkey");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.Examresults)
+                .HasForeignKey(d => d.Studentid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("examresult_studentid_fkey");
         });
 
         modelBuilder.Entity<School>(entity =>
@@ -584,7 +605,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Schoolname, "school_schoolname_key").IsUnique();
 
-            entity.Property(e => e.Schoolid).HasColumnName("schoolid");
+            entity.Property(e => e.Schoolid)
+                .ValueGeneratedNever()
+                .HasColumnName("schoolid");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
@@ -602,7 +625,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("students");
 
-            entity.Property(e => e.Studentid).HasColumnName("studentid");
+            entity.Property(e => e.Studentid)
+                .ValueGeneratedNever()
+                .HasColumnName("studentid");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
@@ -654,19 +679,21 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("studentaccountinfo");
 
-            entity.HasIndex(e => e.Emailorguardianemail, "studentaccountinfo_emailorguardianemail_key").IsUnique();
+            entity.HasIndex(e => e.Email, "studentaccountinfo_email_key").IsUnique();
 
             entity.HasIndex(e => e.Studentid, "studentaccountinfo_studentid_key").IsUnique();
 
             entity.HasIndex(e => e.Username, "studentaccountinfo_username_key").IsUnique();
 
-            entity.Property(e => e.Accountid).HasColumnName("accountid");
+            entity.Property(e => e.Accountid)
+                .ValueGeneratedNever()
+                .HasColumnName("accountid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Emailorguardianemail)
+            entity.Property(e => e.Email)
                 .HasMaxLength(255)
-                .HasColumnName("emailorguardianemail");
+                .HasColumnName("email");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
@@ -687,7 +714,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("studentadditionaldocs");
 
-            entity.Property(e => e.Documentid).HasColumnName("documentid");
+            entity.Property(e => e.Documentid)
+                .ValueGeneratedNever()
+                .HasColumnName("documentid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -711,9 +740,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("studentattendance");
 
-            entity.HasIndex(e => new { e.Studentid, e.Date }, "studentattendance_studentid_date_key").IsUnique();
-
-            entity.Property(e => e.Attendanceid).HasColumnName("attendanceid");
+            entity.Property(e => e.Attendanceid)
+                .ValueGeneratedNever()
+                .HasColumnName("attendanceid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
@@ -737,7 +766,9 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Studentid, "studentdocuments_studentid_key").IsUnique();
 
-            entity.Property(e => e.Documentid).HasColumnName("documentid");
+            entity.Property(e => e.Documentid)
+                .ValueGeneratedNever()
+                .HasColumnName("documentid");
             entity.Property(e => e.Cnicbackorbform)
                 .HasMaxLength(255)
                 .HasColumnName("cnicbackorbform");
@@ -764,35 +795,38 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("studentfinances");
 
-            entity.Property(e => e.Financeid).HasColumnName("financeid");
+            entity.Property(e => e.Financeid)
+                .ValueGeneratedNever()
+                .HasColumnName("financeid");
             entity.Property(e => e.Amountpaid)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("amountpaid");
             entity.Property(e => e.Amountremaining)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("amountremaining");
             entity.Property(e => e.Coursefee)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("coursefee");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
             entity.Property(e => e.Examinationfee)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("examinationfee");
             entity.Property(e => e.Issuedby).HasColumnName("issuedby");
             entity.Property(e => e.Issueddate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("issueddate");
             entity.Property(e => e.Month)
                 .HasMaxLength(20)
                 .HasColumnName("month");
             entity.Property(e => e.Othercharges)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("othercharges");
             entity.Property(e => e.Otherchargesreasons)
@@ -800,18 +834,18 @@ public partial class LmsDatabaseContext : DbContext
                 .HasColumnName("otherchargesreasons");
             entity.Property(e => e.Paiddate).HasColumnName("paiddate");
             entity.Property(e => e.Paidmethod)
-                .HasMaxLength(150)
+                .HasMaxLength(50)
                 .HasColumnName("paidmethod");
             entity.Property(e => e.Remarks)
                 .HasMaxLength(255)
                 .HasColumnName("remarks");
             entity.Property(e => e.Studentid).HasColumnName("studentid");
             entity.Property(e => e.Transportfee)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("transportfee");
             entity.Property(e => e.Tuitionfee)
-                .HasPrecision(10, 2)
+                .HasPrecision(12, 2)
                 .HasDefaultValueSql("0")
                 .HasColumnName("tuitionfee");
             entity.Property(e => e.Updatedat)
@@ -835,17 +869,13 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("studentsessions");
 
-            entity.Property(e => e.Sessionid).HasColumnName("sessionid");
+            entity.Property(e => e.Sessionid)
+                .ValueGeneratedNever()
+                .HasColumnName("sessionid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Device)
-                .HasMaxLength(100)
-                .HasColumnName("device");
             entity.Property(e => e.Expiresat).HasColumnName("expiresat");
-            entity.Property(e => e.Ipaddress)
-                .HasMaxLength(50)
-                .HasColumnName("ipaddress");
             entity.Property(e => e.Refreshtoken)
                 .HasMaxLength(255)
                 .HasColumnName("refreshtoken");

@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Employeeadditionaldoc
 {
-    public int Documentid { get; set; }
+    public Guid Documentid { get; set; }
 
-    public int? Employeeid { get; set; }
+    public Guid? Employeeid { get; set; }
 
     public string Documentpath { get; set; } = null!;
 

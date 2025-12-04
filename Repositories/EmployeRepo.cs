@@ -9,7 +9,7 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
-        public async Task<int> AddEmployee(EmployeeDto emp, int SchoolId, string SchoolName)
+        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId, string SchoolName)
         {
             Employee employee = emp.To_DbModel(SchoolId);
 
@@ -24,7 +24,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> AddEmployeeDocuments(int EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
+        public async Task<Guid> AddEmployeeDocuments(Guid EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
         {
             Employeedocument EmpDocs = new Employeedocument()
             {
@@ -42,7 +42,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<(int EmployeeAccountId, int EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
+        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
@@ -55,7 +55,7 @@ namespace LmsApp2.Api.Repositories
 
 
             var EmployeeId = Employee.Employeeid;
-            if (EmployeeId < 1)
+            if (EmployeeId == null)
             {
                 throw new Exception("Invalid Credentials");
             }
@@ -81,7 +81,7 @@ namespace LmsApp2.Api.Repositories
 
 
         }
-        public async Task<(int EmployeeAccountId, int EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass)
+        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
@@ -94,7 +94,7 @@ namespace LmsApp2.Api.Repositories
 
 
             var EmployeeId = Employee.Employeeid;
-            if (EmployeeId < 1)
+            if (EmployeeId ==null)
             {
                 throw new Exception("Invalid Credentials");
             }
@@ -134,24 +134,20 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> MakeEmployeeUserAccount(EmployeeDto emp, int EmployeeIdOnEmployeesTable)
+        public async Task<Guid> MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable)
         {
             Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
             {
                 Email = emp.Email,
-                Username = (EmployeeIdOnEmployeesTable.ToString() + "_" + emp.EmployeeName),
                 Password = emp.Password.GetHashedPassword(),
                 Createdat = DateTime.UtcNow,
                 Employeeid = EmployeeIdOnEmployeesTable,
 
 
-
-
-
             };
 
             var EmployeeAccountSavedInDatabase = await dbcontext.Employeeaccountinfos.AddAsync(EmpAcc);
-            //await dbcontext.SaveChangesAsync();
+        
 
 
             return EmployeeAccountSavedInDatabase.Entity.Accountid;
@@ -160,11 +156,11 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<int> PopulateEmployeeSession(int employeeAccountId, string refreshToken)
+        public async Task<Guid> PopulateEmployeeSession(Guid employeeAccountId, string refreshToken)
         {
-            if (employeeAccountId < 1 || String.IsNullOrEmpty(refreshToken))
+            if (String.IsNullOrEmpty(refreshToken))
             {
-                throw new Exception("Invalid Employee Id or Invalid refresh Token");
+                throw new Exception("Invalid refresh Token");
 
             }
             // if session exists already so we just have to update it 
@@ -203,7 +199,7 @@ namespace LmsApp2.Api.Repositories
             await dbcontext.SaveChangesAsync();
         }
 
-        public async Task<int> UpdateEmployeeSession(int EmployeeId, string refreshToken)
+        public async Task<Guid> UpdateEmployeeSession(Guid EmployeeId, string refreshToken)
         {
             int SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : 0).FirstOrDefaultAsync();
 
@@ -231,7 +227,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<bool> ValidateEmployeeRefreshToken(int EmpId, string refreshToken)
+        public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
         {
             var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
             {

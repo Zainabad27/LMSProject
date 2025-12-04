@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Exam
 {
-    public int Examid { get; set; }
+    public Guid Examid { get; set; }
 
-    public string Examdate { get; set; } = null!;
+    public DateOnly Examdate { get; set; }
 
     public decimal? Totalmarks { get; set; }
 
@@ -15,9 +15,9 @@ public partial class Exam
 
     public string Examtype { get; set; } = null!;
 
-    public int? Teacherid { get; set; }
+    public Guid? Teacherid { get; set; }
 
-    public int? Classid { get; set; }
+    public Guid? Classid { get; set; }
 
     public DateTime? Createdat { get; set; }
 

@@ -5,11 +5,11 @@ namespace LmsApp2.Api.Models;
 
 public partial class Examenrollment
 {
-    public int Enrollmentid { get; set; }
+    public Guid Enrollmentid { get; set; }
 
-    public int? Examid { get; set; }
+    public Guid? Examid { get; set; }
 
-    public int? Studentid { get; set; }
+    public Guid? Studentid { get; set; }
 
     public DateTime? Createdat { get; set; }
 

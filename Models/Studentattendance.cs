@@ -5,9 +5,9 @@ namespace LmsApp2.Api.Models;
 
 public partial class Studentattendance
 {
-    public long Attendanceid { get; set; }
+    public Guid Attendanceid { get; set; }
 
-    public int? Studentid { get; set; }
+    public Guid? Studentid { get; set; }
 
     public DateOnly Date { get; set; }
 

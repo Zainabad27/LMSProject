@@ -5,13 +5,11 @@ namespace LmsApp2.Api.Models;
 
 public partial class Course
 {
-    public int Courseid { get; set; }
+    public Guid Courseid { get; set; }
 
     public string Boardordepartment { get; set; } = null!;
 
     public DateTime? Createdat { get; set; }
-
-    public string? CourseName { get; set; }
 
     public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
