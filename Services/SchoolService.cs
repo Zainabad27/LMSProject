@@ -8,7 +8,7 @@ namespace LmsApp2.Api.Services
     public class SchoolService(ISchoolRepo schoolrepo,IEmployeeRepo empRepo): ISchoolService
     {
 
-        public async Task<int> AddSchool(SchoolDto SchoolData)
+        public async Task<Guid> AddSchool(SchoolDto SchoolData)
         {
             // when we add an school we make a default account of an Admin.
 
@@ -37,7 +37,7 @@ namespace LmsApp2.Api.Services
 
         };
 
-            await empRepo.AddEmployee();
+            await empRepo.AddEmployee(DefalutAdminAccount,SchoolId);
 
 
 

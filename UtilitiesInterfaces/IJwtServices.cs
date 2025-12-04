@@ -5,7 +5,7 @@ namespace LmsApp2.Api.UtilitiesInterfaces
 {
     public interface IJwtServices
     {
-        public string GenerateAccessToken(int UserId, string Designation, string email);
+        public string GenerateAccessToken(Guid UserId, string Designation, string email);
 
         public string GenerateRefreshToken();
 

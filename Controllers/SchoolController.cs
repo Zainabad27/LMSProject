@@ -20,7 +20,7 @@ namespace LmsApp2.Api.Controllers
 
             }
 
-            int AddedSchoolId=await SchoolServices.AddSchool(School);
+            Guid AddedSchoolId=await SchoolServices.AddSchool(School);
 
 
 

@@ -9,7 +9,7 @@ namespace LmsApp2.Api.Utilities
 {
     public class JwtServices(IConfiguration config) : IJwtServices
     {
-        public string GenerateAccessToken(int UserId, string Designation, string email)
+        public string GenerateAccessToken(Guid UserId, string Designation, string email)
         {
             String GeneratingTokenFor = Designation + "s";
             string AccessToken = null!;

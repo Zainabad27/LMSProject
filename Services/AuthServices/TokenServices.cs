@@ -7,7 +7,7 @@ namespace LmsApp2.Api.Services.AuthServices
 {
     public class TokenServices(IEmployeeRepo empRepo, IJwtServices JwtServices) : ITokenServices
     {
-        public async Task<int> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context)
+        public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context)
         {
             var (AccountId, EmployeeId) = await empRepo.AuthorizeEmployeeAsAdmin(RefreshTokenData.Email, RefreshTokenData.Password);
 

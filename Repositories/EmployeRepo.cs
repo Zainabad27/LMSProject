@@ -9,14 +9,12 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
-        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId, string SchoolName)
+        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId)
         {
             Employee employee = emp.To_DbModel(SchoolId);
 
 
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
-
-            //await dbcontext.SaveChangesAsync();
 
             Employee emp2 = EmployeeSavedInDatabase.Entity;
             return emp2.Employeeid;
@@ -28,6 +26,7 @@ namespace LmsApp2.Api.Repositories
         {
             Employeedocument EmpDocs = new Employeedocument()
             {
+                Documentid = Guid.NewGuid(),
                 Employeeid = EmpId,
                 Cnicfront = CnicFrontPath,
                 Cnicback = CnicBackPath,
@@ -94,7 +93,7 @@ namespace LmsApp2.Api.Repositories
 
 
             var EmployeeId = Employee.Employeeid;
-            if (EmployeeId ==null)
+            if (EmployeeId == null)
             {
                 throw new Exception("Invalid Credentials");
             }
@@ -147,7 +146,7 @@ namespace LmsApp2.Api.Repositories
             };
 
             var EmployeeAccountSavedInDatabase = await dbcontext.Employeeaccountinfos.AddAsync(EmpAcc);
-        
+
 
 
             return EmployeeAccountSavedInDatabase.Entity.Accountid;
@@ -199,27 +198,35 @@ namespace LmsApp2.Api.Repositories
             await dbcontext.SaveChangesAsync();
         }
 
+        public void test()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Guid> UpdateEmployeeSession(Guid EmployeeId, string refreshToken)
         {
-            int SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : 0).FirstOrDefaultAsync();
+            //Guid SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : 0).FirstOrDefaultAsync();
 
 
-            if (SessionId < 1)
-            {
-                throw new Exception("Employee Account Not Found");
-            }
+            //if (SessionId == null)
+            //{
+            //    throw new Exception("Employee Account Not Found");
+            //}
 
-            var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
+            //var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
 
-            if (sessionData == null)
-            {
-                throw new Exception("Employee Session Data Was not found in the database.");
-            }
+            //if (sessionData == null)
+            //{
+            //    throw new Exception("Employee Session Data Was not found in the database.");
+            //}
 
-            sessionData.Refreshtoken = refreshToken;
-            sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
+            //sessionData.Refreshtoken = refreshToken;
+            //sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
 
-            return SessionId;
+            //return SessionId;
+
+
+            throw new NotImplementedException();
 
 
 
@@ -229,34 +236,37 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
         {
-            var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
-            {
+            //var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
+            //{
 
-                refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.UtcNow.AddDays(-3),
-                refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : "No refreshToken"
-
-
-            }).FirstOrDefaultAsync();
+            //    refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.UtcNow.AddDays(-3),
+            //    refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : "No refreshToken"
 
 
-            if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
-            {
-                throw new Exception("Invalid refresh Token");
-            }
-
-            if (data.refreshTokenIndataBase != refreshToken)
-            {
-                throw new Exception("Invalid Refresh Token");
-            }
+            //}).FirstOrDefaultAsync();
 
 
-            if (data.refreshTokenExpiry < DateTime.UtcNow)
-            {
-                throw new Exception("Refresh Token Expired.");
-            }
+            //if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
+            //{
+            //    throw new Exception("Invalid refresh Token");
+            //}
+
+            //if (data.refreshTokenIndataBase != refreshToken)
+            //{
+            //    throw new Exception("Invalid Refresh Token");
+            //}
 
 
-            return true;
+            //if (data.refreshTokenExpiry < DateTime.UtcNow)
+            //{
+            //    throw new Exception("Refresh Token Expired.");
+            //}
+
+
+            //return true;
+
+
+            throw new NotImplementedException();
 
         }
     }

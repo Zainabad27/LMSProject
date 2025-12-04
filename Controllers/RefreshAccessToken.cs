@@ -20,7 +20,7 @@ namespace LmsApp2.Api.Controllers
             }
 
             var context = HttpContext;
-            int EmployeeId = await TokenService.RefreshAccesToken(RefreshTokenData, context);
+            Guid EmployeeId = await TokenService.RefreshAccesToken(RefreshTokenData, context);
 
 
 

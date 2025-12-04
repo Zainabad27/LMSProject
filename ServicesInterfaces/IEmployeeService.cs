@@ -4,6 +4,6 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IEmployeeService
     {
-        public Task<int> AddEmployee(EmployeeDto emp);
+        public Task<Guid> AddEmployee(EmployeeDto emp);
     }
 }

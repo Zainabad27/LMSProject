@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Repositories
 
 
             var res = await dbcontext.Schools.AddAsync(sch.To_DbModel());
-            //await dbcontext.SaveChangesAsync();
+         
 
             School Schoolsaved = res.Entity;
 

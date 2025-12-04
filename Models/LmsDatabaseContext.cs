@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace LmsApp2.Api.Models;
 
 public partial class LmsDatabaseContext : DbContext
 {
-    IConfiguration config;
     public LmsDatabaseContext()
     {
     }
 
-    public LmsDatabaseContext(DbContextOptions<LmsDatabaseContext> options, IConfiguration config)
+    public LmsDatabaseContext(DbContextOptions<LmsDatabaseContext> options)
         : base(options)
     {
-        this.config = config;
     }
 
     public virtual DbSet<Assignment> Assignments { get; set; }
@@ -69,8 +66,8 @@ public partial class LmsDatabaseContext : DbContext
     public virtual DbSet<Studentsession> Studentsessions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql(config["ConnectionStrings:DefaultConnection"]);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=LMS_Database;Username=postgres;Password=27135789");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -477,8 +474,7 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasOne(d => d.Employeeaccount).WithMany(p => p.Employeesessions)
                 .HasForeignKey(d => d.Employeeaccountid)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("employeesessions_employeeaccountid_fkey");
+                .HasConstraintName("fk_employeesession_employeeaccount");
         });
 
         modelBuilder.Entity<Exam>(entity =>

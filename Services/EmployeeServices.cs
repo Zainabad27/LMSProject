@@ -8,17 +8,17 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
-        public async Task<int> AddEmployee(EmployeeDto emp)
+        public async Task<Guid> AddEmployee(EmployeeDto emp)
         {
-            int SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
-            if (SchoolId == 0)
+            Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
+            if (SchoolId == Guid.Empty)
             {
                 throw new Exception("School You are Registering For was not found in the Database.");
             }
             
 
 
-            int ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId, emp.SchoolName);
+            Guid ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId);
 
             // now we have to make Emplloyees Account too and return it too.
             bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
@@ -27,7 +27,7 @@ namespace LmsApp2.Api.Services
 
                 throw new Exception("This Email is Already in use, Please Enter a different email.");
             }
-            int EmployeeAccountId = await employeerepo.MakeEmployeeUserAccount(emp, ReturnedEmpId);
+            Guid EmployeeAccountId = await employeerepo.MakeEmployeeUserAccount(emp, ReturnedEmpId);
 
 
 
@@ -40,7 +40,7 @@ namespace LmsApp2.Api.Services
             string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
             string CnicBackFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
 
-            int DocumentId = await employeerepo.AddEmployeeDocuments(ReturnedEmpId, PhotoFilePathOnServer, CnicFrontFilePathOnServer, CnicBackFilePathOnServer);
+            Guid DocumentId = await employeerepo.AddEmployeeDocuments(ReturnedEmpId, PhotoFilePathOnServer, CnicFrontFilePathOnServer, CnicBackFilePathOnServer);
 
             await employeerepo.SaveChanges();
             return ReturnedEmpId;

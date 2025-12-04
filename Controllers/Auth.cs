@@ -20,7 +20,7 @@ namespace LmsApp2.Api.Controllers
             }
             var context = HttpContext;
 
-            int EmployeeId = await LoginService.AdminLogin(request, context);
+            Guid EmployeeId = await LoginService.AdminLogin(request, context);
 
 
 
@@ -36,7 +36,7 @@ namespace LmsApp2.Api.Controllers
             }
             var context = HttpContext;
 
-            int EmployeeId = await LoginService.TeacherLogin(request, context);
+            Guid EmployeeId = await LoginService.TeacherLogin(request, context);
 
 
 
@@ -52,7 +52,7 @@ namespace LmsApp2.Api.Controllers
             }
             var context = HttpContext;
 
-            int EmployeeId = await LoginService.AdminLogin(request, context);
+            Guid EmployeeId = await LoginService.AdminLogin(request, context);
 
 
 

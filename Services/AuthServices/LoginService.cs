@@ -10,7 +10,7 @@ namespace LmsApp2.Api.Services.AuthServices
 
     public class LoginService(IEmployeeRepo empRepo, IJwtServices JwtServices, ILogger<LoginService> Logger) : ILoginService
     {
-        public async Task<int> AdminLogin(LoginDto LoginData, HttpContext context)
+        public async Task<Guid> AdminLogin(LoginDto LoginData, HttpContext context)
         {
             // we have to first check the credentials of admin if its true then generate a jwt token that we have to
             // save access token in cokkies and refresh token in database and cookies, store session in the database , thats it.
@@ -22,7 +22,7 @@ namespace LmsApp2.Api.Services.AuthServices
             // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.
 
 
-            int SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
+            Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
 
 
             var CookiesOptions = new CookieOptions
@@ -47,7 +47,7 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
         }
-        public async Task<int> TeacherLogin(LoginDto LoginData, HttpContext context)
+        public async Task<Guid> TeacherLogin(LoginDto LoginData, HttpContext context)
         {
             // we have to first check the credentials of admin if its true then generate a jwt token that we have to
             // save access token in cokkies and refresh token in database and cookies, store session in the database , thats it.
@@ -59,7 +59,7 @@ namespace LmsApp2.Api.Services.AuthServices
             // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.
 
 
-            int SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
+            Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
 
             var CookiesOptions = new CookieOptions
             {
