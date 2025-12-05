@@ -41,7 +41,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass)
+        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass,string designation)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
@@ -64,14 +64,50 @@ namespace LmsApp2.Api.Repositories
             {
                 throw new Exception("User does not exists");
             }
-            if (UserInDatabase?.Isactive != true)
+            if (UserInDatabase.Isactive != true)
             {
                 throw new Exception("User Account Deleted");
             }
-            if (UserInDatabase.Employeedesignation != "Admin")
+            if (UserInDatabase.Employeedesignation != designation)
             {
-                throw new Exception("User Is not an Admin");
+                throw new Exception("The designation of the user is not the same that was given in the Parameter.");
             }
+
+
+            return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
+
+
+
+
+        }
+        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass)
+        {
+            var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
+            if (Employee == null) { throw new Exception("No User Found for this Email."); }
+
+            bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
+            if (!CorrectPassword)
+            {
+                throw new Exception("Invalid Password");
+            }
+
+
+            var EmployeeId = Employee.Employeeid;
+            if (EmployeeId == null)
+            {
+                throw new Exception("Invalid Credentials");
+            }
+
+            var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
+            if (UserInDatabase == null)
+            {
+                throw new Exception("User does not exists");
+            }
+            if (UserInDatabase.Isactive != true)
+            {
+                throw new Exception("User Account Deleted");
+            }
+           
 
 
             return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.

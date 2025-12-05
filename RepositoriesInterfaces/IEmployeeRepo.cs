@@ -14,7 +14,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<Guid> AddEmployeeDocuments(Guid EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
 
 
-        public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsAdmin(string email, string pass);
+        public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass,string Designation);
 
 
 
@@ -29,6 +29,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass);
 
+        public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass);
 
         public Task SaveChanges();
 

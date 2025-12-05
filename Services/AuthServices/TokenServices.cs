@@ -9,7 +9,7 @@ namespace LmsApp2.Api.Services.AuthServices
     {
         public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context)
         {
-            var (AccountId, EmployeeId) = await empRepo.AuthorizeEmployeeAsAdmin(RefreshTokenData.Email, RefreshTokenData.Password);
+            var (AccountId, EmployeeId) = await empRepo.AuthorizeEmployee(RefreshTokenData.Email, RefreshTokenData.Password);
 
             bool ValidToken = await empRepo.ValidateEmployeeRefreshToken(EmployeeId, RefreshTokenData.RefreshToken);
 
