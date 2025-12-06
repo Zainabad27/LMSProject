@@ -1,5 +1,6 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Models;
+using LmsApp2.Api.Utilities;
 using System.Runtime.CompilerServices;
 
 namespace LmsApp2.Api.Mappers
@@ -23,6 +24,25 @@ namespace LmsApp2.Api.Mappers
                 Createdat=DateTime.UtcNow,
 
             };
+        
+        
+        }
+
+
+        public static Studentaccountinfo ToAccount(this StudentDto std,Guid StdId) {
+
+            return new Studentaccountinfo {
+            
+            Accountid=Guid.NewGuid(),
+            Email=std.Email,
+            Password=std.Password.GetHashedPassword(),
+            Studentid=StdId,
+            Createdat=DateTime.UtcNow,
+            
+            
+            
+            };
+        
         
         
         }

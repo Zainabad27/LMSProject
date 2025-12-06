@@ -6,6 +6,10 @@ namespace LmsApp2.Api.DTOs
     public class StudentDto
     {
         [Required]
+        public string SchoolName { get; set; }
+
+
+        [Required]
         public String FirstName { get; set; }
         [Required]
         public String LastName { get; set; }
