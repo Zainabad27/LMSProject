@@ -19,19 +19,19 @@ public partial class Student
 
     public string? Bloodgroup { get; set; }
 
-    public bool? Isactive { get; set; }
+    public bool Isactive { get; set; }
 
     public string? Religion { get; set; }
 
     public string? Nationality { get; set; }
-
-    public int? Age { get; set; }
 
     public Guid? Schoolid { get; set; }
 
     public Guid? Classid { get; set; }
 
     public DateTime? Createdat { get; set; }
+
+    public DateTime Birthdate { get; set; }
 
     public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = new List<Assignmentsubmission>();
 

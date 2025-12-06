@@ -22,7 +22,7 @@ namespace LmsApp2.Api.Services
             {
                 SchoolName = SchoolData.SchoolName,
                 EmployeeName = "Admin",
-                EmployeeDesignation = "Admin",
+             
                 Email = "Admin@gmail.com",
                 Password = "Admin@123",
                 Address = "No Address",
@@ -38,7 +38,7 @@ namespace LmsApp2.Api.Services
 
             };
 
-            Guid DefaultAdminId = await empRepo.AddEmployee(DefalutAdminAccount, SchoolId);
+            Guid DefaultAdminId = await empRepo.AddEmployee(DefalutAdminAccount, SchoolId,"Admin");
             await empRepo.MakeEmployeeUserAccount(DefalutAdminAccount, DefaultAdminId);
 
             await empRepo.SaveChanges();

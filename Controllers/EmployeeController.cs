@@ -12,9 +12,9 @@ namespace LmsApp2.Api.Controllers
     {
         [Authorize(Roles="Admin")]
         [Consumes("multipart/form-data")]
-        [HttpPost("addEmployee")]
+        [HttpPost("AddAdmin")]
         //[HttpPost]
-        public async Task<IActionResult> AddEmployee([FromForm] EmployeeDto emp)
+        public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
         {
             var u= User;
             if (!ModelState.IsValid)
@@ -24,7 +24,29 @@ namespace LmsApp2.Api.Controllers
 
 
 
-            Guid addedEmployeeId=await employeeServices.AddEmployee(emp);
+            Guid addedEmployeeId=await employeeServices.AddEmployee(emp,"Admin");
+
+            var context = HttpContext;
+
+
+            Console.WriteLine(context);
+            return Ok(new { AddedEmployeeId = addedEmployeeId });
+
+        }
+        [HttpPost("AddTeacher")]
+        [Authorize(Roles ="Admin")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
+        {
+         
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+
+            Guid addedEmployeeId=await employeeServices.AddEmployee(emp,"Teacher");
 
             var context = HttpContext;
 

@@ -1,7 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
-using LmsApp2.Api.Services;
 using LmsApp2.Api.ServicesInterfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LmsApp2.Api.Controllers

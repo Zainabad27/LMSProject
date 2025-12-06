@@ -7,7 +7,7 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
-        public async Task<Guid> AddEmployee(EmployeeDto emp)
+        public async Task<Guid> AddEmployee(EmployeeDto emp,String Designation)
         {
             Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
             if (SchoolId == Guid.Empty)
@@ -17,7 +17,7 @@ namespace LmsApp2.Api.Services
             
 
 
-            Guid ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId);
+            Guid ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId,Designation);
 
             // now we have to make Emplloyees Account too and return it too.
             bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);

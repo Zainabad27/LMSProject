@@ -629,7 +629,7 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
-            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.Birthdate).HasColumnName("birthdate");
             entity.Property(e => e.Bloodgroup)
                 .HasMaxLength(10)
                 .HasColumnName("bloodgroup");
@@ -681,8 +681,6 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.HasIndex(e => e.Studentid, "studentaccountinfo_studentid_key").IsUnique();
 
-            entity.HasIndex(e => e.Username, "studentaccountinfo_username_key").IsUnique();
-
             entity.Property(e => e.Accountid)
                 .ValueGeneratedNever()
                 .HasColumnName("accountid");
@@ -696,9 +694,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("password");
             entity.Property(e => e.Studentid).HasColumnName("studentid");
-            entity.Property(e => e.Username)
-                .HasMaxLength(100)
-                .HasColumnName("username");
 
             entity.HasOne(d => d.Student).WithOne(p => p.Studentaccountinfo)
                 .HasForeignKey<Studentaccountinfo>(d => d.Studentid)

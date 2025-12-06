@@ -9,9 +9,11 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
-        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId)
+        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation)
         {
             Employee employee = emp.To_DbModel(SchoolId);
+
+            employee.Employeedesignation = designation; 
 
 
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);

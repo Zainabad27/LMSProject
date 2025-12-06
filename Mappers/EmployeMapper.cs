@@ -18,9 +18,8 @@ namespace LmsApp2.Api.Mappers
 
 
                 Schoolid = SchoolId,
-                Employeename = emp.EmployeeName,
 
-                Employeedesignation = emp.EmployeeDesignation,
+                Employeename = emp.EmployeeName,
 
                 Contact = emp.Contact,
 
@@ -43,18 +42,16 @@ namespace LmsApp2.Api.Mappers
             {
 
                 SchoolName = Schoolname,
+
                 EmployeeName = emp.Employeename,
-                EmployeeDesignation = emp.Employeedesignation!,
+
                 Contact = emp.Contact!,
 
                 Religion = emp.Religion!,
 
                 Nationality = emp.Nationality!,
+
                 Address = emp.Address!
-
-
-
-
 
 
             };

@@ -12,7 +12,7 @@ namespace LmsApp2.Api.DTOs
         public string EmployeeName  { get; set; }
 
         [Required]
-        public string EmployeeDesignation { get; set; }
+        //public string EmployeeDesignation { get; set; }
 
         public string Religion { get; set; }
 
