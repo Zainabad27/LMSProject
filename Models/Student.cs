@@ -31,7 +31,7 @@ public partial class Student
 
     public DateTime? Createdat { get; set; }
 
-    public DateTime Birthdate { get; set; }
+    public DateOnly Birthdate { get; set; }
 
     public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = new List<Assignmentsubmission>();
 

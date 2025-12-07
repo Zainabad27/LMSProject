@@ -6,9 +6,6 @@
         public static async Task<string> UploadToServer(this IFormFile file, string DirectoryPath)
         {
 
-
-
-
             string FilePath = Path.Combine(DirectoryPath, file.FileName);
 
 

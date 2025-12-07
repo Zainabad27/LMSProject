@@ -24,7 +24,7 @@ namespace LmsApp2.Api.DTOs
         [Required]
         public String Gender { get; set; }
         [Required]
-        public DateTime BirthDate { get; set; }
+        public DateOnly BirthDate { get; set; }
 
         public string Nationality { get; set; }
         [Required]

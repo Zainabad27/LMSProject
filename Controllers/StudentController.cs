@@ -13,7 +13,8 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("RegisterStudent")]
         [Consumes("multipart/form-data")]
         [AllowAnonymous]
-        public async Task<IActionResult> AddStudent([FromForm] StudentDto stdData) {
+        public async Task<IActionResult> AddStudent([FromForm] StudentDto stdData)
+        {
 
 
             if (!ModelState.IsValid)
@@ -21,11 +22,15 @@ namespace LmsApp2.Api.Controllers
                 return BadRequest(ModelState);
 
             }
-            await StdService.AddStudent(stdData);
+            Guid StudentId = await StdService.AddStudent(stdData);
 
-            throw new NotImplementedException();    
-        
-        
+
+
+            return Ok(new { AddedStudentId = StudentId });
+
+
+
+
         }
     }
 }

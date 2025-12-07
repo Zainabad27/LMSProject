@@ -11,9 +11,9 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<Guid> MakeStudentAccount(StudentDto std, Guid StudentId);
 
-        public Task<Guid> AddStudentDocuments(Guid EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
+        public Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
 
-
+        public Task SaveChanges();
 
     }
 }

@@ -1,10 +1,11 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
+using LmsApp2.Api.Utilities;
 
 namespace LmsApp2.Api.Services
 {
-    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo,IWebHostEnvironment env) : IStudentService
+    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IWebHostEnvironment env) : IStudentService
     {
         public async Task<Guid> AddStudent(StudentDto std)
         {
@@ -32,14 +33,19 @@ namespace LmsApp2.Api.Services
 
 
 
+            var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
 
 
-            // first I have to populate students main table then make the student account and upload the images to server
+            string PhotoFilePathOnServer = await std.Photo.UploadToServer(DirectoryPath);
+            string CnicFrontFilePathOnServer = await std.Cnic_Front.UploadToServer(DirectoryPath);
+            string CnicBackFilePathOnServer = await std.Cnic_Back.UploadToServer(DirectoryPath);
 
 
+            Guid DocId = await stdRepo.AddStudentDocuments(StudentId, PhotoFilePathOnServer, CnicBackFilePathOnServer, CnicFrontFilePathOnServer);
 
+            await stdRepo.SaveChanges();  
 
-            return Guid.Empty;
+            return StudentId;
 
         }
     }

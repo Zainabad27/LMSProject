@@ -2,14 +2,17 @@
 
 namespace LmsApp2.Api.Exceptions
 {
-    public class AppExceptionHandler : IExceptionHandler
+    public class AppExceptionHandler(ILogger<AppExceptionHandler> Logger) : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             Console.WriteLine(exception);
             Console.WriteLine(httpContext);
 
-            await httpContext.Response.WriteAsJsonAsync(exception.Message+" <= Error Message",cancellationToken);
+
+            Logger.LogError(exception,"Exception Occured");
+
+            await httpContext.Response.WriteAsJsonAsync(exception?.Message+" <= Error Message",cancellationToken);
 
             return true;
         }
