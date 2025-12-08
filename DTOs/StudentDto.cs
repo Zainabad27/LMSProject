@@ -20,7 +20,7 @@ namespace LmsApp2.Api.DTOs
         [Required]
         public String AddressFirstLine { get; set; }
 
-        public String AddressSecondLine { get; set; }
+        public String? AddressSecondLine { get; set; }
         [Required]
         public String Gender { get; set; }
         [Required]

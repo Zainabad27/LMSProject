@@ -15,5 +15,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task SaveChanges();
 
+
+        public Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken);
+
     }
 }

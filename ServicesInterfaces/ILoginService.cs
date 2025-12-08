@@ -7,5 +7,7 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<Guid> AdminLogin(LoginDto LoginData,HttpContext context);
         public Task<Guid> TeacherLogin(LoginDto LoginData, HttpContext context);
 
+        public Task<Guid> StudentLogin(LoginDto LoginData, HttpContext context);
+
     }
 }

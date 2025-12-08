@@ -46,7 +46,21 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("Login/Student")]
         public async Task<IActionResult> LoginStudent([FromBody] LoginDto request)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+
+                return BadRequest(ModelState);
+
+            }
+
+            var context = HttpContext;
+
+            Guid StdID = await LoginService.StudentLogin(request, HttpContext);
+
+            return Ok("Employee Logged in successfully.");
+
+
+
 
         }
     }

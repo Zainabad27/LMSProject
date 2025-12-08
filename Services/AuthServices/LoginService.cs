@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace LmsApp2.Api.Services.AuthServices
 {
 
-    public class LoginService(IEmployeeRepo empRepo, IJwtServices JwtServices) : ILoginService
+    public class LoginService(IEmployeeRepo empRepo,IStudentRepo stdRepo, IJwtServices JwtServices) : ILoginService
     {
         public async Task<Guid> AdminLogin(LoginDto LoginData, HttpContext context)
         {
@@ -90,18 +90,17 @@ namespace LmsApp2.Api.Services.AuthServices
         {
             // we have to first check the credentials of admin if its true then generate a jwt token that we have to
             // save access token in cokkies and refresh token in database and cookies, store session in the database , thats it.
-            var (EmployeeAccountId, EmployeeId) = await empRepo.AuthorizeEmployeeAsTeacher(LoginData.Email, LoginData.Password);
 
-
-            string AccessToken = JwtServices.GenerateAccessToken(EmployeeId, "Teacher", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
+            var (StdAccId, StdId) = await stdRepo.AuthorizeStudent(LoginData.Email, LoginData.Password);
+            string AccessToken = JwtServices.GenerateAccessToken(StdId, "Student", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
             string RefreshToken = JwtServices.GenerateRefreshToken();
             // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.
 
 
-            Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
+            Guid SessionId = await stdRepo.PopulateStudentSession(StdAccId, RefreshToken);
 
 
-            await empRepo.SaveChanges();
+            await stdRepo.SaveChanges();
 
             var CookiesOptions = new CookieOptions
             {
@@ -117,7 +116,7 @@ namespace LmsApp2.Api.Services.AuthServices
             context.Response.Cookies.Append("RefreshToken", RefreshToken, CookiesOptions);
 
 
-            return EmployeeId;
+            return StdId;
 
 
         }

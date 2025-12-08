@@ -6,7 +6,7 @@ using LmsApp2.Api.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
-{ 
+{
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
         public async Task<Guid> AddStudent(StudentDto std, Guid SchoolId)
@@ -29,7 +29,8 @@ namespace LmsApp2.Api.Repositories
         }
 
 
-        public async Task SaveChanges() {
+        public async Task SaveChanges()
+        {
             dbcontext.SaveChanges();
         }
 
@@ -75,22 +76,65 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
         {
-            Studentdocument StdDocs=new Studentdocument()
+            Studentdocument StdDocs = new Studentdocument()
             {
                 Documentid = Guid.NewGuid(),
-                Studentid = StdId,  
-                Createdat=DateTime.UtcNow,
-                Photo=PhotoPath,
-                Cnicbackorbform=CnicBackPath,
-                Cnicfrontorbform=CnicFrontPath,
+                Studentid = StdId,
+                Createdat = DateTime.UtcNow,
+                Photo = PhotoPath,
+                Cnicbackorbform = CnicBackPath,
+                Cnicfrontorbform = CnicFrontPath,
 
 
 
             };
-            
-            var DocsInDb=await dbcontext.Studentdocuments.AddAsync(StdDocs);
-            
+
+            var DocsInDb = await dbcontext.Studentdocuments.AddAsync(StdDocs);
+
             return StdDocs.Documentid;
+        }
+
+
+
+        public async Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken)
+        {
+            var IfSessionAlreadyExists = await dbcontext.Studentsessions.FirstOrDefaultAsync(sess => sess.Studentaccountid == StdAccId);
+
+
+            if (IfSessionAlreadyExists != null)
+            {
+
+                IfSessionAlreadyExists.Refreshtoken = RefreshToken;
+                IfSessionAlreadyExists.Expiresat = DateTime.UtcNow.AddDays(10);
+
+                return IfSessionAlreadyExists.Sessionid;
+
+
+            }
+
+            // if session does not exists.
+
+
+            Studentsession StdSession = new()
+            {
+                Sessionid = Guid.NewGuid(),
+                Studentaccountid = StdAccId,
+                Refreshtoken = RefreshToken,
+                Createdat = DateTime.UtcNow,
+                Expiresat = DateTime.UtcNow.AddDays(10),
+
+            };
+
+
+
+            await dbcontext.Studentsessions.AddAsync(StdSession);
+
+
+            return StdSession.Sessionid;
+
+
+
+
         }
     }
 }
