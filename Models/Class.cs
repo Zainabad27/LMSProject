@@ -13,13 +13,11 @@ public partial class Class
 
     public Guid? Schoolid { get; set; }
 
-    public Guid? Courseid { get; set; }
-
     public DateTime? Createdat { get; set; }
 
     public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
 
-    public virtual Course? Course { get; set; }
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
     public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
 

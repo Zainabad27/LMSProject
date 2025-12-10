@@ -20,6 +20,8 @@ namespace LmsApp2.Api
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentRepo, StudentRepo>();
+            services.AddScoped<IClassRepo, ClassRepo>();
+            services.AddScoped<IClassService, ClassService>();
 
 
 

@@ -24,7 +24,7 @@ namespace LmsApp2.Api.Controllers
 
 
 
-            return Ok("Employee Logged in successfully.");
+            return Ok("Admin Logged in successfully.");
 
         }
         [HttpPost("Login/Teacher")]
@@ -57,7 +57,7 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdID = await LoginService.StudentLogin(request, HttpContext);
 
-            return Ok("Employee Logged in successfully.");
+            return Ok("Student Logged in successfully.");
 
 
 

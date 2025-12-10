@@ -11,7 +11,13 @@ public partial class Course
 
     public DateTime? Createdat { get; set; }
 
-    public virtual ICollection<Book> Books { get; set; } = new List<Book>();
+    public string CourseName { get; set; } = null!;
 
-    public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+    public Guid? Class { get; set; }
+
+    public Guid? Teacher { get; set; }
+
+    public virtual Class? ClassNavigation { get; set; }
+
+    public virtual Employee? TeacherNavigation { get; set; }
 }

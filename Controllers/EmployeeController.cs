@@ -33,8 +33,8 @@ namespace LmsApp2.Api.Controllers
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
-        [HttpPost("AddTeacher")]
         [Authorize(Roles ="Admin")]
+        [HttpPost("AddTeacher")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
         {

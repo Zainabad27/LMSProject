@@ -91,7 +91,7 @@ namespace LmsApp2.Api.Services.AuthServices
             // we have to first check the credentials of admin if its true then generate a jwt token that we have to
             // save access token in cokkies and refresh token in database and cookies, store session in the database , thats it.
 
-            var (StdAccId, StdId) = await stdRepo.AuthorizeStudent(LoginData.Email, LoginData.Password);
+            var (StdId, StdAccId) = await stdRepo.AuthorizeStudent(LoginData.Email, LoginData.Password);
             string AccessToken = JwtServices.GenerateAccessToken(StdId, "Student", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
             string RefreshToken = JwtServices.GenerateRefreshToken();
             // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.

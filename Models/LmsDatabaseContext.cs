@@ -21,8 +21,6 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Assignmentsubmission> Assignmentsubmissions { get; set; }
 
-    public virtual DbSet<Book> Books { get; set; }
-
     public virtual DbSet<Class> Classes { get; set; }
 
     public virtual DbSet<Course> Courses { get; set; }
@@ -162,37 +160,6 @@ public partial class LmsDatabaseContext : DbContext
                 .HasConstraintName("assignmentsubmission_studentid_fkey");
         });
 
-        modelBuilder.Entity<Book>(entity =>
-        {
-            entity.HasKey(e => e.Bookid).HasName("books_pkey");
-
-            entity.ToTable("books");
-
-            entity.HasIndex(e => e.BookIsbn, "books_book_isbn_key").IsUnique();
-
-            entity.Property(e => e.Bookid)
-                .ValueGeneratedNever()
-                .HasColumnName("bookid");
-            entity.Property(e => e.BookAuthor)
-                .HasMaxLength(255)
-                .HasColumnName("book_author");
-            entity.Property(e => e.BookIsbn)
-                .HasMaxLength(50)
-                .HasColumnName("book_isbn");
-            entity.Property(e => e.BookTitle)
-                .HasMaxLength(255)
-                .HasColumnName("book_title");
-            entity.Property(e => e.Courseid).HasColumnName("courseid");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnName("createdat");
-
-            entity.HasOne(d => d.Course).WithMany(p => p.Books)
-                .HasForeignKey(d => d.Courseid)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("books_courseid_fkey");
-        });
-
         modelBuilder.Entity<Class>(entity =>
         {
             entity.HasKey(e => e.Classid).HasName("class_pkey");
@@ -208,16 +175,10 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Classsection)
                 .HasMaxLength(10)
                 .HasColumnName("classsection");
-            entity.Property(e => e.Courseid).HasColumnName("courseid");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
             entity.Property(e => e.Schoolid).HasColumnName("schoolid");
-
-            entity.HasOne(d => d.Course).WithMany(p => p.Classes)
-                .HasForeignKey(d => d.Courseid)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("class_courseid_fkey");
 
             entity.HasOne(d => d.School).WithMany(p => p.Classes)
                 .HasForeignKey(d => d.Schoolid)
@@ -237,9 +198,18 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Boardordepartment)
                 .HasMaxLength(100)
                 .HasColumnName("boardordepartment");
+            entity.Property(e => e.CourseName).HasMaxLength(130);
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
+
+            entity.HasOne(d => d.ClassNavigation).WithMany(p => p.Courses)
+                .HasForeignKey(d => d.Class)
+                .HasConstraintName("course_Class_fkey");
+
+            entity.HasOne(d => d.TeacherNavigation).WithMany(p => p.Courses)
+                .HasForeignKey(d => d.Teacher)
+                .HasConstraintName("course_Teacher_fkey");
         });
 
         modelBuilder.Entity<Employee>(entity =>

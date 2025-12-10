@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Repositories
 
 
             var res = await dbcontext.Schools.AddAsync(sch.To_DbModel());
-         
+
 
             School Schoolsaved = res.Entity;
 
@@ -27,10 +27,7 @@ namespace LmsApp2.Api.Repositories
         public async Task<Guid> GetSchoolByName(string name)
         {
 
-
             return await dbcontext.Schools.Where(sch => sch.Schoolname == name).Select(sch => sch.Schoolid).FirstOrDefaultAsync();
-
-
 
 
         }

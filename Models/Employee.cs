@@ -29,6 +29,8 @@ public partial class Employee
 
     public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
 
+    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+
     public virtual Employeeaccountinfo? Employeeaccountinfo { get; set; }
 
     public virtual ICollection<Employeeadditionaldoc> Employeeadditionaldocs { get; set; } = new List<Employeeadditionaldoc>();
