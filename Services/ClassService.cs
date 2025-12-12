@@ -34,12 +34,12 @@ namespace LmsApp2.Api.Services
             {
                 throw new Exception($"{courseData.SchoolName} School does not Exists in the database.");
             }
-            Guid ClassID = await classRepo.GetClass(SchoolId, courseData.ClassSection, courseData.ClassGrade);
+            Guid ClassID = await classRepo.GetClass(SchoolId, courseData.ClassSection.ToUpper(), courseData.ClassGrade);
 
             if (ClassID == Guid.Empty)
             {
 
-                throw new Exception($"{courseData.ClassSection}{courseData.ClassGrade} does not exist in {courseData.SchoolName} yet.");
+                throw new Exception($" Class {courseData.ClassGrade} {courseData.ClassSection} does not exist in {courseData.SchoolName} yet.");
 
 
             }

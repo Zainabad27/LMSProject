@@ -11,7 +11,7 @@ namespace LmsApp2.Api.Mappers
             return new Class() {
             Classid=Guid.NewGuid(), 
             Classgrade=ClassData.ClassGrade,
-            Classsection=ClassData.ClassSection,    
+            Classsection=ClassData.ClassSection.ToUpper(),    
             Createdat=DateTime.UtcNow,
             Schoolid=SchoolId,
             };
