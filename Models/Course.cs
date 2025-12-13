@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LmsApp2.Api.Models;
+﻿namespace LmsApp2.Api.Models;
 
 public partial class Course
 {

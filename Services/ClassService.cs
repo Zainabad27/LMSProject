@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
@@ -12,7 +13,7 @@ namespace LmsApp2.Api.Services
             Guid SchoolId = await schRepo.GetSchoolByName(Class.SchoolName);
             if (SchoolId == Guid.Empty)
             {
-                throw new Exception($"{Class.SchoolName} School does not Exists in the database.");
+                throw new CustomException($"{Class.SchoolName} School does not Exists in the database.",400);
             }
 
             // we have to check now that class already exists or not 
@@ -23,7 +24,7 @@ namespace LmsApp2.Api.Services
             if (ClassAlreadyExists != Guid.Empty)
             {
 
-                throw new Exception($"Class {Class.ClassGrade} {Class.ClassSection} Already Exists in {Class.SchoolName}");
+                throw new CustomException($"Class {Class.ClassGrade} {Class.ClassSection} Already Exists in {Class.SchoolName}",400);
 
 
             }
@@ -45,14 +46,14 @@ namespace LmsApp2.Api.Services
             Guid SchoolId = await schRepo.GetSchoolByName(courseData.SchoolName);
             if (SchoolId == Guid.Empty)
             {
-                throw new Exception($"{courseData.SchoolName} School does not Exists in the database.");
+                throw new CustomException($"{courseData.SchoolName} School does not Exists in the database.",400);
             }
             Guid ClassID = await classRepo.GetClass(SchoolId, courseData.ClassSection.ToUpper(), courseData.ClassGrade);
 
             if (ClassID == Guid.Empty)
             {
 
-                throw new Exception($" Class {courseData.ClassGrade} {courseData.ClassSection} does not exist in {courseData.SchoolName} yet.");
+                throw new CustomException($" Class {courseData.ClassGrade} {courseData.ClassSection.ToUpper()} does not exist in {courseData.SchoolName} yet.",400);
 
 
             }
@@ -64,7 +65,7 @@ namespace LmsApp2.Api.Services
 
             if (CourseAlreadyExistsInThisClass!=Guid.Empty) {
 
-                throw new Exception($"Course {courseData.CourseName} already exists in class {courseData.ClassGrade} {courseData.ClassSection} of {courseData.SchoolName}");
+                throw new CustomException($"Course {courseData.CourseName} already exists in class {courseData.ClassGrade} {courseData.ClassSection.ToUpper()} of {courseData.SchoolName}",400);
             
             }
 

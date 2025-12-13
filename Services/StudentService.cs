@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
@@ -13,7 +14,7 @@ namespace LmsApp2.Api.Services
 
             if (SchoolId == Guid.Empty)
             {
-                throw new Exception("The School Student is trying to register in does not Exists.");
+                throw new CustomException("The School Student is trying to register in does not Exists.",401);
             }
 
 

@@ -10,13 +10,13 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class EmployeeController(IEmployeeService employeeServices) : ControllerBase
     {
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
         [HttpPost("AddAdmin")]
         //[HttpPost]
         public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
         {
-            var u= User;
+            var u = User;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -24,7 +24,7 @@ namespace LmsApp2.Api.Controllers
 
 
 
-            Guid addedEmployeeId=await employeeServices.AddEmployee(emp,"Admin");
+            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
 
             var context = HttpContext;
 
@@ -33,12 +33,12 @@ namespace LmsApp2.Api.Controllers
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddTeacher")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
         {
-         
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -46,13 +46,35 @@ namespace LmsApp2.Api.Controllers
 
 
 
-            Guid addedEmployeeId=await employeeServices.AddEmployee(emp,"Teacher");
+            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");
 
             var context = HttpContext;
 
 
             Console.WriteLine(context);
             return Ok(new { AddedEmployeeId = addedEmployeeId });
+
+        }
+
+
+
+        [HttpPost("Teacher/AssignCourse")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignCourseToATeacher([FromQuery] AssignCourseDto AssignCourse)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+
+            await employeeServices.AssignCourseToTeacher(AssignCourse);
+
+
+            return Ok("Course Assigned Successfully");
+
 
         }
     }

@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
@@ -9,11 +10,24 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
+        public async Task<Guid> AssignCourse(Guid TeacherId, Guid CourseId)
+        {
+            var CourseInDb = await dbcontext.Courses.Where(crs => crs.Courseid == CourseId).FirstOrDefaultAsync();
+            if (CourseInDb == null)
+            {
+                throw new CustomException("This Course Does not Exists in the Datase Currently.", 400);
+            }
+
+            CourseInDb.Teacher = TeacherId;
+
+            return CourseInDb.Courseid;
+
+        }
         public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation)
         {
             Employee employee = emp.To_DbModel(SchoolId);
 
-            employee.Employeedesignation = designation; 
+            employee.Employeedesignation = designation;
 
 
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
@@ -43,7 +57,7 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass,string designation)
+        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass, string designation)
         {
             var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
             if (Employee == null) { throw new Exception("No User Found for this Email."); }
@@ -109,7 +123,7 @@ namespace LmsApp2.Api.Repositories
             {
                 throw new Exception("User Account Deleted");
             }
-           
+
 
 
             return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
@@ -175,7 +189,7 @@ namespace LmsApp2.Api.Repositories
         {
             Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
             {
-                Accountid=Guid.NewGuid(),
+                Accountid = Guid.NewGuid(),
                 Email = emp.Email,
                 Password = emp.Password.GetHashedPassword(),
                 Createdat = DateTime.UtcNow,
@@ -269,6 +283,36 @@ namespace LmsApp2.Api.Repositories
 
 
         }
+
+
+        public async Task<Guid> GetEmployee(Guid EmployeeId)
+        {
+
+            var EmployeeInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
+            if (EmployeeInDatabase == null)
+            {
+                return Guid.Empty;
+            }
+
+            if (EmployeeInDatabase.Isactive == false)
+            {
+
+                throw new CustomException("This Employee is Not Active Currently.", 400);
+
+
+            }
+
+
+
+            return EmployeeInDatabase.Employeeid;
+
+
+        }
+
+
+
+
+
 
         public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
         {

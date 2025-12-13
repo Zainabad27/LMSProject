@@ -6,11 +6,13 @@ namespace LmsApp2.Api.Exceptions
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            Console.WriteLine(exception);
-            Console.WriteLine(httpContext);
-
-
             Logger.LogError(exception,"Exception Occured");
+            if(exception is CustomException ex)
+            {
+                httpContext.Response.StatusCode = ex.StatusCode;
+                await httpContext.Response.WriteAsJsonAsync(ex.Message + " <= Error Message", cancellationToken);
+                return true;
+            }
 
             await httpContext.Response.WriteAsJsonAsync(exception?.Message+" <= Error Message",cancellationToken);
 

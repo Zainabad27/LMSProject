@@ -1,23 +1,46 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
 
 namespace LmsApp2.Api.Services
 {
-    public class EmployeeServices(IEmployeeRepo employeerepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
+    public class EmployeeServices(IEmployeeRepo employeerepo, IEdRepo edRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
-        public async Task<Guid> AddEmployee(EmployeeDto emp,String Designation)
+
+        public async Task<Guid> AssignCourseToTeacher(AssignCourseDto assignCourse)
+        {
+
+            // first we have to check if that Teacher and Course Both exists 
+            // then in course we have to just put that teacher's id then that course is assigned to that teacher.
+
+
+            Guid TeacherId = await employeerepo.GetEmployee(assignCourse.TeacherId);
+            if (TeacherId == Guid.Empty)
+            {
+                throw new CustomException("Teacher Does not Exists in the Database.", 400);
+            }
+
+            Guid CourseId = await employeerepo.AssignCourse(TeacherId, assignCourse.CourseId);
+
+            await employeerepo.SaveChanges();
+
+            return CourseId;
+
+
+        }
+        public async Task<Guid> AddEmployee(EmployeeDto emp, String Designation)
         {
             Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
             if (SchoolId == Guid.Empty)
             {
                 throw new Exception("School You are Registering For was not found in the Database.");
             }
-            
 
 
-            Guid ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId,Designation);
+
+            Guid ReturnedEmpId = await employeerepo.AddEmployee(emp, SchoolId, Designation);
 
             // now we have to make Emplloyees Account too and return it too.
             bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
@@ -33,7 +56,7 @@ namespace LmsApp2.Api.Services
             // now we have to upload the necessary documents of Employee and also save it too Server
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
-         
+
 
             string PhotoFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
             string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);

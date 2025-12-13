@@ -4,6 +4,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IEmployeeRepo
     {
+        public Task<Guid> AssignCourse(Guid TeacherId, Guid CourseId);
+
         public Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId,string designation);
 
         public Task<Guid> MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable);
@@ -24,6 +26,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass);
 
+        public Task<Guid> GetEmployee(Guid EmployeeId);
         public Task SaveChanges();
 
 

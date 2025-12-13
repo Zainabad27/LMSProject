@@ -97,7 +97,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
 
-            return context.Response.WriteAsync("{\"error\": \"UnAuthorized Access,You are not allowed to access this resource.\"}");
+            return context.Response.WriteAsync("{\"error\": \"Unauthorized Access,You are not allowed to access this resource.\"}");
         }
     };
 });
