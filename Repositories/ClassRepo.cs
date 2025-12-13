@@ -17,32 +17,30 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+
         public async Task<Guid> GetClass(Guid SchoolId, string ClassSection, string ClassGrade)
         {
-            var Classes = await dbcontext.Classes.Where(cls => cls.Schoolid == SchoolId).ToListAsync();
 
-            if (Classes == null)
-            {
-                throw new Exception("This School Does Not Have any Classes Rgistered");
-
-            }
-
-            foreach (Class c in Classes)
-            {
-                if (c.Classsection == ClassSection && c.Classgrade == ClassGrade)
-                {
-
-                    return c.Classid;
-
-
-                }
-
-            }
-
-            return Guid.Empty;
-
+            return await dbcontext.Classes
+             .Where(cls => (cls.Schoolid == SchoolId && cls.Classsection == ClassSection && cls.Classgrade == ClassGrade))
+             .Select(cls => cls.Classid)
+             .FirstOrDefaultAsync();
 
         }
+
+
+        public async Task<Guid> GetACourse(Guid ClassId,string CourseName,string boardOrDepartment) {
+
+          return await dbcontext.Courses
+                .Where(crs => crs.Class == ClassId)
+                .Select(crs => crs.Courseid)
+                .FirstOrDefaultAsync();
+        
+        
+        
+        
+        }
+
 
 
         public async Task<Guid> AddCourse(Guid ClassId, CourseDto CourseData)

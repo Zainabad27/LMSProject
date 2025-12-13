@@ -15,6 +15,19 @@ namespace LmsApp2.Api.Services
                 throw new Exception($"{Class.SchoolName} School does not Exists in the database.");
             }
 
+            // we have to check now that class already exists or not 
+
+
+            Guid ClassAlreadyExists = await classRepo.GetClass(SchoolId, Class.ClassSection.ToUpper(), Class.ClassGrade);
+
+            if (ClassAlreadyExists != Guid.Empty)
+            {
+
+                throw new Exception($"Class {Class.ClassGrade} {Class.ClassSection} Already Exists in {Class.SchoolName}");
+
+
+            }
+
 
             Guid ClassId = await classRepo.AddClass(Class, SchoolId);
 
@@ -45,14 +58,19 @@ namespace LmsApp2.Api.Services
             }
 
 
+            // now that we have checked the class does exists we have to check if that class already has this course registered for it.
+
+            Guid CourseAlreadyExistsInThisClass = await classRepo.GetACourse(ClassID, courseData.CourseName, courseData.BoardOrDepartment);
+
+            if (CourseAlreadyExistsInThisClass!=Guid.Empty) {
+
+                throw new Exception($"Course {courseData.CourseName} already exists in class {courseData.ClassGrade} {courseData.ClassSection} of {courseData.SchoolName}");
+            
+            }
+
             Guid CourseId = await classRepo.AddCourse(ClassID, courseData);
 
-
-
             await classRepo.SaveChanges();
-
-
-
 
             return CourseId;
 

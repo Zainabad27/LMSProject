@@ -40,7 +40,7 @@ namespace LmsApp2.Api.Controllers
 
 
 
-            return Ok("Employee Logged in successfully.");
+            return Ok("Teacher Logged in successfully.");
 
         }
         [HttpPost("Login/Student")]
