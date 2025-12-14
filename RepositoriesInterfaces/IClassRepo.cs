@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Models;
 
 namespace LmsApp2.Api.RepositoriesInterfaces
 {
@@ -6,6 +7,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
     {
         public Task<Guid> AddClass(ClassDto Class,Guid SchoolId);
 
+        public Task<Class> GetClass(Guid ClassId);
 
         public Task<Guid> GetClass(Guid SchoolId,string ClassSection,string ClassGrade);
 
@@ -13,6 +15,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
 
         public Task<Guid> GetACourse(Guid ClassId, string CourseName, string boardOrDepartment);
+
         public Task SaveChanges();
     }
 }

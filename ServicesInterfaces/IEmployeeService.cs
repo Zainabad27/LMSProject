@@ -7,6 +7,6 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<Guid> AddEmployee(EmployeeDto emp,string designation);
 
 
-        public Task<Guid> AssignCourseToTeacher(AssignCourseDto assignCourse);
+        public Task<Guid> AssignCourseToTeacher(Guid TeacherId,Guid CourseId);
     }
 }

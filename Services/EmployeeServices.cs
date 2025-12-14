@@ -9,24 +9,26 @@ namespace LmsApp2.Api.Services
     public class EmployeeServices(IEmployeeRepo employeerepo, IEdRepo edRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
 
-        public async Task<Guid> AssignCourseToTeacher(AssignCourseDto assignCourse)
+        public async Task<Guid> AssignCourseToTeacher(Guid TeacherId, Guid CourseId)
         {
 
             // first we have to check if that Teacher and Course Both exists 
             // then in course we have to just put that teacher's id then that course is assigned to that teacher.
 
 
-            Guid TeacherId = await employeerepo.GetEmployee(assignCourse.TeacherId);
+            Guid TeacherIdReturned = await employeerepo.GetEmployee(TeacherId);
             if (TeacherId == Guid.Empty)
             {
                 throw new CustomException("Teacher Does not Exists in the Database.", 400);
             }
 
-            Guid CourseId = await employeerepo.AssignCourse(TeacherId, assignCourse.CourseId);
+            // while assigning the course from dbmodel we are also checking in a single query that if coure exists or not if not then throwing error.
+
+            Guid CourseIdReturned = await employeerepo.AssignCourse(TeacherIdReturned, CourseId);
 
             await employeerepo.SaveChanges();
 
-            return CourseId;
+            return CourseIdReturned;
 
 
         }

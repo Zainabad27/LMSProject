@@ -4,6 +4,8 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IClassService
     {
+
+        public Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData);
         public Task<Guid> AddClass(ClassDto Class);
 
 

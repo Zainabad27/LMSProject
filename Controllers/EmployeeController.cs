@@ -60,7 +60,7 @@ namespace LmsApp2.Api.Controllers
 
         [HttpPost("Teacher/AssignCourse")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AssignCourseToATeacher([FromQuery] AssignCourseDto AssignCourse)
+        public async Task<IActionResult> AssignCourseToATeacher([FromBody] AssignCourseDto assignCourse)
         {
 
             if (!ModelState.IsValid)
@@ -69,8 +69,7 @@ namespace LmsApp2.Api.Controllers
             }
 
 
-
-            await employeeServices.AssignCourseToTeacher(AssignCourse);
+            await employeeServices.AssignCourseToTeacher(assignCourse.TeacherId,assignCourse.CourseId);
 
 
             return Ok("Course Assigned Successfully");

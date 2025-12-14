@@ -47,6 +47,34 @@ namespace LmsApp2.Api.Controllers
         }
 
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> EnrollInAClass([FromBody] EnrollClassDto EnrollmentData)
+        {
+
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+
+            Guid ClassId = await ClassServices.EnrollStudent(EnrollmentData);
+
+
+            await HttpContext.Response.WriteAsync("Student Enrolled Successfuly.");
+            return Ok(new { ClassId = ClassId });   
+
+
+
+
+
+
+        }
+
+
 
 
     }

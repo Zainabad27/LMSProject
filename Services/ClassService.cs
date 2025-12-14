@@ -6,8 +6,39 @@ using LmsApp2.Api.ServicesInterfaces;
 
 namespace LmsApp2.Api.Services
 {
-    public class ClassService(ISchoolRepo schRepo, IClassRepo classRepo) : IClassService
+    public class ClassService(ISchoolRepo schRepo, IClassRepo classRepo,IStudentRepo stdRepo) : IClassService
     {
+
+        public async Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData) {
+            // first we have to check if the student exists and we have to check if class exists.
+           var ClassInDb=await classRepo.GetClass(EnrollmentData.ClassId);
+            if (ClassInDb == null) {
+
+                throw new CustomException("This Class Does not Exists in the School.",400);
+            
+            }
+
+            var StudentInDb=await stdRepo.GetStudent(EnrollmentData.StudentId);
+
+            if (StudentInDb==null) {
+                throw new CustomException("this Student does not exists in the database.");
+            
+            }
+
+            if (StudentInDb.Isactive == false)
+            {
+                throw new CustomException("this student is currently not active.");
+            }
+
+            // since the entity is tracked by context i can assign the class id to it then call savechanges async.
+
+            StudentInDb.Classid = ClassInDb.Classid;
+
+            await stdRepo.SaveChanges();
+
+
+            return ClassInDb.Classid;
+        }
         public async Task<Guid> AddClass(ClassDto Class)
         {
             Guid SchoolId = await schRepo.GetSchoolByName(Class.SchoolName);

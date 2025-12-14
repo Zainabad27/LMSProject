@@ -9,6 +9,22 @@ namespace LmsApp2.Api.Repositories
 {
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
+        //public async Task<Guid> EnrollInAClass(Guid ClassId,Student StudentEntity) {
+
+            
+        
+        
+        
+        
+        
+        //}
+        public async Task<Student> GetStudent(Guid StudentId) {
+
+
+            return await dbcontext.Students.FirstOrDefaultAsync(std=>std.Studentid==StudentId);
+        
+        
+        }
         public async Task<Guid> AddStudent(StudentDto std, Guid SchoolId)
         {
             Student Student = std.ToDbModel(SchoolId);

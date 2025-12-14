@@ -29,16 +29,24 @@ namespace LmsApp2.Api.Repositories
         }
 
 
-        public async Task<Guid> GetACourse(Guid ClassId,string CourseName,string boardOrDepartment) {
+        public async Task<Class> GetClass(Guid ClassId)
+        {
+            return await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
 
-          return await dbcontext.Courses
-                .Where(crs => crs.Class == ClassId)
-                .Select(crs => crs.Courseid)
-                .FirstOrDefaultAsync();
-        
-        
-        
-        
+        }
+
+
+        public async Task<Guid> GetACourse(Guid ClassId, string CourseName, string boardOrDepartment)
+        {
+
+            return await dbcontext.Courses
+                  .Where(crs => crs.Class == ClassId)
+                  .Select(crs => crs.Courseid)
+                  .FirstOrDefaultAsync();
+
+
+
+
         }
 
 
