@@ -11,6 +11,7 @@ namespace LmsApp2.Api.Services
 
         public async Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData) {
             // first we have to check if the student exists and we have to check if class exists.
+          
            var ClassInDb=await classRepo.GetClass(EnrollmentData.ClassId);
             if (ClassInDb == null) {
 
@@ -28,6 +29,14 @@ namespace LmsApp2.Api.Services
             if (StudentInDb.Isactive == false)
             {
                 throw new CustomException("this student is currently not active.");
+            }
+
+
+            // and now we have to check if the student already exists in that class.
+
+            if(StudentInDb.Classid==EnrollmentData.ClassId)
+            {
+                throw new CustomException("this Student is Already Enrolled in this class.");
             }
 
             // since the entity is tracked by context i can assign the class id to it then call savechanges async.

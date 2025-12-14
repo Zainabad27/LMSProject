@@ -47,7 +47,7 @@ namespace LmsApp2.Api.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("EnrollStudent")]
         [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> EnrollInAClass([FromBody] EnrollClassDto EnrollmentData)
@@ -64,17 +64,13 @@ namespace LmsApp2.Api.Controllers
             Guid ClassId = await ClassServices.EnrollStudent(EnrollmentData);
 
 
-            await HttpContext.Response.WriteAsync("Student Enrolled Successfuly.");
+            //await HttpContext.Response.WriteAsync("Student Enrolled Successfuly.");
             return Ok(new { ClassId = ClassId });   
 
 
 
 
-
-
         }
-
-
 
 
     }

@@ -58,7 +58,7 @@ namespace LmsApp2.Api.Controllers
 
 
 
-        [HttpPost("Teacher/AssignCourse")]
+        [HttpPost("AssignCourse")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCourseToATeacher([FromBody] AssignCourseDto assignCourse)
         {
