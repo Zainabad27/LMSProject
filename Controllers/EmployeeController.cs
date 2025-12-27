@@ -17,10 +17,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
         {
             var u = User;
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            
 
 
 
@@ -39,19 +36,12 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
         {
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
 
 
             Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");
 
-            var context = HttpContext;
-
-
-            Console.WriteLine(context);
+           
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
@@ -62,11 +52,6 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCourseToATeacher([FromBody] AssignCourseDto assignCourse)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
 
             await employeeServices.AssignCourseToTeacher(assignCourse.TeacherId,assignCourse.CourseId);

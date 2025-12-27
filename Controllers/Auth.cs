@@ -14,10 +14,6 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("Login/Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var context = HttpContext;
 
             Guid EmployeeId = await LoginService.AdminLogin(request, context);
@@ -30,10 +26,7 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("Login/Teacher")]
         public async Task<IActionResult> LoginTeacher([FromBody] LoginDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+           
             var context = HttpContext;
 
             Guid EmployeeId = await LoginService.TeacherLogin(request, context);
@@ -46,12 +39,7 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("Login/Student")]
         public async Task<IActionResult> LoginStudent([FromBody] LoginDto request)
         {
-            if (!ModelState.IsValid)
-            {
-
-                return BadRequest(ModelState);
-
-            }
+           
 
             var context = HttpContext;
 

@@ -8,6 +8,11 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IEdRepo edRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
+        public async Task<Guid> UploadAssignment(AssignmentUploadDto assignmentData)
+        {
+            throw new NotImplementedException();
+
+        }
 
         public async Task<Guid> AssignCourseToTeacher(Guid TeacherId, Guid CourseId)
         {

@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
@@ -6,8 +7,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
 {
+
     public class ClassRepo(LmsDatabaseContext dbcontext) : IClassRepo
     {
+
+        public async Task<bool> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
+        {
+            var ClassInDb = await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
+            if (ClassInDb == null)
+            {
+                throw new CustomException("This Class Does Not Exists in our database", 400);
+
+            }
+
+            foreach (Course C in ClassInDb.Courses)
+            {
+                if (C.Courseid == CourseId)
+                {
+                    return true;
+                }
+
+
+            }
+
+
+            return false;
+
+
+
+
+
+        }
         public async Task<Guid> AddClass(ClassDto Class, Guid SchoolId)
         {
             Class NewClass = Class.ToDb_Modle(SchoolId);

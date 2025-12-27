@@ -14,11 +14,6 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> RefreshAccesstoken([FromBody] RefreshAccessTokenDto RefreshTokenData)
         {
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var context = HttpContext;
             Guid EmployeeId = await TokenService.RefreshAccesToken(RefreshTokenData, context);
 

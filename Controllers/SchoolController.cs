@@ -11,18 +11,8 @@ namespace LmsApp2.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddSchool([FromBody]SchoolDto School) {
 
-            if (!ModelState.IsValid) {
-
-                return BadRequest(ModelState);
-
-
-            }
 
             Guid AddedSchoolId=await SchoolServices.AddSchool(School);
-
-
-
-
 
             return Created("Somewhere",new { SchoolId = AddedSchoolId });
         }

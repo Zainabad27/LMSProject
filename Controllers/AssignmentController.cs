@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,20 +8,24 @@ namespace LmsApp2.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AssignmentController : ControllerBase
+    public class AssignmentController(IEmployeeService employeeService) : ControllerBase
     {
-        [HttpPost("UploadAssignment/{TeacherId}")]
+        [HttpPost("UploadAssignment")]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> UploadAssigment(Guid TeacherId, [FromBody] AssignmentUploadDto AssignmentData) {
-            if (!ModelState.IsValid) {
-            return BadRequest(ModelState);
-            }
+        public async Task<IActionResult> UploadAssigment([FromBody] AssignmentUploadDto AssignmentData)
+        {
+           
 
 
-            throw new NotImplementedException();    
-        
-            
-        
+            await employeeService.UploadAssignment(AssignmentData);
+
+
+
+            return Ok();
+
+
+
+
         }
     }
 }

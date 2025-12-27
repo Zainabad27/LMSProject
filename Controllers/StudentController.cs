@@ -17,11 +17,7 @@ namespace LmsApp2.Api.Controllers
         {
 
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-
-            }
+          
             Guid StudentId = await StdService.AddStudent(stdData);
 
 

@@ -4,6 +4,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IEmployeeRepo
     {
+        public Task<bool> CheckTeacherAndHisCourses(Guid TeacherId,Guid CourseId);
         public Task<Guid> AssignCourse(Guid TeacherId, Guid CourseId);
 
         public Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId,string designation);
