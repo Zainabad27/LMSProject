@@ -42,11 +42,11 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> EnrollInAClass([FromBody] EnrollClassDto EnrollmentData)
         {
 
-            Guid ClassId = await ClassServices.EnrollStudent(EnrollmentData);
+            Guid Classid = await ClassServices.EnrollStudent(EnrollmentData);
 
 
             //await HttpContext.Response.WriteAsync("Student Enrolled Successfuly.");
-            return Ok(new { ClassId = ClassId });   
+            return Ok(new { ClassId = Classid });   
 
 
 
