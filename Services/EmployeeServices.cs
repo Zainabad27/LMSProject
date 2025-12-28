@@ -6,11 +6,55 @@ using LmsApp2.Api.Utilities;
 
 namespace LmsApp2.Api.Services
 {
-    public class EmployeeServices(IEmployeeRepo employeerepo, IEdRepo edRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
+    public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
         public async Task<Guid> UploadAssignment(AssignmentUploadDto assignmentData)
         {
-            throw new NotImplementedException();
+            // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
+            // second we will check the class he is uploading assignment for does that course is assigned to that class or not
+            // // we will also check if the employee id that has been given is the employee teacher as well.
+
+            // then after validations we have to upload assigment 
+            // first we have to upload assigment content on the server means saving the assigment file on the server 
+
+            // second we have to save it in the database.
+            bool Teacher_TeachesThisCourse = await employeerepo.CheckTeacherAndHisCourses(assignmentData.TeacherId, assignmentData.CourseId);
+            if (!Teacher_TeachesThisCourse)
+            {
+
+                throw new CustomException("This Teacher Cannot Upload Assignment for this Course because this course is not assigned to them(they do not teach this course)", 400);
+
+
+            }
+
+            bool CourseisAssignedToClass = await ClsRepo.CheckClassAndItsCourses(assignmentData.Class, assignmentData.CourseId);
+
+            if (!CourseisAssignedToClass)
+            {
+                throw new CustomException("This Course is not Assigned to this Class hence you cannot upload this assignment for this Class");
+
+            }
+
+            // validations have finished now we can simply upload that assigment on the server and then in the DB with refrence of that class and that teacher.
+
+            var DirectoryPath = Path.Combine(env.WebRootPath, "Assignments");
+
+
+            if (!Directory.Exists(DirectoryPath))
+            {
+                throw new CustomException("Some Internal Server Error Occured while Saving the Assignment Data on the server.", 500);
+
+            }
+
+
+            String AssignmentPathOnServer = await assignmentData.AssigmentFile.UploadToServer(DirectoryPath);
+
+            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, AssignmentPathOnServer);
+            await assrepo.SaveChanges();
+
+            return AssignmentId;
+
+
 
         }
 
@@ -64,6 +108,11 @@ namespace LmsApp2.Api.Services
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
 
+            if (!Directory.Exists(DirectoryPath))
+            {
+                throw new CustomException("Some Internal Server Error Occured while Saving the Assignment Data on the server.", 500);
+
+            }
 
             string PhotoFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
             string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);

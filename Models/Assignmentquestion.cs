@@ -9,13 +9,9 @@ public partial class Assignmentquestion
 
     public string Content { get; set; } = null!;
 
-    public Guid? Employeeid { get; set; }
+    public DateTime? Createdat { get; set; }
 
     public Guid? Assignmentid { get; set; }
 
-    public DateTime? Createdat { get; set; }
-
     public virtual Assignment? Assignment { get; set; }
-
-    public virtual Employee? Employee { get; set; }
 }

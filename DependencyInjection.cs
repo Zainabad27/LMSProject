@@ -10,7 +10,8 @@ namespace LmsApp2.Api
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDI(this IServiceCollection services) {
+        public static IServiceCollection AddDI(this IServiceCollection services)
+        {
             services.AddScoped<ISchoolService, SchoolService>();
 
             services.AddScoped<ISchoolRepo, SchoolRepo>();
@@ -22,11 +23,12 @@ namespace LmsApp2.Api
             services.AddScoped<IStudentRepo, StudentRepo>();
             services.AddScoped<IClassRepo, ClassRepo>();
             services.AddScoped<IClassService, ClassService>();
-            services.AddScoped<IEdRepo, EdRepo>();
+            
+            services.AddScoped<IAssignmentRepo, AssignmentRepo>();
 
 
             return services;
-        
+
         }
     }
 }

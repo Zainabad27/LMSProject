@@ -38,10 +38,10 @@ builder.Services.Configure<FormOptions>(options =>
 
 // model state validation 
 
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.SuppressModelStateInvalidFilter = false;
-});
+//builder.Services.Configure<ApiBehaviorOptions>(options =>
+//{
+//    options.SuppressModelStateInvalidFilter = false;
+//});
 
 
 

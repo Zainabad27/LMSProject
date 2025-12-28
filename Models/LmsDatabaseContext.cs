@@ -105,6 +105,8 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("assignmentquestion");
 
+            entity.HasIndex(e => e.Assignmentid, "assignmentquestion_assignmentid_key").IsUnique();
+
             entity.Property(e => e.Assignmentquestionid)
                 .ValueGeneratedNever()
                 .HasColumnName("assignmentquestionid");
@@ -115,17 +117,10 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Employeeid).HasColumnName("employeeid");
 
-            entity.HasOne(d => d.Assignment).WithMany(p => p.Assignmentquestions)
-                .HasForeignKey(d => d.Assignmentid)
-                .OnDelete(DeleteBehavior.Cascade)
+            entity.HasOne(d => d.Assignment).WithOne(p => p.Assignmentquestion)
+                .HasForeignKey<Assignmentquestion>(d => d.Assignmentid)
                 .HasConstraintName("assignmentquestion_assignmentid_fkey");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.Assignmentquestions)
-                .HasForeignKey(d => d.Employeeid)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("assignmentquestion_employeeid_fkey");
         });
 
         modelBuilder.Entity<Assignmentsubmission>(entity =>

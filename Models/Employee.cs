@@ -25,8 +25,6 @@ public partial class Employee
 
     public DateTime? Createdat { get; set; }
 
-    public virtual ICollection<Assignmentquestion> Assignmentquestions { get; set; } = new List<Assignmentquestion>();
-
     public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
 
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();

@@ -347,5 +347,44 @@ namespace LmsApp2.Api.Repositories
 
 
         }
+
+        public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
+        {
+            var EmployeeInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
+
+            if (EmployeeInDatabase == null)
+            {
+                throw new CustomException("This Teacher does not exists in our database.", 400);
+
+
+            }
+            if (EmployeeInDatabase.Isactive != true)
+            {
+                throw new CustomException("This Teacher is not Active Employee", 400);
+
+            }
+
+            if (EmployeeInDatabase.Employeedesignation != "Teacher")
+            {
+                throw new CustomException("This Employee is not a teacher hence cannot upload a assignment.");
+            }
+
+
+            foreach (Course C in EmployeeInDatabase.Courses)
+            {
+                if (C.Courseid == CourseId)
+                {
+                    return true;
+                }
+
+
+
+            }
+            return false;
+
+
+        }
+
+
     }
 }
