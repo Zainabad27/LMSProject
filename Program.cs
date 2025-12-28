@@ -12,16 +12,16 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
+//// logging control.   
+//builder.Logging.ClearProviders();
+//builder.Logging.AddConsole();
+//builder.Logging.AddDebug();
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
+//builder.Logging.AddFilter("Microsoft.AspNetCore.Watch", LogLevel.Warning);
+//builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+//builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
 
-builder.Logging.AddFilter("Microsoft.AspNetCore.Watch", LogLevel.Warning);
-builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
-builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
-
-builder.Logging.AddFilter("Default", LogLevel.Warning);
+//builder.Logging.AddFilter("Default", LogLevel.Warning);
 
 
 
