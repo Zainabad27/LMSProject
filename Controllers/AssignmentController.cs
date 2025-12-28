@@ -10,7 +10,7 @@ namespace LmsApp2.Api.Controllers
     public class AssignmentController(IEmployeeService employeeService) : ControllerBase
     {
         [HttpPost("UploadAssignment")]
-        //[Consumes("multipart/form-data")]
+        [Consumes("multipart/form-data")]
 
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> UploadAssigment([FromForm] AssignmentUploadDto AssignmentData)
