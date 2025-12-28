@@ -12,41 +12,42 @@ namespace LmsApp2.Api.Services
         public async Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData) {
             // first we have to check if the student exists and we have to check if class exists.
           
-           var ClassInDb=await classRepo.GetClass(EnrollmentData.ClassId);
-            if (ClassInDb == null) {
+           //var ClassInDb=await classRepo.GetClass(EnrollmentData.ClassId);
+           // if (ClassInDb == null) {
 
-                throw new CustomException("This Class Does not Exists in the School.",400);
+           //     throw new CustomException("This Class Does not Exists in the School.",400);
             
-            }
+           // }
 
-            var StudentInDb=await stdRepo.GetStudent(EnrollmentData.StudentId);
+           // var StudentInDb=await stdRepo.GetStudent(EnrollmentData.StudentId);
 
-            if (StudentInDb==null) {
-                throw new CustomException("this Student does not exists in the database.");
+           // if (StudentInDb==null) {
+           //     throw new CustomException("this Student does not exists in the database.");
             
-            }
+           // }
 
-            if (StudentInDb.Isactive == false)
-            {
-                throw new CustomException("this student is currently not active.");
-            }
-
-
-            // and now we have to check if the student already exists in that class.
-
-            if(StudentInDb.Classid==EnrollmentData.ClassId)
-            {
-                throw new CustomException("this Student is Already Enrolled in this class.");
-            }
-
-            // since the entity is tracked by context i can assign the class id to it then call savechanges async.
-
-            StudentInDb.Classid = ClassInDb.Classid;
-
-            await stdRepo.SaveChanges();
+           // if (StudentInDb.Isactive == false)
+           // {
+           //     throw new CustomException("this student is currently not active.");
+           // }
 
 
-            return ClassInDb.Classid;
+           // // and now we have to check if the student already exists in that class.
+
+           // if(StudentInDb.Classid==EnrollmentData.ClassId)
+           // {
+           //     throw new CustomException("this Student is Already Enrolled in this class.");
+           // }
+
+           // // since the entity is tracked by context i can assign the class id to it then call savechanges async.
+
+           // StudentInDb.Classid = ClassInDb.Classid;
+
+           // await stdRepo.SaveChanges();
+
+
+           // return ClassInDb.Classid;
+            throw new NotImplementedException();
         }
         public async Task<Guid> AddClass(ClassDto Class)
         {
