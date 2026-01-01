@@ -5,13 +5,13 @@ namespace LmsApp2.Api.Mappers
 {
     public static class AssignmentMapper
     {
-        public static Assignment To_DBMODEL(this AssignmentDto assignmentData)
+        public static Assignment To_DBMODEL(this AssignmentDto assignmentData,Guid TeacherId)
         {
 
             return new Assignment()
             {
                 Assignmentid = Guid.NewGuid(),
-                Employeeid = assignmentData.TeacherId,
+                Employeeid = TeacherId,
                 Createdat = DateTime.UtcNow,
                 Classid = assignmentData.Class,
                 Deadline = DateTime.SpecifyKind(assignmentData.Deadline.ToDateTime(TimeOnly.MaxValue),DateTimeKind.Utc),

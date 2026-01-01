@@ -4,7 +4,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IAssignmentRepo
     {
-        public Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer);
+        public Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer,Guid TeacherId);
 
         public Task SaveChanges();
         

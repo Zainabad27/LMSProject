@@ -1,7 +1,9 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
 {
@@ -16,11 +18,20 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> UploadAssigment([FromForm] AssignmentDto AssignmentData)
         {
+            var UserClaims = User;
+            var TeacherId=UserClaims.FindFirstValue("Id");
 
-            Guid AssignmentId= await employeeService.UploadAssignment(AssignmentData);
+            if (TeacherId==null) {
+                throw new CustomException("Unauthorized Access.",403);
+            
+            }
+
+            Guid TId=Guid.Parse(TeacherId);
+
+            Guid AssignmentId= await employeeService.UploadAssignment(AssignmentData,TId);
 
             return Ok(new { UploadedAssigmentId = AssignmentId });
-            //throw new NotImplementedException();
+         
 
         }
     }

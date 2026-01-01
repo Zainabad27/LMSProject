@@ -8,8 +8,6 @@ namespace LmsApp2.Api.DTOs
         [Required(ErrorMessage = "Enter the Course for which this assignment is destined.")]
         public Guid CourseId { get; set; }
 
-        [Required]
-        public Guid TeacherId { get; set; }
 
         [Required(ErrorMessage = "Uploading Assignment File is Necessary")]
         public IFormFile AssigmentFile { get; set; }

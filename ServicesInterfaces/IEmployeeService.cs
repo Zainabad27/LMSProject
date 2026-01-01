@@ -10,6 +10,6 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<Guid> AssignCourseToTeacher(Guid TeacherId,Guid CourseId);
 
 
-        public Task<Guid> UploadAssignment(AssignmentDto assignmentData);
+        public Task<Guid> UploadAssignment(AssignmentDto assignmentData,Guid TeacherId);
     }
 }
