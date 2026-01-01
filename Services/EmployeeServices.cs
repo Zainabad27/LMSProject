@@ -23,13 +23,10 @@ namespace LmsApp2.Api.Services
             bool Teacher_TeachesThisCourse = await employeerepo.CheckTeacherAndHisCourses(TeacherId, assignmentData.CourseId);
             if (!Teacher_TeachesThisCourse)
             {
-
-                throw new CustomException("This Teacher Cannot Upload Assignment for this Course because this course is not assigned to them(they do not teach this course)", 400);
-
-
+               throw new CustomException("This Teacher Cannot Upload Assignment for this Course because this course is not assigned to them(they do not teach this course)", 400);
             }
 
-            bool CourseisAssignedToClass = await ClsRepo.CheckClassAndItsCourses(assignmentData.Class, assignmentData.CourseId);
+            var (CourseisAssignedToClass,CourseName) = await ClsRepo.CheckClassAndItsCourses(assignmentData.Class, assignmentData.CourseId);
 
             if (!CourseisAssignedToClass)
             {
@@ -51,7 +48,7 @@ namespace LmsApp2.Api.Services
 
             String AssignmentPathOnServer = await assignmentData.AssigmentFile.UploadToServer(DirectoryPath);
 
-            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, AssignmentPathOnServer,TeacherId);
+            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, AssignmentPathOnServer,TeacherId,CourseName);
             await assrepo.SaveChanges();
 
             return AssignmentId;

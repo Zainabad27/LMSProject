@@ -7,9 +7,9 @@ namespace LmsApp2.Api.Repositories
 {
     public class AssignmentRepo(LmsDatabaseContext dbcontext) : IAssignmentRepo
     {
-        public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer,Guid TeacherId)
+        public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer,Guid TeacherId,String CourseName)
         {
-            Assignment Ass = assignmentData.To_DBMODEL(TeacherId);
+            Assignment Ass = assignmentData.To_DBMODEL(TeacherId,CourseName);
             await dbcontext.Assignments.AddAsync(Ass);
 
 

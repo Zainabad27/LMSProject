@@ -1,8 +1,10 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
 {
@@ -17,7 +19,7 @@ namespace LmsApp2.Api.Controllers
         {
 
 
-          
+
             Guid StudentId = await StdService.AddStudent(stdData);
 
 
@@ -26,6 +28,25 @@ namespace LmsApp2.Api.Controllers
 
 
 
+
+        }
+        [HttpPost("GetAssignments")]
+        [Consumes("multipart/form-data")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetAllAssignments([FromBody] String CourseName)
+        {
+            var Id = User.FindFirstValue("Id");
+            if (Id == null)
+            {
+                throw new CustomException("Unauthorized Access.");
+            }
+
+            Guid StdId = Guid.Parse(Id);
+
+            await StdService.GetAllAssignments(StdId, CourseName);
+
+
+            throw new NotImplementedException();
 
         }
     }

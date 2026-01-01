@@ -17,6 +17,8 @@ public partial class Assignment
 
     public DateTime? Createdat { get; set; }
 
+    public string Coursename { get; set; } = null!;
+
     public virtual Assignmentquestion? Assignmentquestion { get; set; }
 
     public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = new List<Assignmentsubmission>();

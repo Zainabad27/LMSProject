@@ -4,6 +4,7 @@ using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlTypes;
 
 namespace LmsApp2.Api.Repositories
 {
@@ -11,7 +12,16 @@ namespace LmsApp2.Api.Repositories
     public class ClassRepo(LmsDatabaseContext dbcontext) : IClassRepo
     {
 
-        public async Task<bool> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
+        public async Task<List<String>> GetAllAssignmentsOfClass(Guid ClassId,String CourseName) {
+
+           var AllAssignmentsOfClass= await dbcontext.Assignments.Include(ass=>ass.Assignmentquestion!.Content).AllAsync(ass=>ass.Classid==ClassId);
+
+            throw new NotImplementedException();
+        
+        
+        }
+
+        public async Task<(bool,String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
         {
             var ClassInDb = await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
             if (ClassInDb == null)
@@ -24,14 +34,14 @@ namespace LmsApp2.Api.Repositories
             {
                 if (C.Courseid == CourseId)
                 {
-                    return true;
+                    return (true,C.CourseName);
                 }
 
 
             }
 
 
-            return false;
+            return (false,"No Course Found");
 
 
 

@@ -79,6 +79,9 @@ public partial class LmsDatabaseContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("assignmentid");
             entity.Property(e => e.Classid).HasColumnName("classid");
+            entity.Property(e => e.Coursename)
+                .HasMaxLength(200)
+                .HasColumnName("coursename");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");

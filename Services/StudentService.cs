@@ -49,5 +49,22 @@ namespace LmsApp2.Api.Services
             return StudentId;
 
         }
+
+        public async Task<List<IFormFile>> GetAllAssignments(Guid StdId,String CourseName)
+        {
+            // first we have to check the students is real student 
+            // then we have to check his class and in that class we will fetch the assignments for that particular course.
+
+            Guid StdClass=await stdRepo.GetStudentClass(StdId);
+
+
+            throw new NotImplementedException();    
+
+        }
+
+        public Task<List<(Guid, string)>> GetStudentCourse(Guid StdId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

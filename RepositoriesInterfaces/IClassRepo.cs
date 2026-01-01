@@ -5,7 +5,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IClassRepo
     {
-        public Task<bool> CheckClassAndItsCourses(Guid ClassId, Guid CourseId);
+        public Task<(bool,String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId);
         public Task<Guid> AddClass(ClassDto Class,Guid SchoolId);
 
         public Task<Class> GetClass(Guid ClassId);

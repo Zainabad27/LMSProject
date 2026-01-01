@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
@@ -9,15 +10,18 @@ namespace LmsApp2.Api.Repositories
 {
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
-        //public async Task<Guid> EnrollInAClass(Guid ClassId,Student StudentEntity) {
+        public async Task<Guid> GetStudentClass(Guid StdId) {
+            //await dbcontext.Students.Include(s => s.Class).Select(s=>s.Class.Classid).FirstOrDefaultAsync(s=>s.Studentid==StdId);
+         Guid ClassId= await dbcontext.Students.Where(s => s.Studentid == StdId&&s.Isactive==true).Select(s => s.Class!=null? s.Class.Classid:Guid.Empty).FirstOrDefaultAsync();
+            if (ClassId == Guid.Empty)
+            {
+                throw new CustomException("This Student Is not Active Currently or Is not enrolled in any Class currerntly",400);
 
-            
+            }
+
+            return ClassId; 
         
-        
-        
-        
-        
-        //}
+        }
         public async Task<Student> GetStudent(Guid StudentId) {
 
 
