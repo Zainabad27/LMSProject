@@ -9,16 +9,18 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class AssignmentController(IEmployeeService employeeService) : ControllerBase
     {
+        // swagger issue persists, eating all the memory of our pc
         [HttpPost("UploadAssignment")]
         [Consumes("multipart/form-data")]
 
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> UploadAssigment([FromForm] AssignmentUploadDto AssignmentData)
+        public async Task<IActionResult> UploadAssigment([FromForm] AssignmentDto AssignmentData)
         {
 
-           Guid AssignmentId= await employeeService.UploadAssignment(AssignmentData);
+            Guid AssignmentId= await employeeService.UploadAssignment(AssignmentData);
 
             return Ok(new { UploadedAssigmentId = AssignmentId });
+            //throw new NotImplementedException();
 
         }
     }

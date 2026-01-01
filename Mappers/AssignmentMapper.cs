@@ -5,7 +5,7 @@ namespace LmsApp2.Api.Mappers
 {
     public static class AssignmentMapper
     {
-        public static Assignment To_DBMODEL(this AssignmentUploadDto assignmentData)
+        public static Assignment To_DBMODEL(this AssignmentDto assignmentData)
         {
 
             return new Assignment()
@@ -21,7 +21,7 @@ namespace LmsApp2.Api.Mappers
 
 
         }
-        public static Assignmentquestion AssQTo_DBMODEL(this AssignmentUploadDto assignmentData,Guid AssId,String FilePathOnServer)
+        public static Assignmentquestion AssQTo_DBMODEL(this AssignmentDto assignmentData,Guid AssId,String FilePathOnServer)
         {
 
             return new Assignmentquestion()

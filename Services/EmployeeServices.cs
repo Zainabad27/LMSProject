@@ -8,7 +8,7 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
-        public async Task<Guid> UploadAssignment(AssignmentUploadDto assignmentData)
+        public async Task<Guid> UploadAssignment(AssignmentDto assignmentData)
         {
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
             // second we will check the class he is uploading assignment for does that course is assigned to that class or not
