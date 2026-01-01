@@ -350,7 +350,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
         {
-            var EmployeeInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
+            var EmployeeInDatabase = await dbcontext.Employees.Include(e=>e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
 
             if (EmployeeInDatabase == null)
             {
@@ -368,7 +368,7 @@ namespace LmsApp2.Api.Repositories
             {
                 throw new CustomException("This Employee is not a teacher hence cannot upload a assignment.");
             }
-
+            List<Course> cc = EmployeeInDatabase.Courses.ToList();
 
             foreach (Course C in EmployeeInDatabase.Courses)
             {

@@ -14,22 +14,23 @@ namespace LmsApp2.Api.Mappers
                 Employeeid = assignmentData.TeacherId,
                 Createdat = DateTime.UtcNow,
                 Classid = assignmentData.Class,
-                Deadline = assignmentData.Deadline.ToDateTime(TimeOnly.MaxValue),
+                Deadline = DateTime.SpecifyKind(assignmentData.Deadline.ToDateTime(TimeOnly.MaxValue),DateTimeKind.Utc),
+
                 Totalmarks = assignmentData.TotalMarks,
 
             };
 
 
         }
-        public static Assignmentquestion AssQTo_DBMODEL(this AssignmentDto assignmentData,Guid AssId,String FilePathOnServer)
+        public static Assignmentquestion AssQTo_DBMODEL(this AssignmentDto assignmentData, Guid AssId, String FilePathOnServer)
         {
 
             return new Assignmentquestion()
             {
-               Assignmentquestionid= Guid.NewGuid(),    
-               Assignmentid=AssId,
-               Createdat= DateTime.UtcNow,  
-               Content=FilePathOnServer,
+                Assignmentquestionid = Guid.NewGuid(),
+                Assignmentid = AssId,
+                Createdat = DateTime.UtcNow,
+                Content = FilePathOnServer,
 
 
             };
