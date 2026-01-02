@@ -19,11 +19,15 @@ public partial class Assignment
 
     public string Coursename { get; set; } = null!;
 
+    public Guid Courseid { get; set; }
+
     public virtual Assignmentquestion? Assignmentquestion { get; set; }
 
     public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = new List<Assignmentsubmission>();
 
     public virtual Class? Class { get; set; }
+
+    public virtual Course Course { get; set; } = null!;
 
     public virtual Employee? Employee { get; set; }
 }

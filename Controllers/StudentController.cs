@@ -33,7 +33,7 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("GetAssignments")]
         [Consumes("multipart/form-data")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetAllAssignments([FromBody] String CourseName)
+        public async Task<IActionResult> GetAllAssignments([FromBody] Guid CourseId)
         {
             var Id = User.FindFirstValue("Id");
             if (Id == null)
@@ -43,7 +43,7 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdId = Guid.Parse(Id);
 
-            await StdService.GetAllAssignments(StdId, CourseName);
+            await StdService.GetAllAssignments(StdId, CourseId);
 
 
             throw new NotImplementedException();

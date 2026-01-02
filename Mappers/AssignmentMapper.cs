@@ -5,7 +5,7 @@ namespace LmsApp2.Api.Mappers
 {
     public static class AssignmentMapper
     {
-        public static Assignment To_DBMODEL(this AssignmentDto assignmentData,Guid TeacherId,String CourseN)
+        public static Assignment To_DBMODEL(this AssignmentDto assignmentData, Guid TeacherId, String CourseN)
         {
 
             return new Assignment()
@@ -14,9 +14,9 @@ namespace LmsApp2.Api.Mappers
                 Employeeid = TeacherId,
                 Createdat = DateTime.UtcNow,
                 Classid = assignmentData.Class,
-                Deadline = DateTime.SpecifyKind(assignmentData.Deadline.ToDateTime(TimeOnly.MaxValue),DateTimeKind.Utc),
-                Coursename=CourseN,
-
+                Deadline = DateTime.SpecifyKind(assignmentData.Deadline.ToDateTime(TimeOnly.MaxValue), DateTimeKind.Utc),
+                Coursename = CourseN,
+                Courseid = assignmentData.CourseId,
                 Totalmarks = assignmentData.TotalMarks,
 
             };

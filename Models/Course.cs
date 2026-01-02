@@ -17,6 +17,8 @@ public partial class Course
 
     public Guid? Teacher { get; set; }
 
+    public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+
     public virtual Class? ClassNavigation { get; set; }
 
     public virtual Employee? TeacherNavigation { get; set; }

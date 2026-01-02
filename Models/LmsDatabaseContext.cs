@@ -79,6 +79,7 @@ public partial class LmsDatabaseContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("assignmentid");
             entity.Property(e => e.Classid).HasColumnName("classid");
+            entity.Property(e => e.Courseid).HasColumnName("courseid");
             entity.Property(e => e.Coursename)
                 .HasMaxLength(200)
                 .HasColumnName("coursename");
@@ -95,6 +96,11 @@ public partial class LmsDatabaseContext : DbContext
                 .HasForeignKey(d => d.Classid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("assignments_classid_fkey");
+
+            entity.HasOne(d => d.Course).WithMany(p => p.Assignments)
+                .HasForeignKey(d => d.Courseid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("assignments_courseid_fkey");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.Assignments)
                 .HasForeignKey(d => d.Employeeid)

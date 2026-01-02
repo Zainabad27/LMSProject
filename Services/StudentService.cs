@@ -6,7 +6,7 @@ using LmsApp2.Api.Utilities;
 
 namespace LmsApp2.Api.Services
 {
-    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IWebHostEnvironment env) : IStudentService
+    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo,IClassRepo clsRepo ,IWebHostEnvironment env) : IStudentService
     {
         public async Task<Guid> AddStudent(StudentDto std)
         {
@@ -50,12 +50,18 @@ namespace LmsApp2.Api.Services
 
         }
 
-        public async Task<List<IFormFile>> GetAllAssignments(Guid StdId,String CourseName)
+        public async Task<List<IFormFile>> GetAllAssignments(Guid StdId,Guid CourseId)
         {
             // first we have to check the students is real student 
             // then we have to check his class and in that class we will fetch the assignments for that particular course.
+            // assignments are saved on the server in the form of jpeg or other file we have to fetch it from there DB only saves the Path of it on the server in the Database.
 
             Guid StdClass=await stdRepo.GetStudentClass(StdId);
+
+
+            //clsRepo.GetAllAssignmentsOfClass();
+
+
 
 
             throw new NotImplementedException();    

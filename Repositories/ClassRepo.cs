@@ -5,6 +5,7 @@ using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 
 namespace LmsApp2.Api.Repositories
 {
@@ -12,11 +13,38 @@ namespace LmsApp2.Api.Repositories
     public class ClassRepo(LmsDatabaseContext dbcontext) : IClassRepo
     {
 
-        public async Task<List<String>> GetAllAssignmentsOfClass(Guid ClassId,String CourseName) {
+        public async Task<List<(Guid,String)>> GetAllAssignmentsOfClass(Guid ClassId,Guid CourseId) {
 
-           var AllAssignmentsOfClass= await dbcontext.Assignments.Include(ass=>ass.Assignmentquestion!.Content).AllAsync(ass=>ass.Classid==ClassId);
+           //List<Assignment> AllAssignmentsOfClass= await dbcontext.Assignments.Include(ass=>ass.Assignmentquestion).Where(ass=>ass.Classid==ClassId&&ass.Courseid== CourseId).ToListAsync();
 
-            throw new NotImplementedException();
+           // List<(Guid, String)> Assignments = new List<(Guid, string)>();
+
+           // if (AllAssignmentsOfClass.Count == 0)
+           // {
+           //     Assignments.Add((Guid.Empty, ""));
+           //     return Assignments; 
+           // }
+
+
+           // for (int i=0;i<AllAssignmentsOfClass.Count;i++) {
+
+           //     Assignments.Add((AllAssignmentsOfClass[i].Assignmentid, AllAssignmentsOfClass[i].Assignmentquestion!.Content));
+            
+            
+            
+           // }
+
+
+
+           // return Assignments; 
+
+
+
+            throw new NotImplementedException();    
+
+
+
+            
         
         
         }
@@ -69,9 +97,9 @@ namespace LmsApp2.Api.Repositories
         }
 
 
-        public async Task<Class> GetClass(Guid ClassId)
+        public async Task<Guid> GetClass(Guid ClassId)
         {
-            return await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
+            return await dbcontext.Classes.Where(cls => cls.Classid == ClassId).Select(cls=>cls.Classid).FirstOrDefaultAsync();
 
         }
 
