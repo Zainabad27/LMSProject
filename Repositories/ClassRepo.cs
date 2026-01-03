@@ -13,43 +13,51 @@ namespace LmsApp2.Api.Repositories
     public class ClassRepo(LmsDatabaseContext dbcontext) : IClassRepo
     {
 
-        public async Task<List<(Guid,String)>> GetAllAssignmentsOfClass(Guid ClassId,Guid CourseId) {
+        public async Task<List<AssignmentResponse>> GetAllAssignmentsOfClass(Guid ClassId, Guid CourseId)
+        {
 
-           //List<Assignment> AllAssignmentsOfClass= await dbcontext.Assignments.Include(ass=>ass.Assignmentquestion).Where(ass=>ass.Classid==ClassId&&ass.Courseid== CourseId).ToListAsync();
+            // List<Assignment> AllAssignmentsOfClass = await dbcontext.Assignments.Include(ass => ass.Assignmentquestion).Where(ass => ass.Classid == ClassId && ass.Courseid == CourseId).ToListAsync();
 
-           // List<(Guid, String)> Assignments = new List<(Guid, string)>();
+            List<Assignment> AllAssignmentsOfClass = await dbcontext.Assignments.Where(ass => ass.Classid == ClassId && ass.Courseid == CourseId).ToListAsync();
 
-           // if (AllAssignmentsOfClass.Count == 0)
-           // {
-           //     Assignments.Add((Guid.Empty, ""));
-           //     return Assignments; 
-           // }
-
-
-           // for (int i=0;i<AllAssignmentsOfClass.Count;i++) {
-
-           //     Assignments.Add((AllAssignmentsOfClass[i].Assignmentid, AllAssignmentsOfClass[i].Assignmentquestion!.Content));
-            
-            
-            
-           // }
+            List<AssignmentResponse> Assignments = new List<AssignmentResponse>();
 
 
 
-           // return Assignments; 
+            if (AllAssignmentsOfClass.Count == 0)
+            {
+
+                Assignments.Clear();    
+                return Assignments;
+            }
+
+
+            for (int i = 0; i < AllAssignmentsOfClass.Count; i++)
+            {
+
+
+                Assignments.Add((new AssignmentResponse
+                {
+                    AssignmentId = AllAssignmentsOfClass[i].Assignmentid,
+                    CourseName = AllAssignmentsOfClass[i].Coursename,
+                    Deadline=AllAssignmentsOfClass[i].Deadline,
+                    TotalMarks = (decimal) AllAssignmentsOfClass[i].Totalmarks!,
+
+
+                }));
 
 
 
-            throw new NotImplementedException();    
+            }
 
 
 
-            
-        
-        
+            return Assignments;
+
+
         }
 
-        public async Task<(bool,String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
+        public async Task<(bool, String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
         {
             var ClassInDb = await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
             if (ClassInDb == null)
@@ -62,14 +70,14 @@ namespace LmsApp2.Api.Repositories
             {
                 if (C.Courseid == CourseId)
                 {
-                    return (true,C.CourseName);
+                    return (true, C.CourseName);
                 }
 
 
             }
 
 
-            return (false,"No Course Found");
+            return (false, "No Course Found");
 
 
 
@@ -99,7 +107,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<Guid> GetClass(Guid ClassId)
         {
-            return await dbcontext.Classes.Where(cls => cls.Classid == ClassId).Select(cls=>cls.Classid).FirstOrDefaultAsync();
+            return await dbcontext.Classes.Where(cls => cls.Classid == ClassId).Select(cls => cls.Classid).FirstOrDefaultAsync();
 
         }
 

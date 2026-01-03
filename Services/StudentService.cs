@@ -6,7 +6,7 @@ using LmsApp2.Api.Utilities;
 
 namespace LmsApp2.Api.Services
 {
-    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo,IClassRepo clsRepo ,IWebHostEnvironment env) : IStudentService
+    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IClassRepo clsRepo, IWebHostEnvironment env) : IStudentService
     {
         public async Task<Guid> AddStudent(StudentDto std)
         {
@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Services
 
             if (SchoolId == Guid.Empty)
             {
-                throw new CustomException("The School Student is trying to register in does not Exists.",401);
+                throw new CustomException("The School Student is trying to register in does not Exists.", 401);
             }
 
 
@@ -44,27 +44,24 @@ namespace LmsApp2.Api.Services
 
             Guid DocId = await stdRepo.AddStudentDocuments(StudentId, PhotoFilePathOnServer, CnicBackFilePathOnServer, CnicFrontFilePathOnServer);
 
-            await stdRepo.SaveChanges();  
+            await stdRepo.SaveChanges();
 
             return StudentId;
 
         }
 
-        public async Task<List<IFormFile>> GetAllAssignments(Guid StdId,Guid CourseId)
+        public async Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId, Guid CourseId)
         {
             // first we have to check the students is real student 
             // then we have to check his class and in that class we will fetch the assignments for that particular course.
             // assignments are saved on the server in the form of jpeg or other file we have to fetch it from there DB only saves the Path of it on the server in the Database.
 
-            Guid StdClass=await stdRepo.GetStudentClass(StdId);
+            Guid StdClass = await stdRepo.GetStudentClass(StdId);
 
 
-            //clsRepo.GetAllAssignmentsOfClass();
+            List<AssignmentResponse> AssignmentIdAndData = await clsRepo.GetAllAssignmentsOfClass(StdClass, CourseId);
 
-
-
-
-            throw new NotImplementedException();    
+            return AssignmentIdAndData; 
 
         }
 

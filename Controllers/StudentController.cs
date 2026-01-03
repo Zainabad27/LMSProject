@@ -31,9 +31,9 @@ namespace LmsApp2.Api.Controllers
 
         }
         [HttpPost("GetAssignments")]
-        [Consumes("multipart/form-data")]
+        //[Consumes("multipart/form-data")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetAllAssignments([FromBody] Guid CourseId)
+        public async Task<IActionResult> GetAllAssignments([FromBody] GetAssignmentDto CourseId)
         {
             var Id = User.FindFirstValue("Id");
             if (Id == null)
@@ -43,10 +43,16 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdId = Guid.Parse(Id);
 
-            await StdService.GetAllAssignments(StdId, CourseId);
+            List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId, CourseId.CourseId);
 
+            //List<File> Files = new List<File>();
 
-            throw new NotImplementedException();
+            if (AllAssignments.Count==0)
+            {
+                return Ok("No Assignments Due Currently.");
+            }
+            
+            return Ok(AllAssignments);  
 
         }
     }
