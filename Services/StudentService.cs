@@ -3,10 +3,11 @@ using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
+using LmsApp2.Api.UtilitiesInterfaces;
 
 namespace LmsApp2.Api.Services
 {
-    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IClassRepo clsRepo, IWebHostEnvironment env) : IStudentService
+    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IAssignmentRepo AssRepo, IClassRepo clsRepo, IFetchFileFromServer FetchFile, IWebHostEnvironment env) : IStudentService
     {
         public async Task<Guid> AddStudent(StudentDto std)
         {
@@ -61,7 +62,44 @@ namespace LmsApp2.Api.Services
 
             List<AssignmentResponse> AssignmentIdAndData = await clsRepo.GetAllAssignmentsOfClass(StdClass, CourseId);
 
-            return AssignmentIdAndData; 
+            return AssignmentIdAndData;
+
+        }
+
+
+        public async Task<byte[]> DownloadAssignment(Guid AssignmentId, Guid StdId)
+        {
+            // first we have to validate that the Student is Enrolled in the class to which this Assignment is 
+
+            // then from Db we have to fetch Assignment path on server and then fetch file from server. 
+            Guid StdClassId = await stdRepo.GetStudentClass(StdId);
+
+            var AssignmentClassId = await AssRepo.GetAssignmentClass(AssignmentId);
+
+            if (AssignmentClassId == null)
+            {
+                throw new CustomException("No Assignment Found",400);
+
+            }
+
+
+            if (AssignmentClassId!=StdClassId) {
+                throw new CustomException("Student Is not Enrolled in this Class To Access this Assignment.",400);
+            
+            }
+
+
+            var PathOnServer=await AssRepo.GetAssignmentPath(AssignmentId);
+
+            if (PathOnServer==null) {
+                throw new CustomException("Assignment Question Paper was not found in the DB.");
+            
+            }
+
+
+
+            return FetchFile.FetchFile(PathOnServer);
+
 
         }
 

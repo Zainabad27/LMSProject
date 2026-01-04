@@ -47,13 +47,34 @@ namespace LmsApp2.Api.Controllers
 
             //List<File> Files = new List<File>();
 
-            if (AllAssignments.Count==0)
+            if (AllAssignments.Count == 0)
             {
                 return Ok("No Assignments Due Currently.");
             }
-            
-            return Ok(AllAssignments);  
+
+            return Ok(AllAssignments);
 
         }
+        [HttpPost("DownloadAssignment")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> DownloadAssignment([FromBody] Guid AssignmentId)
+        {
+            var Id = User.FindFirstValue("Id");
+            if (Id == null)
+            {
+                throw new CustomException("Unauthorized Access.");
+            }
+
+            Guid StdId = Guid.Parse(Id);
+
+
+
+
+            throw new NotImplementedException();
+
+        }
+
+
+
     }
 }
