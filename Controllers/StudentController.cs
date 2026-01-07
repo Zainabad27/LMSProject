@@ -57,7 +57,7 @@ namespace LmsApp2.Api.Controllers
         }
         [HttpPost("DownloadAssignment")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> DownloadAssignment([FromBody] Guid AssignmentId)
+        public async Task<IActionResult> DownloadAssignment([FromBody] DownloadAssignmentDto DownloadAssignment)
         {
             var Id = User.FindFirstValue("Id");
             if (Id == null)
@@ -68,9 +68,9 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
 
-            byte[] FileData= await StdService.DownloadAssignment(StdId, AssignmentId);
+            byte[] FileData= await StdService.DownloadAssignment(DownloadAssignment.AssignmentId, StdId);
 
-            return File(FileData,"image/png","Assignment");
+            return File(FileData,"image/jpg");
 
         }
 

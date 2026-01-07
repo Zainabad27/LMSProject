@@ -10,24 +10,33 @@ namespace LmsApp2.Api.Repositories
 {
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
-        public async Task<Guid> GetStudentClass(Guid StdId) {
+        public async Task<Guid?> GetStudentClass(Guid StdId)
+        {
+            var ClassIdtesting = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
             //await dbcontext.Students.Include(s => s.Class).Select(s=>s.Class.Classid).FirstOrDefaultAsync(s=>s.Studentid==StdId);
-         Guid ClassId= await dbcontext.Students.Where(s => s.Studentid == StdId&&s.Isactive==true).Select(s => s.Class!=null? s.Class.Classid:Guid.Empty).FirstOrDefaultAsync();
-            if (ClassId == Guid.Empty)
+            var ClassId = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
+
+
+
+
+            if (ClassId == null || ClassId == Guid.Empty)
             {
-                throw new CustomException("This Student Is not Active Currently or Is not enrolled in any Class currerntly",400);
+                throw new CustomException("This Student Is not Active Currently or Is not enrolled in any Class currerntly", 400);
 
             }
 
-            return ClassId; 
-        
+            
+
+            return ClassId;
+
         }
-        public async Task<Student> GetStudent(Guid StudentId) {
+        public async Task<Student> GetStudent(Guid StudentId)
+        {
 
 
-            return await dbcontext.Students.FirstOrDefaultAsync(std=>std.Studentid==StudentId);
-        
-        
+            return await dbcontext.Students.FirstOrDefaultAsync(std => std.Studentid == StudentId);
+
+
         }
         public async Task<Guid> AddStudent(StudentDto std, Guid SchoolId)
         {

@@ -13,7 +13,7 @@ namespace LmsApp2.Api.Repositories
     public class ClassRepo(LmsDatabaseContext dbcontext) : IClassRepo
     {
 
-        public async Task<List<AssignmentResponse>> GetAllAssignmentsOfClass(Guid ClassId, Guid CourseId)
+        public async Task<List<AssignmentResponse>> GetAllAssignmentsOfClass(Guid? ClassId, Guid CourseId)
         {
 
             // List<Assignment> AllAssignmentsOfClass = await dbcontext.Assignments.Include(ass => ass.Assignmentquestion).Where(ass => ass.Classid == ClassId && ass.Courseid == CourseId).ToListAsync();

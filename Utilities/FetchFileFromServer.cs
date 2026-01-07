@@ -16,15 +16,13 @@ namespace LmsApp2.Api.Utilities
         {
             string FullPath = env!.WebRootPath + "/" + Path;
 
-            if (!System.IO.File.Exists(Path))
+            if (!System.IO.File.Exists(FullPath))
             {
                 throw new CustomException("Some internal server error occured, File not found", 500);
             }
 
 
-
-
-            byte[] Data = File.ReadAllBytes(Path);
+            byte[] Data = File.ReadAllBytes(FullPath);
 
 
             return Data;

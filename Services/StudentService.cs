@@ -15,7 +15,7 @@ namespace LmsApp2.Api.Services
 
             if (SchoolId == Guid.Empty)
             {
-                throw new CustomException("The School Student is trying to register in does not Exists.", 401);
+                throw new CustomException("The School, Student is trying to register in, does not Exists.", 401);
             }
 
 
@@ -57,9 +57,9 @@ namespace LmsApp2.Api.Services
             // then we have to check his class and in that class we will fetch the assignments for that particular course.
             // assignments are saved on the server in the form of jpeg or other file we have to fetch it from there DB only saves the Path of it on the server in the Database.
 
-            Guid StdClass = await stdRepo.GetStudentClass(StdId);
+            Guid? StdClass = await stdRepo.GetStudentClass(StdId);
 
-
+            
             List<AssignmentResponse> AssignmentIdAndData = await clsRepo.GetAllAssignmentsOfClass(StdClass, CourseId);
 
             return AssignmentIdAndData;
@@ -72,7 +72,7 @@ namespace LmsApp2.Api.Services
             // first we have to validate that the Student is Enrolled in the class to which this Assignment is 
 
             // then from Db we have to fetch Assignment path on server and then fetch file from server. 
-            Guid StdClassId = await stdRepo.GetStudentClass(StdId);
+            Guid? StdClassId = await stdRepo.GetStudentClass(StdId);
 
             var AssignmentClassId = await AssRepo.GetAssignmentClass(AssignmentId);
 

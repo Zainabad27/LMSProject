@@ -7,7 +7,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
     {
         public Task<Student> GetStudent(Guid StudentId);
 
-        public Task<Guid> GetStudentClass(Guid StdId);
+        public Task<Guid?> GetStudentClass(Guid StdId);
 
         public Task<(Guid StudentId, Guid AccountId)> AuthorizeStudent(string email, string Password);
 
