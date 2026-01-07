@@ -8,7 +8,7 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
-        public async Task<Guid> UploadAssignment(AssignmentDto assignmentData,Guid TeacherId)
+        public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId)
         {
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
             // second we will check the class he is uploading assignment for does that course is assigned to that class or not
@@ -23,10 +23,10 @@ namespace LmsApp2.Api.Services
             bool Teacher_TeachesThisCourse = await employeerepo.CheckTeacherAndHisCourses(TeacherId, assignmentData.CourseId);
             if (!Teacher_TeachesThisCourse)
             {
-               throw new CustomException("This Teacher Cannot Upload Assignment for this Course because this course is not assigned to them(they do not teach this course)", 400);
+                throw new CustomException("This Teacher Cannot Upload Assignment for this Course because this course is not assigned to them(they do not teach this course)", 400);
             }
 
-            var (CourseisAssignedToClass,CourseName) = await ClsRepo.CheckClassAndItsCourses(assignmentData.Class, assignmentData.CourseId);
+            var (CourseisAssignedToClass, CourseName) = await ClsRepo.CheckClassAndItsCourses(assignmentData.Class, assignmentData.CourseId);
 
             if (!CourseisAssignedToClass)
             {
@@ -38,6 +38,7 @@ namespace LmsApp2.Api.Services
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Assignments");
 
+            //string aa = env.WebRootPath; was debugging.
 
             if (!Directory.Exists(DirectoryPath))
             {
@@ -46,9 +47,9 @@ namespace LmsApp2.Api.Services
             }
 
 
-            String AssignmentPathOnServer = await assignmentData.AssigmentFile.UploadToServer("Assignments");
+            String AssignmentPathOnServer = await assignmentData.AssigmentFile.UploadToServer(DirectoryPath);
 
-            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, AssignmentPathOnServer,TeacherId,CourseName);
+            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, $"Assignments/{assignmentData.AssigmentFile.FileName}", TeacherId, CourseName);
             await assrepo.SaveChanges();
 
             return AssignmentId;
