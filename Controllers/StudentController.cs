@@ -68,9 +68,9 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
 
+            byte[] FileData= await StdService.DownloadAssignment(StdId, AssignmentId);
 
-
-            throw new NotImplementedException();
+            return File(FileData,"image/png","Assignment");
 
         }
 

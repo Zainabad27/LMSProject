@@ -14,6 +14,8 @@ namespace LmsApp2.Api.ServicesInterfaces
 
         public Task<List<(Guid, String)>> GetStudentCourse(Guid StdId);
 
+        public Task<byte[]> DownloadAssignment(Guid AssignmentId, Guid StdId);
+
 
 
     }

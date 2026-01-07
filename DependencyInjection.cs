@@ -25,6 +25,7 @@ namespace LmsApp2.Api
             services.AddScoped<IClassService, ClassService>();
             
             services.AddScoped<IAssignmentRepo, AssignmentRepo>();
+            services.AddScoped<IFetchFileFromServer, FetchFileFromServer>();
 
 
             return services;
