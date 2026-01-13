@@ -12,6 +12,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
+
+
 //// logging control.   
 //builder.Logging.ClearProviders();
 //builder.Logging.AddConsole();
@@ -58,11 +60,14 @@ builder.Services.AddSwaggerGen();
 
 // Connecting to Database.
 
-builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("DB_URL")
+));
 
 
-var JwtIssuer = builder.Configuration["AppSettingsForJWT:Issuer"];
-var JwtKey = builder.Configuration["AppSettingsForJWT:Token"];
+// Console.WriteLine($"this is the env var bro: {Environment.GetEnvironmentVariable("DB_URL")}");
+
+var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var JwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -124,6 +129,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+app.MapGet("/", () => "Hello World from ASP.NET Core!");
 
 
 

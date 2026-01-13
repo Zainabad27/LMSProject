@@ -5,7 +5,8 @@
 
 ### Universal ###
 # Common files that should be ignored in all projects
-
+.vscode
+global.json
 # Logs
 *.log
 # Temporary files
