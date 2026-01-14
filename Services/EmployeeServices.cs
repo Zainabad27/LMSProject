@@ -105,12 +105,12 @@ namespace LmsApp2.Api.Services
 
 
             // now we have to upload the necessary documents of Employee and also save it too Server
-
+            Console.WriteLine($"this is the webroot path:===>>>{env.WebRootPath}");
             var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
 
             if (!Directory.Exists(DirectoryPath))
             {
-                throw new CustomException("Some Internal Server Error Occured while Saving the Assignment Data on the server.", 500);
+                throw new CustomException("Some Internal Server Error Occured while Saving the Employee Data on the server.", 500);
 
             }
 

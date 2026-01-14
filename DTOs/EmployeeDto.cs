@@ -11,7 +11,7 @@ namespace LmsApp2.Api.DTOs
         [Required]
         public string EmployeeName  { get; set; }
 
-        [Required]
+        // [Required]
         //public string EmployeeDesignation { get; set; }
 
         public string Religion { get; set; }
@@ -34,16 +34,16 @@ namespace LmsApp2.Api.DTOs
         public string Password { get; set; }
 
 
-        [Required]
+        // [Required]
         public IFormFile photo { get; set; }
 
 
-        [Required]
+        // [Required]
 
         public IFormFile Cnic_Front { get; set; }
         
 
-        [Required]
+        // [Required]
         public IFormFile Cnic_Back { get; set; }
 
         
