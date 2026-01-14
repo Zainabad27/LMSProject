@@ -65,17 +65,17 @@ namespace LmsApp2.Api.Utilities
 
         public (ClaimsPrincipal principal, SecurityToken validateToken) VerifyJwtToken(string token)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!));
             var tokenHandler = new JwtSecurityTokenHandler();
 
-
+   
             var validationParams = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
 
 
-                ValidIssuer = config["AppSettingsForJWT:Issuer"],
+                ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
                 ValidateIssuer = true,     // set to true if you want strict issuer check
 
 
@@ -109,11 +109,11 @@ namespace LmsApp2.Api.Utilities
         private string TokenGenerationForJwt(List<Claim> claims, int TokenExpiry, string Audience)
         {
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("AppSettingsForJWT:Token")!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var TokenDescriptor = new JwtSecurityToken(
-                issuer: config.GetValue<string>("AppSettingsForJWT:Issuer"),
+                issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
                 audience: Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(TokenExpiry),
