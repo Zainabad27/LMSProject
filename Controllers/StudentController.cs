@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class StudentController(IStudentService StdService) : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace LmsApp2.Api.Controllers
 
 
         }
-        [HttpPost("GetAssignments")]
+        [HttpGet("GetAssignments")]
         //[Consumes("multipart/form-data")]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetAllAssignments([FromBody] GetAssignmentDto CourseId)
@@ -55,7 +55,7 @@ namespace LmsApp2.Api.Controllers
             return Ok(AllAssignments);
 
         }
-        [HttpPost("DownloadAssignment")]
+        [HttpGet("DownloadAssignment")]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> DownloadAssignment([FromBody] DownloadAssignmentDto DownloadAssignment)
         {
