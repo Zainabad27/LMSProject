@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]s")]
     [ApiController]
     public class AssignmentController(IEmployeeService employeeService) : ControllerBase
     {

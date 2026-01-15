@@ -47,9 +47,9 @@ namespace LmsApp2.Api.Services
             }
 
 
-            String AssignmentPathOnServer = await assignmentData.AssigmentFile.UploadToServer(DirectoryPath);
+            String AssignmentPathOnServer = await assignmentData.AssignmentFile.UploadToServer(DirectoryPath);
 
-            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, $"Assignments/{assignmentData.AssigmentFile.FileName}", TeacherId, CourseName);
+            Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, $"Assignments/{assignmentData.AssignmentFile.FileName}", TeacherId, CourseName);
             await assrepo.SaveChanges();
 
             return AssignmentId;
