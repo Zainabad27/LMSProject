@@ -4,6 +4,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IAssignmentRepo
     {
+          public Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId);
         public Task<string?> GetAssignmentPath(Guid AssignmentId);
 
         public Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer, Guid TeacherId, String CourseName);

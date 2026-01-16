@@ -16,18 +16,32 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> GetAssigments([FromBody] Guid CourseId)
         {
+            var userClaims = User;
+            var TeacherId = userClaims.FindFirstValue("Id");
+             
+             if (TeacherId == null)
+             {
+                 throw new CustomException("Unauthorized Access.", 403);
+
+             }
+
+
+             Guid TId = Guid.Parse(TeacherId);
+
+
+            List<(Guid,string)> AllAssignments= await employeeService.GetAssignmentsOfTeacher(TId, CourseId);
 
 
 
 
-            throw new NotImplementedException();
+            return Ok(AllAssignments );
 
         }
 
 
         [HttpPost("AssignmentSubmission")]
         [Consumes("multipart/form-data")]
-        [Authorize(Roles = "Stduent")]
+        [Authorize(Roles = "Student")]
 
         public async Task<IActionResult> AssignmentSubmission([FromBody] AssignmentSubmissionDto submission)
         {

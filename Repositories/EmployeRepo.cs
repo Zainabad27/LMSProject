@@ -366,7 +366,7 @@ namespace LmsApp2.Api.Repositories
 
             if (EmployeeInDatabase.Employeedesignation != "Teacher")
             {
-                throw new CustomException("This Employee is not a teacher hence cannot upload a assignment.");
+                throw new CustomException("This Employee is not a Teacher.", 400);
             }
             List<Course> cc = EmployeeInDatabase.Courses.ToList();
 

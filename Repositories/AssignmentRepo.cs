@@ -9,6 +9,33 @@ namespace LmsApp2.Api.Repositories
 {
     public class AssignmentRepo(LmsDatabaseContext dbcontext) : IAssignmentRepo
     {
+        public async Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId)
+        {
+            // return all the assignments uploaded by this teacher for this course. 
+
+
+         var Teacher= await  dbcontext.Employees.Include(emp => emp.Assignments).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
+
+            if (Teacher == null)
+            {
+                throw new CustomException("Teacher was not found in the Database", 400);
+            }
+            List<(Guid AssignmentId, string AssignmentName)> AssignmentsList = new List<(Guid AssignmentId, string AssignmentName)>();
+
+           foreach(Assignment ass in Teacher.Assignments)
+            {
+                if (ass.Courseid == CourseId)
+                {
+                    AssignmentsList.Add((ass.Assignmentid, ass.Coursename));
+                }
+
+                
+            }
+
+
+            return AssignmentsList;
+            
+        }
 
         public async Task<string?> GetAssignmentPath(Guid AssignmentId) {
         

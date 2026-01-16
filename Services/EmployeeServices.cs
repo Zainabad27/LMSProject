@@ -8,6 +8,33 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
+        public async Task<List<(Guid AssignmentId,string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
+        {
+            // first we have to check that the teacher is assigned to that course or not
+
+            // if assigned then we will fetch all the assignments uploaded by that teacher for that course. 
+
+           bool TeachesThisSubject= await employeerepo.CheckTeacherAndHisCourses(TeacherId, CourseId);
+            if (!TeachesThisSubject)
+            {
+                throw new CustomException("This Teacher is not assigned to this Course hence cannot fetch assignments for this Course.", 400);
+            }
+
+            List<(Guid AssignmentId, string CourseName)> AssignmentsList;
+    
+            AssignmentsList=await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId); 
+
+
+            if(AssignmentsList.Count==0)
+            {
+                throw new CustomException("No Assignments were found for this Teacher for this Course.", 404);
+            }
+
+            return AssignmentsList;
+            
+        }
+
+
         public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId)
         {
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
