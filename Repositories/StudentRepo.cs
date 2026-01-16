@@ -40,7 +40,7 @@ namespace LmsApp2.Api.Repositories
             return ClassId;
 
         }
-        public async Task<Student> GetStudent(Guid StudentId)
+        public async Task<Student?> GetStudent(Guid StudentId)
         {
 
 
