@@ -31,6 +31,37 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<bool> ValidAssignment(Guid AssignmentId)
+        {
+            var ass=await dbcontext.Assignments.FirstOrDefaultAsync(ass=>ass.Assignmentid==AssignmentId);
+    
+
+            if (ass == null)
+            {
+                throw new CustomException("Assignment was not found in the Database",400);
+            }
+
+            if(ass.Deadline < DateTime.UtcNow)
+            {
+                throw new CustomException("Assignment deadline has passed.");
+            }
+
+            return true;
+        }
+
+        public async Task<DateTime> GetAssignmentDeadline(Guid AssignmentId)
+        {
+            var deadline = await dbcontext.Assignments.Where(ass => ass.Assignmentid == AssignmentId).Select(ass => ass.Deadline).FirstOrDefaultAsync();
+
+            if (deadline <= DateTime.MinValue)
+            {
+                throw new CustomException("Assignment deadline was not set.",400);
+            }
+
+
+            return deadline;    
+        }
+
 
         public async Task<Guid?> GetAssignmentClass(Guid AssignmentId)
         {

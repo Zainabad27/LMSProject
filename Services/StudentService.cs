@@ -4,11 +4,54 @@ using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
 using LmsApp2.Api.UtilitiesInterfaces;
+using LMSProject.DTOs;
 
 namespace LmsApp2.Api.Services
 {
     public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IAssignmentRepo AssRepo, IClassRepo clsRepo, IFetchFileFromServer FetchFile, IWebHostEnvironment env) : IStudentService
     {
+
+
+        public async Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId)
+        {
+            // first we have to validate that the student is enrolled in the class to which this assignment belongs.    
+
+            // then we will check that the assignment is valid and exists in the Db.
+
+            // then we will check the deadline of the assignment is not passed.
+
+            // then we will save the file on the server and save the path in the Db against that student and assignment.
+
+            Guid? StudentClassId = await stdRepo.GetStudentClass(StudentId);
+
+            Guid? AssignmentClassId = await AssRepo.GetAssignmentClass(Submission.AssignmentId);
+
+            if (AssignmentClassId == null)
+            {
+                throw new CustomException("No Assignment Found", 400);
+            }
+            if (AssignmentClassId != StudentClassId)
+            {
+                throw new CustomException("Student Is not Enrolled in this Class To Submit this Assignment.", 400);
+
+            }
+
+            await AssRepo.ValidAssignment(Submission.AssignmentId); // checks the deadline and existence of assignment.
+
+
+            var DirectoryPath = Path.Combine(env.WebRootPath, "Submissions");
+
+
+
+            string SubmissionFilePathOnServer = await Submission.SubmissionFile.UploadToServer(DirectoryPath);
+
+            Guid SubmissionId = await stdRepo.SubmitAssignment(Submission, StudentId, SubmissionFilePathOnServer);
+
+            await stdRepo.SaveChanges();
+
+
+            return SubmissionId;
+        }
         public async Task<Guid> AddStudent(StudentDto std)
         {
             Guid SchoolId = await schRepo.GetSchoolByName(std.SchoolName);
@@ -59,7 +102,7 @@ namespace LmsApp2.Api.Services
 
             Guid? StdClass = await stdRepo.GetStudentClass(StdId);
 
-            
+
             List<AssignmentResponse> AssignmentIdAndData = await clsRepo.GetAllAssignmentsOfClass(StdClass, CourseId);
 
             return AssignmentIdAndData;
@@ -78,22 +121,24 @@ namespace LmsApp2.Api.Services
 
             if (AssignmentClassId == null)
             {
-                throw new CustomException("No Assignment Found",400);
+                throw new CustomException("No Assignment Found", 400);
 
             }
 
 
-            if (AssignmentClassId!=StdClassId) {
-                throw new CustomException("Student Is not Enrolled in this Class To Access this Assignment.",400);
-            
+            if (AssignmentClassId != StdClassId)
+            {
+                throw new CustomException("Student Is not Enrolled in this Class To Access this Assignment.", 400);
+
             }
 
 
-            var PathOnServer=await AssRepo.GetAssignmentPath(AssignmentId);
+            var PathOnServer = await AssRepo.GetAssignmentPath(AssignmentId);
 
-            if (PathOnServer==null) {
+            if (PathOnServer == null)
+            {
                 throw new CustomException("Assignment Question Paper was not found in the DB.");
-            
+
             }
 
 

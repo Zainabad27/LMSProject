@@ -4,12 +4,22 @@ using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.Utilities;
+using LMSProject.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
 {
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
+
+        public async Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId, string SubmissionFilePathOnServer)
+        {
+            Assignmentsubmission sub=Submission.To_DBMODEL(StudentId, SubmissionFilePathOnServer);
+            await dbcontext.Assignmentsubmissions.AddAsync(sub);
+
+            return sub.Assignmentsubmissionid;  
+            
+        }
         public async Task<Guid?> GetStudentClass(Guid StdId)
         {
             var ClassIdtesting = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
