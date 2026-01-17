@@ -4,50 +4,184 @@ using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.DTOs;
 using System.Threading.Tasks;
+using LmsApp2.Api.Exceptions;
 
 namespace LMSPROJECT.Integration_tests;
 
 public class ClassService_UnitTests
 {
+
+
     [Fact]
-    public async Task EnrollStudent_FuncUnitTests()
+    public async Task EnrollStudentSuccessfully()
+    {
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+        Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
+
+
+        Student std = new Student()
+        {
+            Studentid = It.IsAny<Guid>(),
+            Studentname = "Test Student",
+            Isactive = true,
+            Classid = Guid.Empty
+        };
+
+        Guid IdThatClassRepoReturns = Guid.NewGuid();
+        ClassRepoMock.Setup(crm => crm.GetClass(It.IsAny<Guid>())).ReturnsAsync(IdThatClassRepoReturns);
+        StudentRepoMock.Setup(srm => srm.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
+
+        Guid ClassId = Guid.NewGuid();
+        Guid StdId = Guid.NewGuid();
+
+
+        EnrollClassDto Edata = new();
+        Edata.ClassId = ClassId;
+        Edata.StudentId = StdId;
+
+        ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
+
+
+        var Result = await Cs.EnrollStudent(Edata);
+
+        Assert.Equal(IdThatClassRepoReturns, Result);
+
+
+
+
+    }
+
+    [Fact]
+    public async Task StudentDoesNotExistsInSchoolShouldThrowException()
+    {
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+        Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
+
+
+        Student std = null;
+
+
+        Guid IdThatClassRepoReturns = Guid.NewGuid();
+        ClassRepoMock.Setup(crm => crm.GetClass(It.IsAny<Guid>())).ReturnsAsync(IdThatClassRepoReturns);
+        StudentRepoMock.Setup(srm => srm.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
+
+        Guid ClassId = Guid.NewGuid();
+        Guid StdId = Guid.NewGuid();
+
+
+        EnrollClassDto Edata = new();
+        Edata.ClassId = ClassId;
+        Edata.StudentId = StdId;
+
+        ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
+
+
+        var ex = await Assert.ThrowsAsync<CustomException>(() =>
+          Cs.EnrollStudent(Edata)
+       );
+
+
+        Assert.Equal("this Student does not exists in the database.", ex.Message);
+        Assert.Equal(400, ex.StatusCode);
+
+
+
+    }
+
+
+
+    [Fact]
+    public async Task StudentAlreadyEnrolledShouldThrowException()
+    {
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+        Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
+
+        Guid IdThatClassRepoReturns = Guid.NewGuid();
+
+        Guid ClassId = Guid.NewGuid(); // this id is the classid that user want to enroll in but also this is the id student already enrolled in in the returned db model object 
+        Guid StdId = Guid.NewGuid();
+
+
+        Student std = new Student()
+        {
+            Studentid = It.IsAny<Guid>(),
+            Studentname = "Test Student",
+            Isactive = true,
+            Classid = ClassId
+        };
+
+        ClassRepoMock.Setup(crm => crm.GetClass(It.IsAny<Guid>())).ReturnsAsync(IdThatClassRepoReturns);
+        StudentRepoMock.Setup(srm => srm.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
+
+        // Guid ClassId = Guid.NewGuid();
+        // Guid StdId = Guid.NewGuid();
+
+
+        EnrollClassDto Edata = new();
+        Edata.ClassId = ClassId;
+        Edata.StudentId = StdId;
+
+        ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
+
+
+        var ex = await Assert.ThrowsAsync<CustomException>(() =>
+          Cs.EnrollStudent(Edata)
+       );
+
+
+        Assert.Equal("this Student is Already Enrolled in this class.", ex.Message);
+        Assert.Equal(400, ex.StatusCode);
+
+
+
+    }
+    [Fact]
+    public async Task EnrollStudentInANonExistentClassShouldThrowException()
     {
         // AAA 
         // Arrange
-        var SchoolRepoMock = new Mock<ISchoolRepo>();
-        var ClassRepoMock = new Mock<IClassRepo>();
-        var StudentRepoMock = new Mock<IStudentRepo>();
+
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+        Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
+
         var inputId = Guid.NewGuid();
         var returnId = Guid.NewGuid();
 
 
-        Student std=new Student()
+        Student std = new Student()
         {
-            Studentid = inputId,
+            Studentid = It.IsAny<Guid>(),
             Studentname = "Test Student",
             Isactive = true,
             Classid = Guid.Empty
         };
 
 
-        ClassRepoMock.Setup(cr => cr.GetClass(It.IsAny<Guid>())).ReturnsAsync(returnId);
-        StudentRepoMock.Setup(sr=>sr.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
+        ClassRepoMock.Setup(cr => cr.GetClass(It.IsAny<Guid>())).ReturnsAsync(Guid.Empty);
+        StudentRepoMock.Setup(sr => sr.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
 
 
 
-        EnrollClassDto EData=new();
-        EData.ClassId=It.IsAny<Guid>(); 
-        EData.StudentId=It.IsAny<Guid>();   
+        EnrollClassDto EData = new();
+        EData.ClassId = It.IsAny<Guid>();
+        EData.StudentId = It.IsAny<Guid>();
 
 
-        ClassService Cs = new ClassService(null, ClassRepoMock.Object, StudentRepoMock.Object);
+        ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
 
-    // action
-       Guid ClassID= await Cs.EnrollStudent(EData);
+        // action
+        var ex = await Assert.ThrowsAsync<CustomException>(() =>
+           Cs.EnrollStudent(EData)
+        );
 
 
         // Assert
-        Assert.Equal(returnId, ClassID);
+        Assert.Equal("This Class Does not Exists in the School.", ex.Message);
+        Assert.Equal(400, ex.StatusCode);
 
 
     }

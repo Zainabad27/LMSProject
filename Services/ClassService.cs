@@ -25,13 +25,13 @@ namespace LmsApp2.Api.Services
 
             if (StudentInDb == null)
             {
-                throw new CustomException("this Student does not exists in the database.");
+                throw new CustomException("this Student does not exists in the database.",400);
 
             }
 
             if (StudentInDb.Isactive == false)
             {
-                throw new CustomException("this student is currently not active.");
+                throw new CustomException("this student is currently not active.",400);
             }
 
 
