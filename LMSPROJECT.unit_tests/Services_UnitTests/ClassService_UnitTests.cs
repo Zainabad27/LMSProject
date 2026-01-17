@@ -60,7 +60,7 @@ public class ClassService_UnitTests
         Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
 
 
-        Student std = null;
+        Student std = null!;
 
 
         Guid IdThatClassRepoReturns = Guid.NewGuid();
@@ -138,6 +138,50 @@ public class ClassService_UnitTests
 
 
     }
+
+    [Fact]
+    public async Task StudentNotActiveShouldThrowException()
+    {
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+        Mock<IStudentRepo> StudentRepoMock = new Mock<IStudentRepo>();
+
+        Guid IdThatClassRepoReturns = Guid.NewGuid();
+
+        Guid ClassId = Guid.NewGuid(); // this id is the classid that user want to enroll in but also this is the id student already enrolled in in the returned db model object 
+        Guid StdId = Guid.NewGuid();
+
+
+        Student std = new Student()
+        {
+            Studentid = It.IsAny<Guid>(),
+            Studentname = "Test Student",
+            Isactive = false,
+            Classid = Guid.NewGuid()
+        };
+
+        ClassRepoMock.Setup(crm => crm.GetClass(It.IsAny<Guid>())).ReturnsAsync(IdThatClassRepoReturns);
+        StudentRepoMock.Setup(srm => srm.GetStudent(It.IsAny<Guid>())).ReturnsAsync(std);
+
+        EnrollClassDto Edata = new();
+        Edata.ClassId = ClassId;
+        Edata.StudentId = StdId;
+
+        ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
+
+
+        var ex = await Assert.ThrowsAsync<CustomException>(() =>
+          Cs.EnrollStudent(Edata)
+       );
+
+
+        Assert.Equal("this student is currently not active.", ex.Message);
+        Assert.Equal(400, ex.StatusCode);
+
+
+
+    }
+
     [Fact]
     public async Task EnrollStudentInANonExistentClassShouldThrowException()
     {
@@ -166,9 +210,11 @@ public class ClassService_UnitTests
 
 
 
-        EnrollClassDto EData = new();
-        EData.ClassId = It.IsAny<Guid>();
-        EData.StudentId = It.IsAny<Guid>();
+        EnrollClassDto EData = new()
+        {
+            ClassId = It.IsAny<Guid>(),
+            StudentId = It.IsAny<Guid>()
+        };
 
 
         ClassService Cs = new ClassService(null!, ClassRepoMock.Object, StudentRepoMock.Object);
@@ -182,6 +228,43 @@ public class ClassService_UnitTests
         // Assert
         Assert.Equal("This Class Does not Exists in the School.", ex.Message);
         Assert.Equal(400, ex.StatusCode);
+
+
+    }
+
+
+
+
+    [Fact]
+
+    public async Task AddAClassInASchoolSuccessfully()
+    {
+        Mock<ISchoolRepo> SchoolRepoMock = new Mock<ISchoolRepo>();
+        Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
+
+        Guid SchoolId = Guid.NewGuid();
+        SchoolRepoMock.Setup(srm => srm.GetSchoolByName("Valid School Name")).ReturnsAsync(SchoolId);
+        ClassRepoMock.Setup(crm => crm.GetClass(SchoolId, "Some Valid Section", "Some Valid Grade")).ReturnsAsync(Guid.Empty);
+        ClassDto cls = new()
+        {
+            SchoolName = "Some Valid SchoolName",
+            ClassGrade = "Valid Grade",
+            ClassSection = "Valid Section"
+
+        };
+        Guid ClsId = It.IsAny<Guid>();
+        ClassRepoMock.Setup(crm => crm.AddClass(cls, SchoolId)).ReturnsAsync(ClsId);
+
+        ClassService Cs = new(SchoolRepoMock.Object, ClassRepoMock.Object, null!);
+
+        var Result = await Cs.AddClass(cls);
+
+
+
+        Assert.Equal(ClsId, Result);
+
+
+
 
 
     }
