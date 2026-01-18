@@ -243,8 +243,8 @@ public class ClassService_UnitTests
         Mock<IClassRepo> ClassRepoMock = new Mock<IClassRepo>();
 
         Guid SchoolId = Guid.NewGuid();
-        SchoolRepoMock.Setup(srm => srm.GetSchoolByName("Valid School Name")).ReturnsAsync(SchoolId);
-        ClassRepoMock.Setup(crm => crm.GetClass(SchoolId, "Some Valid Section", "Some Valid Grade")).ReturnsAsync(Guid.Empty);
+        SchoolRepoMock.Setup(srm => srm.GetSchoolByName("Some Valid SchoolName")).ReturnsAsync(SchoolId);
+        ClassRepoMock.Setup(crm => crm.GetClass(SchoolId, "Valid Section", "Valid Grade")).ReturnsAsync(Guid.Empty);
         ClassDto cls = new()
         {
             SchoolName = "Some Valid SchoolName",

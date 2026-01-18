@@ -19,7 +19,7 @@ namespace LmsApp2.Api.Controllers
             var u = User;
             
 
-            Console.WriteLine($"this is the employee Data:=====>>>> {emp}");
+            // Console.WriteLine($"this is the employee Data:=====>>>> {emp}");
 
 
             Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
@@ -45,6 +45,9 @@ namespace LmsApp2.Api.Controllers
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
+
+
+
 
 
 

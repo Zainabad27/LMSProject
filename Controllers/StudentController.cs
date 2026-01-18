@@ -4,6 +4,7 @@ using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
@@ -68,10 +69,29 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
 
-            byte[] FileData= await StdService.DownloadAssignment(DownloadAssignment.AssignmentId, StdId);
+            byte[] FileData = await StdService.DownloadAssignment(DownloadAssignment.AssignmentId, StdId);
 
-            return File(FileData,"image/jpg");
+            return File(FileData, "image/jpg");
 
+        }
+
+        [HttpGet("GetAllCourses")]
+        [Authorize(Roles = "Student")]
+
+        public async Task<IActionResult> GetAllCourses()
+        {
+            var Id = User.FindFirstValue("Id");
+            if (Id == null)
+            {
+                throw new CustomException("Unauthorized Access.");
+            }
+
+            Guid StdId = Guid.Parse(Id);
+
+            
+
+
+            throw new NotImplementedException();
         }
 
 

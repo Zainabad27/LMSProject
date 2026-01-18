@@ -148,9 +148,25 @@ namespace LmsApp2.Api.Services
 
         }
 
-        public Task<List<(Guid, string)>> GetStudentCourse(Guid StdId)
+        public async Task<List<(string CourseName, Guid CourseId)>> GetStudentCourses(Guid StdId)
         {
-            throw new NotImplementedException();
+            // first we have to  validtae that the student is real student and active in the system.
+            // then we will fetch his class and then we will fetch all the courses assigned to that class.
+            var (IsStudentPresentAndActive,ClassId) = await stdRepo.ValidStudent(StdId);       
+            if (!IsStudentPresentAndActive)
+            {
+                throw new CustomException("No Active Student Found with this Id", 400);
+            }
+
+            if (ClassId == null)
+            {
+                throw new CustomException("This Student Is not enrolled in any Class currerntly", 400);
+            }
+
+
+            var CourseList = await stdRepo.GetStudentCourses(ClassId.Value);
+
+            return CourseList;
         }
     }
 }

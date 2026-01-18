@@ -6,15 +6,16 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IStudentService
     {
-        public  Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId);
+        public Task<List<(string CourseName, Guid CourseId)>> GetStudentCourses(Guid StdId);
+        public Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId);
 
         public Task<Guid> AddStudent(StudentDto std);
 
 
-        public Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId,Guid CourseId);
+        public Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId, Guid CourseId);
 
 
-        public Task<List<(Guid, String)>> GetStudentCourse(Guid StdId);
+        // public Task<List<(Guid, String)>> GetStudentCourses(Guid StdId);
 
         public Task<byte[]> DownloadAssignment(Guid AssignmentId, Guid StdId);
 

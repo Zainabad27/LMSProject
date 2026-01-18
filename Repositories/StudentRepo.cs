@@ -9,21 +9,54 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
 {
+
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
+        public async Task<List<(String CourseName, Guid CourseId)>> GetStudentCourses(Guid ClassId)
+        {
+            var Courses = await dbcontext.Classes.Include(cls => cls.Courses).Where(cls => cls.Classid == ClassId).Select(cls => cls.Courses).FirstOrDefaultAsync();
+
+            if (Courses == null || Courses.Count == 0)
+            {
+                throw new CustomException("No Courses Found for this Class", 404);
+            }
+
+            List<(String CourseName, Guid CourseId)> CourseList = [];
+
+
+            foreach (Course C in Courses)
+            {
+                CourseList.Add((C.CourseName, C.Courseid));
+            }
+
+
+            return CourseList;
+
+        }
+
+        public async Task<(bool ValidStudent,Guid? ClassId)> ValidStudent(Guid StudentId)
+        {
+            var StudentInDb = await dbcontext.Students.FirstOrDefaultAsync(std => std.Studentid == StudentId && std.Isactive == true);
+            if (StudentInDb == null)
+            {
+                return (false, Guid.Empty);
+            }
+            return (true, StudentInDb.Classid);
+
+        }
 
         public async Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId, string SubmissionFilePathOnServer)
         {
-            Assignmentsubmission sub=Submission.To_DBMODEL(StudentId, SubmissionFilePathOnServer);
+            Assignmentsubmission sub = Submission.To_DBMODEL(StudentId, SubmissionFilePathOnServer);
             await dbcontext.Assignmentsubmissions.AddAsync(sub);
 
-            return sub.Assignmentsubmissionid;  
-            
+            return sub.Assignmentsubmissionid;
+
         }
         public async Task<Guid?> GetStudentClass(Guid StdId)
         {
-            var ClassIdtesting = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
-            //await dbcontext.Students.Include(s => s.Class).Select(s=>s.Class.Classid).FirstOrDefaultAsync(s=>s.Studentid==StdId);
+            // var ClassIdtesting = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
+
             var ClassId = await dbcontext.Students.Where(s => s.Studentid == StdId && s.Isactive == true).Select(s => s.Classid).FirstOrDefaultAsync();
 
 
@@ -35,7 +68,7 @@ namespace LmsApp2.Api.Repositories
 
             }
 
-            
+
 
             return ClassId;
 

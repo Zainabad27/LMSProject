@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace LmsApp2.Api.Models;
-
+      
 public partial class Class
 {
     public Guid Classid { get; set; }
@@ -15,13 +15,13 @@ public partial class Class
 
     public DateTime? Createdat { get; set; }
 
-    public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+    public virtual ICollection<Assignment> Assignments { get; set; } = [];
 
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+    public virtual ICollection<Course> Courses { get; set; } = [];
 
-    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+    public virtual ICollection<Exam> Exams { get; set; } = [];
 
     public virtual School? School { get; set; }
 
-    public virtual ICollection<Student> Students { get; set; } = new List<Student>();
+    public virtual ICollection<Student> Students { get; set; } = [];
 }

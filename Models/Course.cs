@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace LmsApp2.Api.Models;
-
+     
 public partial class Course
 {
     public Guid Courseid { get; set; }
