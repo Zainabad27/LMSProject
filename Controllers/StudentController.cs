@@ -88,10 +88,15 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdId = Guid.Parse(Id);
 
-            
+            List<SendCoursesToFrontendDto> Courses = await StdService.GetStudentCourses(StdId);
+
+        //  Console.WriteLine($"this is the returned courses====>>>>>    {Courses.Count}");
 
 
-            throw new NotImplementedException();
+
+
+
+            return Ok(Courses);
         }
 
 

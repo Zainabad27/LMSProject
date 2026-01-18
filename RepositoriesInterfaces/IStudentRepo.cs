@@ -6,7 +6,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IStudentRepo
     {
-         public Task<List<(String CourseName, Guid CourseId)>> GetStudentCourses(Guid ClassId);
+         public  Task<List<SendCoursesToFrontendDto>> GetStudentCourses(Guid ClassId);
        public Task<(bool ValidStudent,Guid? ClassId)> ValidStudent(Guid StudentId);
         public Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId, string SubmissionFilePathOnServer);
         public Task<Student?> GetStudent(Guid StudentId);

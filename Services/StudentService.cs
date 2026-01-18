@@ -148,7 +148,7 @@ namespace LmsApp2.Api.Services
 
         }
 
-        public async Task<List<(string CourseName, Guid CourseId)>> GetStudentCourses(Guid StdId)
+        public async Task<List<SendCoursesToFrontendDto>> GetStudentCourses(Guid StdId)
         {
             // first we have to  validtae that the student is real student and active in the system.
             // then we will fetch his class and then we will fetch all the courses assigned to that class.

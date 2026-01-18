@@ -12,7 +12,7 @@ namespace LmsApp2.Api.Repositories
 
     public class StudentRepo(LmsDatabaseContext dbcontext) : IStudentRepo
     {
-        public async Task<List<(String CourseName, Guid CourseId)>> GetStudentCourses(Guid ClassId)
+        public async Task<List<SendCoursesToFrontendDto>> GetStudentCourses(Guid ClassId)
         {
             var Courses = await dbcontext.Classes.Include(cls => cls.Courses).Where(cls => cls.Classid == ClassId).Select(cls => cls.Courses).FirstOrDefaultAsync();
 
@@ -21,12 +21,12 @@ namespace LmsApp2.Api.Repositories
                 throw new CustomException("No Courses Found for this Class", 404);
             }
 
-            List<(String CourseName, Guid CourseId)> CourseList = [];
+            List<SendCoursesToFrontendDto> CourseList = [];
 
 
             foreach (Course C in Courses)
             {
-                CourseList.Add((C.CourseName, C.Courseid));
+                CourseList.Add(new SendCoursesToFrontendDto { CourseName = C.CourseName, CourseId = C.Courseid });
             }
 
 
