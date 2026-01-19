@@ -8,7 +8,7 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData);
         public Task<Guid> AddClass(ClassDto Class);
 
-
-        public Task<Guid> AddCourseToAClass(CourseDto courseData);
+        public Task<Guid> AssignCourseToAClass(Guid ClassId, Guid CourseId);
+        public Task<Guid> AddCourse(CourseDto courseData);
     }
 }

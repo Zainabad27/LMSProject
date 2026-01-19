@@ -25,13 +25,13 @@ namespace LmsApp2.Api.Services
 
             if (StudentInDb == null)
             {
-                throw new CustomException("this Student does not exists in the database.",400);
+                throw new CustomException("this Student does not exists in the database.", 400);
 
             }
 
             if (StudentInDb.Isactive == false)
             {
-                throw new CustomException("this student is currently not active.",400);
+                throw new CustomException("this student is currently not active.", 400);
             }
 
 
@@ -85,41 +85,38 @@ namespace LmsApp2.Api.Services
 
         }
 
-        public async Task<Guid> AddCourseToAClass(CourseDto courseData)
+        public async Task<Guid> AssignCourseToAClass(Guid ClassId, Guid CourseId)
         {
-            Guid SchoolId = await schRepo.GetSchoolByName(courseData.SchoolName);
-            if (SchoolId == Guid.Empty)
+            // first we have to check if class and course both exists.
+            // then we have to check if that course is already assigned to that class.
+            // then we have to assign the course to that class.
+            Guid clsId = await classRepo.GetClass(ClassId);
+            if (clsId == Guid.Empty)
             {
-                throw new CustomException($"{courseData.SchoolName} School does not Exists in the database.", 400);
-            }
-            Guid ClassID = await classRepo.GetClass(SchoolId, courseData.ClassSection.ToUpper(), courseData.ClassGrade);
-
-            if (ClassID == Guid.Empty)
-            {
-
-                throw new CustomException($" Class {courseData.ClassGrade} {courseData.ClassSection.ToUpper()} does not exist in {courseData.SchoolName} yet.", 400);
-
-
+                throw new CustomException("This Class Does Not Exists in our database", 400);
             }
 
+            var (CourseExists, CourseName) = await classRepo.CheckClassAndItsCourses(clsId, CourseId);
 
-            // now that we have checked the class does exists we have to check if that class already has this course registered for it.
-
-            Guid CourseAlreadyExistsInThisClass = await classRepo.GetACourse(ClassID, courseData.CourseName, courseData.BoardOrDepartment);
-
-            if (CourseAlreadyExistsInThisClass != Guid.Empty)
+            if (CourseExists)
             {
-
-                throw new CustomException($"Course {courseData.CourseName} already exists in class {courseData.ClassGrade} {courseData.ClassSection.ToUpper()} of {courseData.SchoolName}", 400);
-
+                throw new CustomException($"This Course {CourseName} is already assigned to this class.", 400);
             }
 
-            Guid CourseId = await classRepo.AddCourse(ClassID, courseData);
 
+            // now we can assign this course to this class.
+
+            await classRepo.AssignCourseToAClass(CourseId, clsId);
             await classRepo.SaveChanges();
-
             return CourseId;
+        }
 
+        public async Task<Guid> AddCourse(CourseDto courseData)
+        {
+            // we have to do no validations basically.
+            Guid AddedCourseId = await classRepo.AddCourse(courseData);
+            await classRepo.SaveChanges();
+            return AddedCourseId;
         }
     }
 }

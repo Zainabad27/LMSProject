@@ -26,12 +26,22 @@ namespace LmsApp2.Api.Controllers
         {
            
 
-            Guid CourseId = await ClassServices.AddCourseToAClass(CourseData);
+            Guid CourseId = await ClassServices.AddCourse(CourseData);
 
 
             return Ok(new { AddedCourseId = CourseId });
 
 
+
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("AssignCourseToClass")]
+        public async Task<IActionResult> AssignCourseToClass([FromBody] AssignCourseToClassDto Data)
+        {
+           await ClassServices.AssignCourseToAClass(Data.ClassId, Data.CourseId);   
+
+
+            return Ok(new { Message = "Course Assigned to Class Successfully" }); 
 
         }
 

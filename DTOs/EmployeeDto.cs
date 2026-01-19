@@ -7,9 +7,9 @@ namespace LmsApp2.Api.DTOs
     {
         [Required]
 
-        public string SchoolName    { get; set; }
+        public required string SchoolName    { get; set; }
         [Required]
-        public string EmployeeName  { get; set; }
+        public required string EmployeeName  { get; set; }
 
         // [Required]
         //public string EmployeeDesignation { get; set; }
@@ -19,10 +19,10 @@ namespace LmsApp2.Api.DTOs
         public string Nationality { get; set; }
 
         [Required]
-        public string Address { get; set; }
+        public required string Address { get; set; }
 
         [Required]
-        public string Contact { get; set; }
+        public required string Contact { get; set; }
 
 
         [Required]

@@ -5,7 +5,7 @@ namespace LmsApp2.Api.Mappers
 {
     public static class CourseMapper
     {
-        public static Course ToDbModel(this CourseDto CourseData, Guid ClassId)
+        public static Course ToDbModel(this CourseDto CourseData)
         {
 
             return new Course()
@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Mappers
                 CourseName=CourseData.CourseName,   
                 Boardordepartment=CourseData.BoardOrDepartment,
                 Createdat=DateTime.UtcNow,
-                Class = ClassId,
+                
             };
 
 

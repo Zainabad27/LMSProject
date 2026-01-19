@@ -27,7 +27,7 @@ namespace LmsApp2.Api.Repositories
             if (AllAssignmentsOfClass.Count == 0)
             {
 
-                Assignments.Clear();    
+                Assignments.Clear();
                 return Assignments;
             }
 
@@ -36,15 +36,15 @@ namespace LmsApp2.Api.Repositories
             {
 
 
-                Assignments.Add((new AssignmentResponse
+                Assignments.Add(new AssignmentResponse
                 {
                     AssignmentId = AllAssignmentsOfClass[i].Assignmentid,
                     CourseName = AllAssignmentsOfClass[i].Coursename,
-                    Deadline=AllAssignmentsOfClass[i].Deadline,
-                    TotalMarks = (decimal) AllAssignmentsOfClass[i].Totalmarks!,
+                    Deadline = AllAssignmentsOfClass[i].Deadline,
+                    TotalMarks = (decimal)AllAssignmentsOfClass[i].Totalmarks!,
 
 
-                }));
+                });
 
 
 
@@ -112,6 +112,22 @@ namespace LmsApp2.Api.Repositories
         }
 
 
+        public async Task<Guid> AssignCourseToAClass(Guid CourseId, Guid ClassId)
+        {
+           var course = await dbcontext.Courses.FirstOrDefaultAsync(crs=>crs.Courseid==CourseId);
+            if (course == null)
+            {
+                throw new CustomException("This Course Does Not Exists in our database", 400);  
+            }
+
+
+            course.Class = ClassId;
+            return course.Courseid;
+
+        }
+
+
+
         public async Task<Guid> GetACourse(Guid ClassId, string CourseName, string boardOrDepartment)
         {
 
@@ -127,9 +143,9 @@ namespace LmsApp2.Api.Repositories
 
 
 
-        public async Task<Guid> AddCourse(Guid ClassId, CourseDto CourseData)
+        public async Task<Guid> AddCourse(CourseDto CourseData)
         {
-            Course NewCourse = CourseData.ToDbModel(ClassId);
+            Course NewCourse = CourseData.ToDbModel();
             await dbcontext.Courses.AddAsync(NewCourse);
 
 
