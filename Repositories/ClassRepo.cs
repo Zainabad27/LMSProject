@@ -113,7 +113,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId)
         {
-            var classes = await dbcontext.Schools.Where(sch => sch.Schoolid == SchoolId).Select(sch => sch.Classes).FirstOrDefaultAsync();
+            var classes = await dbcontext.Schools.Include(sch=>sch.Classes).ThenInclude(cls=>cls.Students).Where(sch => sch.Schoolid == SchoolId).Select(sch => sch.Classes).FirstOrDefaultAsync();
             if (classes == null)
             {
                 throw new CustomException("School Not Found", 404);
@@ -129,7 +129,8 @@ namespace LmsApp2.Api.Repositories
                 resultantArrayOfClassses.Add(new SendAllClassesToFrontendDto
                 {
                     ClassId = Cls.Classid,
-                    ClassName = $"{Cls.Classgrade} {Cls.Classsection}"
+                    ClassName = $"{Cls.Classgrade} {Cls.Classsection}",
+                    Strength = Cls.Students.Count
                 });
 
 

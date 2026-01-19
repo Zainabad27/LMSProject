@@ -8,6 +8,9 @@ namespace LmsApp2.Api.DTOs
         public string ClassName { get; set; } = "";
 
 
+        public int Strength { get; set;  }=0;
+
+
     }
 }
 
