@@ -9,6 +9,13 @@ namespace LmsApp2.Api.Services
     public class ClassService(ISchoolRepo schRepo, IClassRepo classRepo, IStudentRepo stdRepo) : IClassService
     {
 
+        public async Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId)
+        {
+            
+            var ClassesInDb = await classRepo.GetAllClasses(SchoolId);
+            return ClassesInDb;
+        }
+
         public async Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData)
         {
             // first we have to check if the student exists and we have to check if class exists.

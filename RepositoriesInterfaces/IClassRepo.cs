@@ -5,6 +5,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IClassRepo
     {
+        public Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId);
         public Task<Guid> AssignCourseToAClass(Guid CourseId, Guid ClassId);
         public Task<List<AssignmentResponse>> GetAllAssignmentsOfClass(Guid? ClassId, Guid CourseId);
         public Task<(bool, String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId);

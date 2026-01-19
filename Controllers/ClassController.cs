@@ -9,6 +9,22 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class ClassController(IClassService ClassServices) : ControllerBase
     {
+
+
+        
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllClasses")]
+        public async Task<IActionResult> GetAllClasses([FromBody] Guid SchoolId)
+        {
+            // throw new NotImplementedException();
+            var Classes = await ClassServices.GetAllClasses(SchoolId);
+
+            return Ok(Classes);
+            
+        }
+
+
+
         [Authorize(Roles = "Admin")]
         [HttpPost("AddClass")]
         public async Task<IActionResult> AddClass([FromBody] ClassDto Class)

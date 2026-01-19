@@ -111,13 +111,44 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId)
+        {
+            var classes = await dbcontext.Schools.Where(sch => sch.Schoolid == SchoolId).Select(sch => sch.Classes).FirstOrDefaultAsync();
+            if (classes == null)
+            {
+                throw new CustomException("School Not Found", 404);
+            }
+            if (classes.Count == 0)
+            {
+                throw new CustomException("No Classes Found for this School", 404);
+            }
+            List<SendAllClassesToFrontendDto> resultantArrayOfClassses = []; // to be send to frontend
+
+            foreach (Class Cls in classes)
+            {
+                resultantArrayOfClassses.Add(new SendAllClassesToFrontendDto
+                {
+                    ClassId = Cls.Classid,
+                    ClassName = $"{Cls.Classgrade} {Cls.Classsection}"
+                });
+
+
+                
+            }
+
+
+            return resultantArrayOfClassses;
+
+
+        }
+
 
         public async Task<Guid> AssignCourseToAClass(Guid CourseId, Guid ClassId)
         {
-           var course = await dbcontext.Courses.FirstOrDefaultAsync(crs=>crs.Courseid==CourseId);
+            var course = await dbcontext.Courses.FirstOrDefaultAsync(crs => crs.Courseid == CourseId);
             if (course == null)
             {
-                throw new CustomException("This Course Does Not Exists in our database", 400);  
+                throw new CustomException("This Course Does Not Exists in our database", 400);
             }
 
 
