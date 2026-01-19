@@ -12,9 +12,9 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class AssignmentController(IEmployeeService employeeService, IStudentService stdService) : ControllerBase
     {
-        [HttpGet("GetAssignments")]
+        [HttpGet("GetAssignments/{CourseId}")]
         [Authorize(Roles = "Teacher")]
-        public async Task<IActionResult> GetAssigments([FromBody] Guid CourseId)
+        public async Task<IActionResult> GetAssigments([FromRoute] Guid CourseId)
         {
             var userClaims = User;
             var TeacherId = userClaims.FindFirstValue("Id");

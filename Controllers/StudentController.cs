@@ -2,9 +2,7 @@
 using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace LmsApp2.Api.Controllers
@@ -31,10 +29,9 @@ namespace LmsApp2.Api.Controllers
 
 
         }
-        [HttpGet("GetAssignments")]
-        //[Consumes("multipart/form-data")]
+        [HttpGet("GetAssignments/{CourseId}")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetAllAssignments([FromBody] GetAssignmentDto CourseId)
+        public async Task<IActionResult> GetAllAssignments([FromRoute] Guid CourseId)
         {
             var Id = User.FindFirstValue("Id");
             if (Id == null)
@@ -44,7 +41,7 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdId = Guid.Parse(Id);
 
-            List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId, CourseId.CourseId);
+            List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId,CourseId);
 
             //List<File> Files = new List<File>();
 
@@ -56,9 +53,9 @@ namespace LmsApp2.Api.Controllers
             return Ok(AllAssignments);
 
         }
-        [HttpGet("DownloadAssignment")]
+        [HttpGet("DownloadAssignment/{AssignmentId}")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> DownloadAssignment([FromBody] DownloadAssignmentDto DownloadAssignment)
+        public async Task<IActionResult> DownloadAssignment([FromRoute] Guid AssignmentId)
         {
             var Id = User.FindFirstValue("Id");
             if (Id == null)
@@ -69,7 +66,7 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
 
-            byte[] FileData = await StdService.DownloadAssignment(DownloadAssignment.AssignmentId, StdId);
+            byte[] FileData = await StdService.DownloadAssignment(AssignmentId, StdId);
 
             return File(FileData, "image/jpg");
 
@@ -89,12 +86,6 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
             List<SendCoursesToFrontendDto> Courses = await StdService.GetStudentCourses(StdId);
-
-        //  Console.WriteLine($"this is the returned courses====>>>>>    {Courses.Count}");
-
-
-
-
 
             return Ok(Courses);
         }
