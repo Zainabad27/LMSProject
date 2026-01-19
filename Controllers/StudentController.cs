@@ -75,6 +75,21 @@ namespace LmsApp2.Api.Controllers
         [HttpGet("GetAllCourses")]
         [Authorize(Roles = "Student")]
 
+
+
+
+        [HttpGet("GetAllStudents/{ClassId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllStudentsOfAClass([FromRoute] Guid ClassId,[FromQuery] int Page=1,[FromQuery] int PageSize=10)
+        {
+            // List<SendStudentToFrontendDto> Students = await StdService.GetAllStudentsOfAClass(ClassId,Page,PageSize);
+
+            // return Ok(Students);
+
+            throw new NotImplementedException();    
+
+            
+        }
         public async Task<IActionResult> GetAllCourses()
         {
             var Id = User.FindFirstValue("Id");
