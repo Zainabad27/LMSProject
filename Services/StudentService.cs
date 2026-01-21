@@ -169,7 +169,7 @@ namespace LmsApp2.Api.Services
             return CourseList;
         }
 
-        public async Task<IEnumerable<SendStudentsToFrontendDto>> GetAllStudentsOfClass(Guid ClassId,int PageNumber,int PageSize)
+        public async Task<Pagination<SendStudentsToFrontendDto>> GetAllStudentsOfClass(Guid ClassId,int PageNumber,int PageSize)
         {
             // first we will check if the class exists
             // then we will fetch all the students of that class and return to the caller.
@@ -179,10 +179,10 @@ namespace LmsApp2.Api.Services
                 throw new CustomException("No Class Found with this Id", 400);
             }
 
-            ICollection<SendStudentsToFrontendDto> students = await clsRepo.GetStudentsOfClass(ClassID,PageNumber,PageSize);
+            Pagination<SendStudentsToFrontendDto> students = await clsRepo.GetStudentsOfClass(ClassID,PageNumber,PageSize);
 
 
-            if (students.Count==0)
+            if (students.Items.Count==0)
             {
                 throw new CustomException("No Students Found in this Class", 400);
                 

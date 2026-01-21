@@ -3,6 +3,7 @@ using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
+using LmsApp2.Api.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -186,16 +187,10 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task SaveChanges()
-        {
-            await dbcontext.SaveChangesAsync();
-        }
-
-        public async  Task<ICollection<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
+        public async  Task<Pagination<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
         {
             IQueryable<SendStudentsToFrontendDto> query = dbcontext.Students
             .Where(std => std.Classid == ClassId)
-            .Skip((PageNumber - 1) * PageSize).Take(PageSize)
             .Select(std=>new SendStudentsToFrontendDto
             {
                 StudentId = std.Studentid,
@@ -204,8 +199,15 @@ namespace LmsApp2.Api.Repositories
                 Gender= std.Gender ?? "Not Specified",
                 IsActive=std.Isactive
             });
-            return await query.ToListAsync();
+
+              return await  Pagination<SendStudentsToFrontendDto>.CreateAsync(query, PageNumber, PageSize);
         
+        }
+
+
+          public async Task SaveChanges()
+        {
+            await dbcontext.SaveChangesAsync();
         }
     }
 }

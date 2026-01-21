@@ -1,6 +1,7 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.ServicesInterfaces;
+using LmsApp2.Api.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -76,7 +77,7 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllStudentsOfAClass([FromRoute] Guid ClassId, [FromQuery] int Page = 1, [FromQuery] int PageSize = 10)
         {
-            IEnumerable<SendStudentsToFrontendDto> Students = await StdService.GetAllStudentsOfClass(ClassId, Page, PageSize);
+            Pagination<SendStudentsToFrontendDto> Students = await StdService.GetAllStudentsOfClass(ClassId, Page, PageSize);
 
             return Ok(Students);
         }
