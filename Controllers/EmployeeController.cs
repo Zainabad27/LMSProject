@@ -1,5 +1,6 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.ServicesInterfaces;
+using LmsApp2.Api.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,22 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class EmployeeController(IEmployeeService employeeServices) : ControllerBase
     {
+
+        public async Task<IActionResult> GetEmployeeById([FromRoute] Guid EmployeeId)
+        {
+            // var emp = await employeeServices.GetEmployeeById(EmployeeId);
+            // return Ok(emp);
+            throw new NotImplementedException();
+        }   
+
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAllTeachers")] 
-        public async Task<IActionResult> GetAllTeachers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllTeachers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            throw new NotImplementedException();
+            Pagination<SendTeachersToFrontend> TeachersList = await employeeServices.GetAllTeachers(page, pageSize);
+
+            return Ok(TeachersList);    
+            // throw new NotImplementedException();
         }   
 
 

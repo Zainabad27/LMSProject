@@ -8,6 +8,12 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
+        public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize)
+        {
+            Pagination<SendTeachersToFrontend> TeachersList = await employeerepo.GetAllTeachers(PageNumber, PageSize);
+            return TeachersList;
+            
+        }
         public async Task<List<(Guid AssignmentId,string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
         {
             // first we have to check that the teacher is assigned to that course or not
