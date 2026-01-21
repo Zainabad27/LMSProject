@@ -195,9 +195,9 @@ namespace LmsApp2.Api.Repositories
             {
                 StudentId = std.Studentid,
                 StudentName = std.Studentname,
-                Photo=std.Studentdocument!=null? std.Studentdocument.Photo ?? "No Photo Uploaded" : "No Documents Uploaded",
-                Gender= std.Gender ?? "Not Specified",
-                IsActive=std.Isactive
+                Gender= std.Gender,
+                IsActive=std.Isactive,
+              
             });
 
               return await  Pagination<SendStudentsToFrontendDto>.CreateAsync(query, PageNumber, PageSize);

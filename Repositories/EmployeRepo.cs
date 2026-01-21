@@ -10,6 +10,20 @@ namespace LmsApp2.Api.Repositories
 {
     public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
     {
+        public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
+        {
+            IQueryable<SendTeachersToFrontend> Query =dbcontext
+            .Employees.Where(emp => emp.Employeedesignation == "Teacher")
+            .Select(emp=>new SendTeachersToFrontend
+            {
+                TeacherId=emp.Employeeid,
+                TeacherName=emp.Employeename,
+                IsActive=emp.Isactive,
+            });
+            return await Pagination<SendTeachersToFrontend>.CreateAsync(Query, pageNumber, pageSize);
+
+
+    }
         public async Task<Guid> AssignCourse(Guid TeacherId, Guid CourseId)
         {
             var CourseInDb = await dbcontext.Courses.Where(crs => crs.Courseid == CourseId).FirstOrDefaultAsync();
@@ -350,7 +364,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
         {
-            var EmployeeInDatabase = await dbcontext.Employees.Include(e=>e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
+            var EmployeeInDatabase = await dbcontext.Employees.Include(e => e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
 
             if (EmployeeInDatabase == null)
             {

@@ -11,6 +11,16 @@ namespace LmsApp2.Api.Controllers
     public class EmployeeController(IEmployeeService employeeServices) : ControllerBase
     {
         [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllTeachers")] 
+        public async Task<IActionResult> GetAllTeachers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            throw new NotImplementedException();
+        }   
+
+
+
+
+        [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
         [HttpPost("AddAdmin")]
         //[HttpPost]
