@@ -41,7 +41,7 @@ namespace LmsApp2.Api.Controllers
 
             Guid StdId = Guid.Parse(Id);
 
-            List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId,CourseId);
+            List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId, CourseId);
 
             //List<File> Files = new List<File>();
 
@@ -72,24 +72,18 @@ namespace LmsApp2.Api.Controllers
 
         }
 
-        [HttpGet("GetAllCourses")]
-        [Authorize(Roles = "Student")]
-
-
-
-
         [HttpGet("GetAllStudents/{ClassId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllStudentsOfAClass([FromRoute] Guid ClassId,[FromQuery] int Page=1,[FromQuery] int PageSize=10)
+        public async Task<IActionResult> GetAllStudentsOfAClass([FromRoute] Guid ClassId, [FromQuery] int Page = 1, [FromQuery] int PageSize = 10)
         {
-            // List<SendStudentToFrontendDto> Students = await StdService.GetAllStudentsOfAClass(ClassId,Page,PageSize);
+            IEnumerable<SendStudentsToFrontendDto> Students = await StdService.GetAllStudentsOfClass(ClassId, Page, PageSize);
 
-            // return Ok(Students);
-
-            throw new NotImplementedException();    
-
-            
+            return Ok(Students);
         }
+
+
+        [HttpGet("GetAllCourses")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetAllCourses()
         {
             var Id = User.FindFirstValue("Id");

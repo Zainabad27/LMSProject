@@ -5,6 +5,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IClassRepo
     {
+        public Task<ICollection<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId,int PageNumber,int PageSize);
         public Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId);
         public Task<Guid> AssignCourseToAClass(Guid CourseId, Guid ClassId);
         public Task<List<AssignmentResponse>> GetAllAssignmentsOfClass(Guid? ClassId, Guid CourseId);

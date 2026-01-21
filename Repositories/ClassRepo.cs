@@ -190,5 +190,22 @@ namespace LmsApp2.Api.Repositories
         {
             await dbcontext.SaveChangesAsync();
         }
+
+        public async  Task<ICollection<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
+        {
+            IQueryable<SendStudentsToFrontendDto> query = dbcontext.Students
+            .Where(std => std.Classid == ClassId)
+            .Skip((PageNumber - 1) * PageSize).Take(PageSize)
+            .Select(std=>new SendStudentsToFrontendDto
+            {
+                StudentId = std.Studentid,
+                StudentName = std.Studentname,
+                Photo=std.Studentdocument!=null? std.Studentdocument.Photo ?? "No Photo Uploaded" : "No Documents Uploaded",
+                Gender= std.Gender ?? "Not Specified",
+                IsActive=std.Isactive
+            });
+            return await query.ToListAsync();
+        
+        }
     }
 }
