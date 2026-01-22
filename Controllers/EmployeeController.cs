@@ -16,6 +16,11 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> GetEmployeeById([FromRoute] Guid EmployeeId)
         {
             var emp = await employeeServices.GetEmployeeById(EmployeeId);
+
+
+            Console.WriteLine($"this is the employee data from Service: =====>>>> {emp}");
+
+
             return Ok(emp);
 
 

@@ -9,8 +9,6 @@ namespace LmsApp2.Api.DTOs
         public string? Email { get; set; }
         public string? Role { get; set; }
         public string? ProfilePictureUrl { get; set; }
-        public string? Gender { get; set; }
-
         public string? ContactNumber { get; set; }
 
         public string? Address { get; set; }
