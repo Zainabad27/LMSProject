@@ -362,8 +362,8 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("photo");
 
-            entity.HasOne(d => d.Employee).WithMany(p => p.Employeedocuments)
-                .HasForeignKey(d => d.Employeeid)
+            entity.HasOne(d => d.Employee).WithOne(p => p.Employeedocuments)
+                .HasForeignKey<Employeedocument>(d => d.Employeeid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("employeedocuments_employeeid_fkey");
         });
