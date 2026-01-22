@@ -12,18 +12,18 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
         {
-            IQueryable<SendTeachersToFrontend> Query =dbcontext
+            IQueryable<SendTeachersToFrontend> Query = dbcontext
             .Employees.Where(emp => emp.Employeedesignation == "Teacher")
-            .Select(emp=>new SendTeachersToFrontend
+            .Select(emp => new SendTeachersToFrontend
             {
-                TeacherId=emp.Employeeid,
-                TeacherName=emp.Employeename,
-                IsActive=emp.Isactive,
+                TeacherId = emp.Employeeid,
+                TeacherName = emp.Employeename,
+                IsActive = emp.Isactive,
             });
             return await Pagination<SendTeachersToFrontend>.CreateAsync(Query, pageNumber, pageSize);
 
 
-    }
+        }
         public async Task<Guid> AssignCourse(Guid TeacherId, Guid CourseId)
         {
             var CourseInDb = await dbcontext.Courses.Where(crs => crs.Courseid == CourseId).FirstOrDefaultAsync();
@@ -399,6 +399,24 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<SendEmployeeToFrontend?> GetEmployeeById(Guid employeeId)
+        {
+            return await dbcontext.Employees.Include(emp => emp.Employeeadditionaldocs).Where(emp => emp.Employeeid == employeeId).Select(emp => new SendEmployeeToFrontend
+            {
+                EmployeeId = emp.Employeeid,
+                Name = emp.Employeename,
+                Role = emp.Employeedesignation,
+                IsActive = emp.Isactive,
+                ContactNumber = emp.Contact,
+                Address = emp.Address,
+                DateOfJoining = emp.Createdat.HasValue ? DateOnly.FromDateTime(emp.Createdat.Value) : null,
+                ProfilePictureUrl = emp.Employeedocuments != null ? emp.Employeedocuments.Photo ?? null : null,
+                Email = emp.Employeeaccountinfo != null ? emp.Employeeaccountinfo.Email ?? null : null,
+                Documents = emp.Employeeadditionaldocs
+                                            .Select(d => d.Documentpath)
+                                            .ToList()
+            }).FirstOrDefaultAsync();
 
+        }
     }
 }

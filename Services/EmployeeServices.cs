@@ -8,6 +8,12 @@ namespace LmsApp2.Api.Services
 {
     public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
     {
+        public async Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId)
+        {
+           var Employee= await employeerepo.GetEmployeeById(EmployeeId) ?? throw new CustomException("No Active/Previous Employee Found With This Id",400);
+
+           return Employee;
+        }
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize)
         {
             Pagination<SendTeachersToFrontend> TeachersList = await employeerepo.GetAllTeachers(PageNumber, PageSize);

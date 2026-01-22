@@ -31,17 +31,17 @@ public partial class Employee
 
     public virtual Employeeaccountinfo? Employeeaccountinfo { get; set; }
 
-    public virtual ICollection<Employeeadditionaldoc> Employeeadditionaldocs { get; set; } = new List<Employeeadditionaldoc>();
+    public virtual ICollection<Employeeadditionaldoc> Employeeadditionaldocs { get; set; } = [];
 
-    public virtual ICollection<Employeeattendance> Employeeattendances { get; set; } = new List<Employeeattendance>();
+    public virtual ICollection<Employeeattendance> Employeeattendances { get; set; } = [];
 
-    public virtual ICollection<Employeedocument> Employeedocuments { get; set; } = new List<Employeedocument>();
+    public virtual Employeedocument? Employeedocuments { get; set; } 
 
-    public virtual ICollection<Employeefinance> Employeefinances { get; set; } = new List<Employeefinance>();
+    public virtual ICollection<Employeefinance> Employeefinances { get; set; } = [];
 
-    public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+    public virtual ICollection<Exam> Exams { get; set; } = [];
 
     public virtual School? School { get; set; }
 
-    public virtual ICollection<Studentfinance> Studentfinances { get; set; } = new List<Studentfinance>();
+    public virtual ICollection<Studentfinance> Studentfinances { get; set; } = [];
 }

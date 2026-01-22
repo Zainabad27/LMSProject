@@ -5,6 +5,8 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IEmployeeService
     {
+
+         public Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId);
          public Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize);
         public Task<Guid> AddEmployee(EmployeeDto emp,string designation);
 

@@ -11,12 +11,15 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class EmployeeController(IEmployeeService employeeServices) : ControllerBase
     {
-
+        [HttpGet("GetEmployee/{EmployeeId}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetEmployeeById([FromRoute] Guid EmployeeId)
         {
-            // var emp = await employeeServices.GetEmployeeById(EmployeeId);
-            // return Ok(emp);
-            throw new NotImplementedException();
+            var emp = await employeeServices.GetEmployeeById(EmployeeId);
+            return Ok(emp);
+
+
+
         }   
 
         [Authorize(Roles = "Admin")]
