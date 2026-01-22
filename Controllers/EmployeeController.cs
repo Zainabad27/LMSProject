@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LmsApp2.Api.Controllers
-{
+{ 
     [Route("api/v1/[controller]s")]
     [ApiController]
     public class EmployeeController(IEmployeeService employeeServices) : ControllerBase
