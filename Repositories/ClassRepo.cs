@@ -194,7 +194,7 @@ namespace LmsApp2.Api.Repositories
             .Select(std=>new SendStudentsToFrontendDto
             {
                 StudentId = std.Studentid,
-                StudentName = std.Studentname,
+                // StudentName = std.Studentname,
                 Gender= std.Gender,
                 IsActive=std.Isactive,
               

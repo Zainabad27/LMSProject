@@ -93,7 +93,12 @@ builder.Services.AddIdentity<AppUser, AppRoles>(options =>
 
 }).AddEntityFrameworkStores<LmsDatabaseContext>().AddDefaultTokenProviders();
 
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+});
 
 
 var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");

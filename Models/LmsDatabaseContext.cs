@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using LmsApp2.Api.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Models;
 
-public partial class LmsDatabaseContext : IdentityDbContext
+public partial class LmsDatabaseContext : IdentityDbContext<AppUser, AppRoles, string>
 {
     public LmsDatabaseContext()
     {
@@ -62,6 +63,7 @@ public partial class LmsDatabaseContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Assignment>(entity =>
         {
             entity.HasKey(e => e.Assignmentid).HasName("assignments_pkey");
