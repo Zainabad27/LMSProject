@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Models;
 
-public partial class LmsDatabaseContext : DbContext
+public partial class LmsDatabaseContext : IdentityDbContext
 {
     public LmsDatabaseContext()
     {
@@ -27,8 +26,6 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<Employeeaccountinfo> Employeeaccountinfos { get; set; }
-
     public virtual DbSet<Employeeadditionaldoc> Employeeadditionaldocs { get; set; }
 
     public virtual DbSet<Employeeattendance> Employeeattendances { get; set; }
@@ -37,7 +34,6 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Employeefinance> Employeefinances { get; set; }
 
-    public virtual DbSet<Employeesession> Employeesessions { get; set; }
 
     public virtual DbSet<Exam> Exams { get; set; }
 
@@ -51,8 +47,6 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Student> Students { get; set; }
 
-    public virtual DbSet<Studentaccountinfo> Studentaccountinfos { get; set; }
-
     public virtual DbSet<Studentadditionaldoc> Studentadditionaldocs { get; set; }
 
     public virtual DbSet<Studentattendance> Studentattendances { get; set; }
@@ -61,7 +55,6 @@ public partial class LmsDatabaseContext : DbContext
 
     public virtual DbSet<Studentfinance> Studentfinances { get; set; }
 
-    public virtual DbSet<Studentsession> Studentsessions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
@@ -222,7 +215,7 @@ public partial class LmsDatabaseContext : DbContext
 
             entity.ToTable("employees");
 
-            entity.HasIndex(e => e.Contact, "employees_contact_key").IsUnique();
+            // entity.HasIndex(e => e.Contact, "employees_contact_key").IsUnique();
 
             entity.Property(e => e.Employeeid)
                 .ValueGeneratedNever()
@@ -230,18 +223,18 @@ public partial class LmsDatabaseContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
-            entity.Property(e => e.Contact)
-                .HasMaxLength(20)
-                .HasColumnName("contact");
+            // entity.Property(e => e.Contact)
+            //     .HasMaxLength(20)
+            //     .HasColumnName("contact");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
-            entity.Property(e => e.Employeedesignation)
-                .HasMaxLength(100)
-                .HasColumnName("employeedesignation");
-            entity.Property(e => e.Employeename)
-                .HasMaxLength(100)
-                .HasColumnName("employeename");
+            // entity.Property(e => e.Employeedesignation)
+            //     .HasMaxLength(100)
+            //     .HasColumnName("employeedesignation");
+            // entity.Property(e => e.Employeename)
+            //     .HasMaxLength(100)
+            //     .HasColumnName("employeename");
             entity.Property(e => e.Isactive)
                 .HasDefaultValue(true)
                 .HasColumnName("isactive");
@@ -259,35 +252,35 @@ public partial class LmsDatabaseContext : DbContext
                 .HasConstraintName("employees_schoolid_fkey");
         });
 
-        modelBuilder.Entity<Employeeaccountinfo>(entity =>
-        {
-            entity.HasKey(e => e.Accountid).HasName("employeeaccountinfo_pkey");
+        // modelBuilder.Entity<Employeeaccountinfo>(entity =>
+        // {
+        //     entity.HasKey(e => e.Accountid).HasName("employeeaccountinfo_pkey");
 
-            entity.ToTable("employeeaccountinfo");
+        //     entity.ToTable("employeeaccountinfo");
 
-            entity.HasIndex(e => e.Email, "employeeaccountinfo_email_key").IsUnique();
+        //     entity.HasIndex(e => e.Email, "employeeaccountinfo_email_key").IsUnique();
 
-            entity.HasIndex(e => e.Employeeid, "employeeaccountinfo_employeeid_key").IsUnique();
+        //     entity.HasIndex(e => e.Employeeid, "employeeaccountinfo_employeeid_key").IsUnique();
 
-            entity.Property(e => e.Accountid)
-                .ValueGeneratedNever()
-                .HasColumnName("accountid");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Email)
-                .HasMaxLength(150)
-                .HasColumnName("email");
-            entity.Property(e => e.Employeeid).HasColumnName("employeeid");
-            entity.Property(e => e.Password)
-                .HasMaxLength(255)
-                .HasColumnName("password");
+        //     entity.Property(e => e.Accountid)
+        //         .ValueGeneratedNever()
+        //         .HasColumnName("accountid");
+        //     entity.Property(e => e.Createdat)
+        //         .HasDefaultValueSql("CURRENT_TIMESTAMP")
+        //         .HasColumnName("createdat");
+        //     entity.Property(e => e.Email)
+        //         .HasMaxLength(150)
+        //         .HasColumnName("email");
+        //     entity.Property(e => e.Employeeid).HasColumnName("employeeid");
+        //     entity.Property(e => e.Password)
+        //         .HasMaxLength(255)
+        //         .HasColumnName("password");
 
-            entity.HasOne(d => d.Employee).WithOne(p => p.Employeeaccountinfo)
-                .HasForeignKey<Employeeaccountinfo>(d => d.Employeeid)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("employeeaccountinfo_employeeid_fkey");
-        });
+        //     entity.HasOne(d => d.Employee).WithOne(p => p.Employeeaccountinfo)
+        //         .HasForeignKey<Employeeaccountinfo>(d => d.Employeeid)
+        //         .OnDelete(DeleteBehavior.Cascade)
+        //         .HasConstraintName("employeeaccountinfo_employeeid_fkey");
+        // });
 
         modelBuilder.Entity<Employeeadditionaldoc>(entity =>
         {
@@ -428,30 +421,30 @@ public partial class LmsDatabaseContext : DbContext
                 .HasConstraintName("employeefinances_employeeid_fkey");
         });
 
-        modelBuilder.Entity<Employeesession>(entity =>
-        {
-            entity.HasKey(e => e.Sessionid).HasName("employeesessions_pkey");
+        // modelBuilder.Entity<Employeesession>(entity =>
+        // {
+        //     entity.HasKey(e => e.Sessionid).HasName("employeesessions_pkey");
 
-            entity.ToTable("employeesessions");
+        //     entity.ToTable("employeesessions");
 
-            entity.HasIndex(e => e.Employeeaccountid, "employeesessions_employeeaccountid_key").IsUnique();
+        //     entity.HasIndex(e => e.Employeeaccountid, "employeesessions_employeeaccountid_key").IsUnique();
 
-            entity.Property(e => e.Sessionid)
-                .ValueGeneratedNever()
-                .HasColumnName("sessionid");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Employeeaccountid).HasColumnName("employeeaccountid");
-            entity.Property(e => e.Expiresat).HasColumnName("expiresat");
-            entity.Property(e => e.Refreshtoken)
-                .HasMaxLength(255)
-                .HasColumnName("refreshtoken");
+        //     entity.Property(e => e.Sessionid)
+        //         .ValueGeneratedNever()
+        //         .HasColumnName("sessionid");
+        //     entity.Property(e => e.Createdat)
+        //         .HasDefaultValueSql("CURRENT_TIMESTAMP")
+        //         .HasColumnName("createdat");
+        //     entity.Property(e => e.Employeeaccountid).HasColumnName("employeeaccountid");
+        //     entity.Property(e => e.Expiresat).HasColumnName("expiresat");
+        //     entity.Property(e => e.Refreshtoken)
+        //         .HasMaxLength(255)
+        //         .HasColumnName("refreshtoken");
 
-            entity.HasOne(d => d.Employeeaccount).WithOne(p => p.Employeesession)
-                .HasForeignKey<Employeesession>(d => d.Employeeaccountid)
-                .HasConstraintName("employeesessions_employeeaccountid_fkey");
-        });
+        //     // entity.HasOne(d => d.Employeeaccount).WithOne(p => p.Employeesession)
+        //     //     .HasForeignKey<Employeesession>(d => d.Employeeaccountid)
+        //     //     .HasConstraintName("employeesessions_employeeaccountid_fkey");
+        // });
 
         modelBuilder.Entity<Exam>(entity =>
         {
@@ -630,9 +623,9 @@ public partial class LmsDatabaseContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("religion");
             entity.Property(e => e.Schoolid).HasColumnName("schoolid");
-            entity.Property(e => e.Studentname)
-                .HasMaxLength(100)
-                .HasColumnName("studentname");
+            // entity.Property(e => e.Studentname)
+            //     .HasMaxLength(100)
+            //     .HasColumnName("studentname");
 
             entity.HasOne(d => d.Class).WithMany(p => p.Students)
                 .HasForeignKey(d => d.Classid)
@@ -645,35 +638,35 @@ public partial class LmsDatabaseContext : DbContext
                 .HasConstraintName("students_schoolid_fkey");
         });
 
-        modelBuilder.Entity<Studentaccountinfo>(entity =>
-        {
-            entity.HasKey(e => e.Accountid).HasName("studentaccountinfo_pkey");
+        // modelBuilder.Entity<Studentaccountinfo>(entity =>
+        // {
+        //     entity.HasKey(e => e.Accountid).HasName("studentaccountinfo_pkey");
 
-            entity.ToTable("studentaccountinfo");
+        //     entity.ToTable("studentaccountinfo");
 
-            entity.HasIndex(e => e.Email, "studentaccountinfo_email_key").IsUnique();
+        //     entity.HasIndex(e => e.Email, "studentaccountinfo_email_key").IsUnique();
 
-            entity.HasIndex(e => e.Studentid, "studentaccountinfo_studentid_key").IsUnique();
+        //     entity.HasIndex(e => e.Studentid, "studentaccountinfo_studentid_key").IsUnique();
 
-            entity.Property(e => e.Accountid)
-                .ValueGeneratedNever()
-                .HasColumnName("accountid");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Email)
-                .HasMaxLength(255)
-                .HasColumnName("email");
-            entity.Property(e => e.Password)
-                .HasMaxLength(255)
-                .HasColumnName("password");
-            entity.Property(e => e.Studentid).HasColumnName("studentid");
+        //     entity.Property(e => e.Accountid)
+        //         .ValueGeneratedNever()
+        //         .HasColumnName("accountid");
+        //     entity.Property(e => e.Createdat)
+        //         .HasDefaultValueSql("CURRENT_TIMESTAMP")
+        //         .HasColumnName("createdat");
+        //     entity.Property(e => e.Email)
+        //         .HasMaxLength(255)
+        //         .HasColumnName("email");
+        //     entity.Property(e => e.Password)
+        //         .HasMaxLength(255)
+        //         .HasColumnName("password");
+        //     entity.Property(e => e.Studentid).HasColumnName("studentid");
 
-            entity.HasOne(d => d.Student).WithOne(p => p.Studentaccountinfo)
-                .HasForeignKey<Studentaccountinfo>(d => d.Studentid)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("studentaccountinfo_studentid_fkey");
-        });
+        //     entity.HasOne(d => d.Student).WithOne(p => p.Studentaccountinfo)
+        //         .HasForeignKey<Studentaccountinfo>(d => d.Studentid)
+        //         .OnDelete(DeleteBehavior.Cascade)
+        //         .HasConstraintName("studentaccountinfo_studentid_fkey");
+        // });
 
         modelBuilder.Entity<Studentadditionaldoc>(entity =>
         {
@@ -830,29 +823,29 @@ public partial class LmsDatabaseContext : DbContext
                 .HasConstraintName("studentfinances_studentid_fkey");
         });
 
-        modelBuilder.Entity<Studentsession>(entity =>
-        {
-            entity.HasKey(e => e.Sessionid).HasName("studentsessions_pkey");
+        // modelBuilder.Entity<Studentsession>(entity =>
+        // {
+        //     entity.HasKey(e => e.Sessionid).HasName("studentsessions_pkey");
 
-            entity.ToTable("studentsessions");
+        //     entity.ToTable("studentsessions");
 
-            entity.Property(e => e.Sessionid)
-                .ValueGeneratedNever()
-                .HasColumnName("sessionid");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Expiresat).HasColumnName("expiresat");
-            entity.Property(e => e.Refreshtoken)
-                .HasMaxLength(255)
-                .HasColumnName("refreshtoken");
-            entity.Property(e => e.Studentaccountid).HasColumnName("studentaccountid");
+        //     entity.Property(e => e.Sessionid)
+        //         .ValueGeneratedNever()
+        //         .HasColumnName("sessionid");
+        //     entity.Property(e => e.Createdat)
+        //         .HasDefaultValueSql("CURRENT_TIMESTAMP")
+        //         .HasColumnName("createdat");
+        //     entity.Property(e => e.Expiresat).HasColumnName("expiresat");
+        //     entity.Property(e => e.Refreshtoken)
+        //         .HasMaxLength(255)
+        //         .HasColumnName("refreshtoken");
+        //     entity.Property(e => e.Studentaccountid).HasColumnName("studentaccountid");
 
-            entity.HasOne(d => d.Studentaccount).WithMany(p => p.Studentsessions)
-                .HasForeignKey(d => d.Studentaccountid)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("studentsessions_studentaccountid_fkey");
-        });
+        //     // entity.HasOne(d => d.Studentaccount).WithMany(p => p.Studentsessions)
+        //     //     .HasForeignKey(d => d.Studentaccountid)
+        //     //     .OnDelete(DeleteBehavior.Cascade)
+        //     //     .HasConstraintName("studentsessions_studentaccountid_fkey");
+        // });
 
         OnModelCreatingPartial(modelBuilder);
     }

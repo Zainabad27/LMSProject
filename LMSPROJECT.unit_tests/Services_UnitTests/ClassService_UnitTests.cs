@@ -23,7 +23,7 @@ public class ClassService_UnitTests
         Student std = new Student()
         {
             Studentid = It.IsAny<Guid>(),
-            Studentname = "Test Student",
+            // Studentname = "Test Student",
             Isactive = true,
             Classid = Guid.Empty
         };
@@ -108,7 +108,7 @@ public class ClassService_UnitTests
         Student std = new Student()
         {
             Studentid = It.IsAny<Guid>(),
-            Studentname = "Test Student",
+            // Studentname = "Test Student",
             Isactive = true,
             Classid = ClassId
         };
@@ -155,7 +155,7 @@ public class ClassService_UnitTests
         Student std = new Student()
         {
             Studentid = It.IsAny<Guid>(),
-            Studentname = "Test Student",
+            // Studentname = "Test Student",
             Isactive = false,
             Classid = Guid.NewGuid()
         };
@@ -199,7 +199,7 @@ public class ClassService_UnitTests
         Student std = new Student()
         {
             Studentid = It.IsAny<Guid>(),
-            Studentname = "Test Student",
+            // Studentname = "Test Student",
             Isactive = true,
             Classid = Guid.Empty
         };

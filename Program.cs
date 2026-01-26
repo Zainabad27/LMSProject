@@ -1,12 +1,17 @@
 using LmsApp2.Api;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
+
 //using LmsApp2.Api.Middlewares;
 using LmsApp2.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,7 +69,32 @@ builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(E
 ));
 
 
-// Console.WriteLine($"this is the env var bro: {Environment.GetEnvironmentVariable("DB_URL")}");
+builder.Services.AddIdentity<AppUser, AppRoles>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireDigit = true;
+
+
+
+
+    // lock out settings
+
+
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+
+
+
+}).AddEntityFrameworkStores<LmsDatabaseContext>().AddDefaultTokenProviders();
+
+
+
 
 var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 var JwtKey = Environment.GetEnvironmentVariable("JWT_KEY");

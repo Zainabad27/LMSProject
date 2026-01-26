@@ -10,7 +10,7 @@ namespace LmsApp2.Api.Mappers
         public static Student ToDbModel(this StudentDto std,Guid SchoolId) {
             return new Student {
                 Studentid=Guid.NewGuid(),
-                Studentname=std.FirstName+" "+std.LastName,
+                // Studentname=std.FirstName+" "+std.LastName,
                 Gender=std.Gender,  
                 Nationality=std.Nationality,    
                 Religion=std.Relegion,
@@ -29,22 +29,20 @@ namespace LmsApp2.Api.Mappers
         }
 
 
-        public static Studentaccountinfo ToAccount(this StudentDto std,Guid StdId) {
+        // public static Studentaccountinfo ToAccount(this StudentDto std,Guid StdId) {
 
-            return new Studentaccountinfo {
+        //     return new Studentaccountinfo {
             
-            Accountid=Guid.NewGuid(),
-            Email=std.Email,
-            Password=std.Password.GetHashedPassword(),
-            Studentid=StdId,
-            Createdat=DateTime.UtcNow,
+        //     Accountid=Guid.NewGuid(),
+        //     Email=std.Email,
+        //     Password=std.Password.GetHashedPassword(),
+        //     Studentid=StdId,
+        //     Createdat=DateTime.UtcNow,
             
             
             
-            };
+        //     }; 
         
-        
-        
-        }
+        // }  
     }
 }

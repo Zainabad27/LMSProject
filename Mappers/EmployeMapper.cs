@@ -19,9 +19,9 @@ namespace LmsApp2.Api.Mappers
 
                 Schoolid = SchoolId,
 
-                Employeename = emp.EmployeeName,
+                // Employeename = emp.EmployeeName,
 
-                Contact = emp.Contact,
+                // Contact = emp.Contact,
 
                 Address = emp.Address,
 
@@ -43,9 +43,9 @@ namespace LmsApp2.Api.Mappers
 
                 SchoolName = Schoolname,
 
-                EmployeeName = emp.Employeename,
+                // EmployeeName = emp.Employeename,
 
-                Contact = emp.Contact!,
+                // Contact = emp.Contact!,
 
                 Religion = emp.Religion!,
 

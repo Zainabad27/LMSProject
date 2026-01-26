@@ -9,11 +9,10 @@ public partial class Employee
 
     public Guid? Schoolid { get; set; }
 
-    public string Employeename { get; set; } = null!;
 
-    public string? Employeedesignation { get; set; }
+    // public string? Employeedesignation { get; set; }
 
-    public string? Contact { get; set; }
+    // public string? Contact { get; set; }
 
     public string? Address { get; set; }
 
@@ -29,7 +28,6 @@ public partial class Employee
 
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
-    public virtual Employeeaccountinfo? Employeeaccountinfo { get; set; }
 
     public virtual ICollection<Employeeadditionaldoc> Employeeadditionaldocs { get; set; } = [];
 
