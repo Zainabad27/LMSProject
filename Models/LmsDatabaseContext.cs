@@ -1,10 +1,11 @@
 ﻿using LmsApp2.Api.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Models;
 
-public partial class LmsDatabaseContext : IdentityDbContext<AppUser, AppRoles, string>
+public partial class LmsDatabaseContext : IdentityDbContext<AppUser, IdentityRole, string>
 {
     public LmsDatabaseContext()
     {

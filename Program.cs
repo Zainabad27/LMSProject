@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
+using LmsApp2.Api.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,7 @@ builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(E
 ));
 
 
-builder.Services.AddIdentity<AppUser, AppRoles>(options =>
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 8;
@@ -93,12 +94,15 @@ builder.Services.AddIdentity<AppUser, AppRoles>(options =>
 
 }).AddEntityFrameworkStores<LmsDatabaseContext>().AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true;
-});
+
+
+// Cookie settings  
+// builder.Services.ConfigureApplicationCookie(options =>
+// {
+//     options.Cookie.HttpOnly = true;
+//     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+//     options.SlidingExpiration = true;
+// });
 
 
 var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
@@ -157,6 +161,19 @@ builder.Services.AddDI();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
 var app = builder.Build();
+
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    RoleManager<IdentityRole> _roleManager=scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+
+
+    await SeedRoles.SeedData(_roleManager);
+    
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
