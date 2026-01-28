@@ -1,18 +1,21 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.Utilities;
+using LmsApp2.Api.UtilitiesInterfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
 {
-    public class EmployeRepo(LmsDatabaseContext dbcontext) : IEmployeeRepo
+    public class EmployeRepo(LmsDatabaseContext dbcontext, IJwtServices JwtServices, UserManager<AppUser> _userManager) : IEmployeeRepo
     {
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
             IQueryable<SendTeachersToFrontend> Query = dbcontext
             .Employees
             // .Where(emp => emp.Employeedesignation == "Teacher")
@@ -113,40 +116,44 @@ namespace LmsApp2.Api.Repositories
 
 
         }
-        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass)
+        public async Task<(string AccessToken, string RefreshToken)> AuthorizeEmployeeAndDesignation(string email, string pass, string designation)
         {
-            throw new NotImplementedException();    
-            // var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
-            // if (Employee == null) { throw new Exception("No User Found for this Email."); }
+            using var transaction = await dbcontext.Database.BeginTransactionAsync();
 
-            // bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
-            // if (!CorrectPassword)
-            // {
-            //     throw new Exception("Invalid Password");
-            // }
+            var user = await _userManager.FindByEmailAsync(email) ?? throw new CustomException("Email not Found", 400);
+            bool PasswordCorrect = await _userManager.CheckPasswordAsync(user, pass);
+
+            bool IsDesignationCorrect = await _userManager.IsInRoleAsync(user, "Admin");
 
 
-            // var EmployeeId = Employee.Employeeid;
-            // if (EmployeeId == null)
-            // {
-            //     throw new Exception("Invalid Credentials");
-            // }
-
-            // var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
-            // if (UserInDatabase == null)
-            // {
-            //     throw new Exception("User does not exists");
-            // }
-            // if (UserInDatabase.Isactive != true)
-            // {
-            //     throw new Exception("User Account Deleted");
-            // }
+            if (!PasswordCorrect)
+            {
+                throw new CustomException("Invalid Password Given.", 400);
+            }
 
 
+            if (!IsDesignationCorrect)
+            {
+                throw new CustomException($"this employee is not an {designation}.", 400);
+            }
 
-            // return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
+            // wrote Custom Auth but since has implemented Identity so commented Out. 
+            // var (EmployeeAccountId, EmployeeId) = await empRepo.AuthorizeEmployee(LoginData.Email, LoginData.Password, "Admin");
 
 
+            string AccessToken = JwtServices.GenerateAccessToken(user.UserId_InMainTable, designation, email); // in access token we have put Employee Id in the Token payload not the Account Id.
+            string RefreshToken = JwtServices.GenerateRefreshToken();
+
+
+            user.RefreshToken = RefreshToken;
+            user.TokenExpiry = DateTime.Today.AddDays(3);
+
+
+
+            await transaction.CommitAsync();
+
+
+            return (AccessToken, RefreshToken);
 
 
         }
@@ -387,7 +394,7 @@ namespace LmsApp2.Api.Repositories
             // }
 
 
-            
+
             List<Course> cc = EmployeeInDatabase.Courses.ToList();
 
             foreach (Course C in EmployeeInDatabase.Courses)

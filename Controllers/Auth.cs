@@ -1,7 +1,9 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LmsApp2.Api.Controllers
@@ -9,7 +11,7 @@ namespace LmsApp2.Api.Controllers
     [AllowAnonymous]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class Auth(ILoginService LoginService) : ControllerBase
+    public class Auth(ILoginService LoginService,UserManager<AppUser> _userManager) : ControllerBase
     {
         [HttpPost("Login/Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
