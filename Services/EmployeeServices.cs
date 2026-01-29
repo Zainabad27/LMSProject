@@ -127,11 +127,10 @@ namespace LmsApp2.Api.Services
             }
 
 
-             bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
+            bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
             if (UserEmailAlreadyExists)
             {
-
-                throw new Exception("This Email is Already in use, Please Enter a different email.");
+                      throw new Exception("This Email is Already in use, Please Enter a different email.");
             }
 
 
@@ -157,7 +156,9 @@ namespace LmsApp2.Api.Services
                 {"photo",PhotoFilePathOnServer}
             };
 
-            var (ReturnedEmpId,DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation,docs);
+
+
+            var (ReturnedEmpId, DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation, docs);
 
             await employeerepo.SaveChanges();
             return ReturnedEmpId;
