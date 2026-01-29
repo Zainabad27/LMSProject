@@ -45,8 +45,6 @@ namespace LmsApp2.Api.Services
             return AssignmentsList;
 
         }
-
-
         public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId)
         {
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
@@ -159,21 +157,7 @@ namespace LmsApp2.Api.Services
                 {"photo",PhotoFilePathOnServer}
             };
 
-
-
             var (ReturnedEmpId,DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation,docs);
-
-           
-
-            //  await employeerepo.MakeEmployeeUserAccount(emp, ReturnedEmpId);
-
-
-
-            // now we have to upload the necessary documents of Employee and also save it too Server
-
-
-
-            // Guid DocumentId = await employeerepo.AddEmployeeDocuments(ReturnedEmpId, PhotoFilePathOnServer, CnicFrontFilePathOnServer, CnicBackFilePathOnServer);
 
             await employeerepo.SaveChanges();
             return ReturnedEmpId;
