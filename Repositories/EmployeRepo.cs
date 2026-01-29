@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Repositories
 {
-    public class EmployeRepo(LmsDatabaseContext dbcontext, IJwtServices JwtServices, UserManager<AppUser> _userManager) : IEmployeeRepo
+    public class EmployeRepo(LmsDatabaseContext dbcontext, IJwtServices JwtServices, UserManager<AppUser> _userManager, RoleManager<IdentityRole> _roleManager) : IEmployeeRepo
     {
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
         {
@@ -42,88 +42,69 @@ namespace LmsApp2.Api.Repositories
             return CourseInDb.Courseid;
 
         }
-        public async Task<Guid> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation)
+        public async Task<(Guid EmployeeId, Guid DocumentId)> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation, Dictionary<string, string> Docs)
         {
+            using var transaction = await dbcontext.Database.BeginTransactionAsync();
             Employee employee = emp.To_DbModel(SchoolId);
+            // adding user to the Role(the designation) in identity
+            var user = _userManager.FindByEmailAsync(emp.Email);
+            if (user != null)
+            {
+                throw new CustomException("Email Already in Use.", 400);
 
-            // employee.Employeedesignation = designation;
+            }
 
 
+            var AddingUser = new AppUser // this is Identity user while the above one was Main Db Emplloyee Table
+            {
+                Email = emp.Email,
+                UserId_InMainTable = employee.Employeeid,
+                UserName = emp.EmployeeName,
+                PhoneNumber = emp.Contact
+            };
+            var result = await _userManager.CreateAsync(AddingUser, emp.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new CustomException($"Error occured while registering Employee. {result.Errors.Select(e => e.Description)}");
+            }
+            // adding user into that role that is given in the Designations we will check it that if the role exists in the service class
+            await _userManager.AddToRoleAsync(AddingUser, designation);
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
+            Guid DocId = await AddEmployeeDocuments(EmployeeSavedInDatabase.Entity.Employeeid, Docs);
 
-            Employee emp2 = EmployeeSavedInDatabase.Entity;
-            return emp2.Employeeid;
+            await transaction.CommitAsync();
+            return (EmployeeSavedInDatabase.Entity.Employeeid, DocId);
 
 
         }
 
-        public async Task<Guid> AddEmployeeDocuments(Guid EmpId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
+        public async Task<Guid> AddEmployeeDocuments(Guid EmpId, Dictionary<string, string> Docs)
         {
-            Employeedocument EmpDocs = new Employeedocument()
+            Employeedocument EmpDocs = new()
             {
                 Documentid = Guid.NewGuid(),
                 Employeeid = EmpId,
-                Cnicfront = CnicFrontPath,
-                Cnicback = CnicBackPath,
-                Photo = PhotoPath,
+                Cnicfront = Docs["cnicfront"],
+                Cnicback = Docs["cnicback"],
+                Photo = Docs["photo"],
                 Createdat = DateTime.UtcNow,
             };
             var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
-            //await dbcontext.SaveChangesAsync();
-
             return DocsSavedInDatabse.Entity.Documentid;
 
 
         }
 
-        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass, string designation)
-        {
-            throw new NotImplementedException();
-            // var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
-            // if (Employee == null) { throw new Exception("No User Found for this Email."); }
 
-            // bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
-            // if (!CorrectPassword)
-            // {
-            //     throw new Exception("Invalid Password");
-            // }
-
-
-            // var EmployeeId = Employee.Employeeid;
-            // if (EmployeeId == null)
-            // {
-            //     throw new Exception("Invalid Credentials");
-            // }
-
-            // var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
-            // if (UserInDatabase == null)
-            // {
-            //     throw new Exception("User does not exists");
-            // }
-            // if (UserInDatabase.Isactive != true)
-            // {
-            //     throw new Exception("User Account Deleted");
-            // }
-            // if (UserInDatabase.Employeedesignation != designation)
-            // {
-            //     throw new Exception("The designation of the user is not the same that was given in the Parameter.");
-            // }
-
-
-            // return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
-
-
-
-
-        }
-        public async Task<(string AccessToken, string RefreshToken)> AuthorizeEmployeeAndDesignation(string email, string pass, string designation)
+        public async Task<SendLoginDataToFrontend> AuthorizeEmployeeAndDesignation(string email, string pass, string designation)
         {
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
 
             var user = await _userManager.FindByEmailAsync(email) ?? throw new CustomException("Email not Found", 400);
             bool PasswordCorrect = await _userManager.CheckPasswordAsync(user, pass);
 
-            bool IsDesignationCorrect = await _userManager.IsInRoleAsync(user, "Admin");
+            bool IsDesignationCorrect = await _userManager.IsInRoleAsync(user, designation);
 
 
             if (!PasswordCorrect)
@@ -134,7 +115,7 @@ namespace LmsApp2.Api.Repositories
 
             if (!IsDesignationCorrect)
             {
-                throw new CustomException($"this employee is not an {designation}.", 400);
+                throw new CustomException($"this employee is not {designation}.", 400);
             }
 
             // wrote Custom Auth but since has implemented Identity so commented Out. 
@@ -153,159 +134,27 @@ namespace LmsApp2.Api.Repositories
             await transaction.CommitAsync();
 
 
-            return (AccessToken, RefreshToken);
 
 
-        }
-        public async Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass)
-        {
-            throw new NotImplementedException();
-            // var Employee = await dbcontext.Employeeaccountinfos.Where(emp => (emp.Email == email)).FirstOrDefaultAsync();
-            // if (Employee == null) { throw new Exception("No User Found for this Email."); }
 
-            // bool CorrectPassword = pass.VerifyHashedPassword(Employee.Password);
-            // if (!CorrectPassword)
-            // {
-            //     throw new Exception("Invalid Password");
-            // }
-
-
-            // var EmployeeId = Employee.Employeeid;
-            // if (EmployeeId == null)
-            // {
-            //     throw new Exception("Invalid Credentials");
-            // }
-
-            // var UserInDatabase = await dbcontext.Employees.FirstOrDefaultAsync(emp => emp.Employeeid == EmployeeId);
-            // if (UserInDatabase == null)
-            // {
-            //     throw new Exception("User does not exists");
-            // }
-            // if (UserInDatabase?.Isactive != true)
-            // {
-            //     throw new Exception("User Account Deleted");
-            // }
-            // if (UserInDatabase.Employeedesignation != "Teacher")
-            // {
-            //     throw new Exception("User Is not a Teacher");
-            // }
-
-
-            // return (Employee.Accountid, UserInDatabase.Employeeid);  // returns the account Id of the employee Account to so that we can populate the Employee Session table.
-
-
+            return new SendLoginDataToFrontend()
+            {
+                AccessToken = AccessToken,
+                RefreshToken = RefreshToken,
+                UserId_InMainTable = user.UserId_InMainTable
+            };
 
 
         }
 
-        public async Task<bool> EmployeeEmailAlreadyExists(string email)
-        {
-            throw new NotImplementedException();
-            // var EmailExists = await dbcontext.Employeeaccountinfos.Where(emp => emp.Email == email).Select(emp => emp.Email).FirstOrDefaultAsync();
-            // if (EmailExists == null)
-            // {
-            //     return false;
 
 
-            // }
-            // return true;
-
-        }
-
-        public async Task<Guid> MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable)
-        {
-            throw new NotImplementedException();
-            // Employeeaccountinfo EmpAcc = new Employeeaccountinfo()
-            // {
-            //     Accountid = Guid.NewGuid(),
-            //     Email = emp.Email,
-            //     Password = emp.Password.GetHashedPassword(),
-            //     Createdat = DateTime.UtcNow,
-            //     Employeeid = EmployeeIdOnEmployeesTable,
-
-
-            // };
-
-            // var EmployeeAccountSavedInDatabase = await dbcontext.Employeeaccountinfos.AddAsync(EmpAcc);
-
-
-
-            // return EmployeeAccountSavedInDatabase.Entity.Accountid;
-
-
-
-        }
-
-        public async Task<Guid> PopulateEmployeeSession(Guid employeeAccountId, string refreshToken)
-        {
-            // if (String.IsNullOrEmpty(refreshToken))
-            // {
-            //     throw new Exception("Invalid refresh Token");
-
-            // }
-            // // if session exists already so we just have to update it 
-
-            // var session = await dbcontext.Employeesessions.FirstOrDefaultAsync(e => e.Employeeaccountid == employeeAccountId);
-            // if (session != null)
-            // {
-            //     session.Expiresat = DateTime.UtcNow.AddDays(10);
-            //     session.Refreshtoken = refreshToken;
-            //     //await dbcontext.SaveChangesAsync();
-
-
-            //     return session.Sessionid;
-            // }
-
-            // Employeesession Session = new()
-            // {
-            //     Sessionid = Guid.NewGuid(),
-
-            //     Employeeaccountid = employeeAccountId,
-            //     Refreshtoken = refreshToken,
-            //     Expiresat = DateTime.UtcNow.AddDays(10),
-            //     Createdat = DateTime.UtcNow,
-
-
-            // };
-            // var SessionSavedInDatabase = await dbcontext.Employeesessions.AddAsync(Session);
-            // //await dbcontext.SaveChangesAsync();
-
-            // return SessionSavedInDatabase.Entity.Sessionid;
-
-            throw new NotImplementedException();
-        }
 
         public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
         }
 
-
-        public async Task<Guid> UpdateEmployeeSession(Guid EmployeeId, string refreshToken)
-        {
-            // Guid SessionId = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmployeeId).Select(x => x.Employeesession != null ? x.Employeesession.Sessionid : Guid.Empty).FirstOrDefaultAsync();
-
-
-            // if (SessionId == Guid.Empty)
-            // {
-            //     throw new Exception("Employee Account Not Found");
-            // }
-
-            // var sessionData = await dbcontext.Employeesessions.FirstOrDefaultAsync(session => session.Sessionid == SessionId);
-
-            // if (sessionData == null)
-            // {
-            //     throw new Exception("Employee Session Data Was not found in the database.");
-            // }
-
-            // sessionData.Refreshtoken = refreshToken;
-            // sessionData.Expiresat = DateTime.UtcNow.AddDays(10);
-
-            // return SessionId;
-
-            throw new NotImplementedException();
-
-        }
 
 
         public async Task<Guid> GetEmployee(Guid EmployeeId)
@@ -340,34 +189,7 @@ namespace LmsApp2.Api.Repositories
         public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
         {
             throw new NotImplementedException();
-            // var data = await dbcontext.Employeeaccountinfos.Where(empAcc => empAcc.Employeeid == EmpId).Select(x => new
-            // {
 
-            //     refreshTokenExpiry = x.Employeesession != null ? x.Employeesession.Expiresat : DateTime.MinValue,
-            //     refreshTokenIndataBase = x.Employeesession != null ? x.Employeesession.Refreshtoken : null
-
-
-            // }).FirstOrDefaultAsync();
-
-
-            // if (data == null || String.IsNullOrEmpty(data.refreshTokenIndataBase))
-            // {
-            //     throw new Exception("Invalid refresh Token");
-            // }
-
-            // if (data.refreshTokenIndataBase != refreshToken)
-            // {
-            //     throw new Exception("Invalid Refresh Token");
-            // }
-
-
-            // if (data.refreshTokenExpiry == DateTime.MinValue || data.refreshTokenExpiry < DateTime.UtcNow)
-            // {
-            //     throw new Exception("Refresh Token Expired.");
-            // }
-
-
-            // return true;
 
 
         }
@@ -429,6 +251,24 @@ namespace LmsApp2.Api.Repositories
                                             .Select(d => d.Documentpath)
                                             .ToList()
             }).FirstOrDefaultAsync();
+
+        }
+
+        public async Task<bool> EmployeeEmailAlreadyExists(string email)
+        {
+            return await _userManager.FindByEmailAsync(email) == null;
+        }
+
+        public async Task MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable)
+        {
+            var user = new AppUser
+            {
+                Email = emp.Email,
+                UserId_InMainTable = EmployeeIdOnEmployeesTable,
+
+
+            };
+
 
         }
     }

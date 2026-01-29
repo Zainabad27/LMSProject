@@ -47,16 +47,10 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
         {
             var u = User;
-            
-
-            // Console.WriteLine($"this is the employee Data:=====>>>> {emp}");
-
 
             Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
 
-            var context = HttpContext;
 
-            Console.WriteLine(context);
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
@@ -65,13 +59,7 @@ namespace LmsApp2.Api.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
         {
-
-
-
-
-            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");
-
-           
+            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");           
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
