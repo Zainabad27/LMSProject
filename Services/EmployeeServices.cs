@@ -130,7 +130,7 @@ namespace LmsApp2.Api.Services
             bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
             if (UserEmailAlreadyExists)
             {
-                      throw new Exception("This Email is Already in use, Please Enter a different email.");
+                throw new Exception("This Email is Already in use, Please Enter a different email.");
             }
 
 
@@ -158,9 +158,11 @@ namespace LmsApp2.Api.Services
 
 
 
+            // this repo runction adds employee data in the main table, Asp.NetUsers,Upload docs path in DB, Assign Role all in a single transaction.
+
             var (ReturnedEmpId, DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation, docs);
 
-            await employeerepo.SaveChanges();
+            // await employeerepo.SaveChanges(); trasaction already commited inside this AddEmployee function.
             return ReturnedEmpId;
         }
     }

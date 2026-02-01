@@ -44,6 +44,7 @@ namespace LmsApp2.Api.Repositories
         }
         public async Task<(Guid EmployeeId, Guid DocumentId)> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation, Dictionary<string, string> Docs)
         {
+           
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
             Employee employee = emp.To_DbModel(SchoolId);
             // adding user to the Role(the designation) in identity
@@ -253,6 +254,10 @@ namespace LmsApp2.Api.Repositories
             }).FirstOrDefaultAsync();
 
         }
+
+
+
+        
 
         public async Task<bool> EmployeeEmailAlreadyExists(string email)
         {

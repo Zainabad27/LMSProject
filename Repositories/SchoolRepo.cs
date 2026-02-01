@@ -1,13 +1,16 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
+using LmsApp2.Api.SeedData;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace LmsApp2.Api.Repositories
 {
-    public class SchoolRepo(LmsDatabaseContext dbcontext) : ISchoolRepo
+    public class SchoolRepo(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager) : ISchoolRepo
     {
         public async Task<Guid> AddSchool(SchoolDto sch)
         {
@@ -35,6 +38,14 @@ namespace LmsApp2.Api.Repositories
         public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
+        }
+
+        public async Task SeedInitialData(Guid SchoolId)
+        {
+
+            await SeedAdmin.SeedData(dbcontext, _userManager, SchoolId);
+
+
         }
     }
 }

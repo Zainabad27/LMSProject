@@ -8,7 +8,6 @@ namespace LmsApp2.Api.SeedData
     internal class SeedRoles()
     {
 
-
         public static async Task SeedData(RoleManager<IdentityRole> _roleManager)
         {
                         

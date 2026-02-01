@@ -15,31 +15,18 @@ namespace LmsApp2.Api.Utilities
             string AccessToken = null!;
             var claims = new List<Claim> {
 
-                    new Claim(ClaimTypes.Role,Designation),
-                    new Claim("Id",UserId.ToString()),
-                    new Claim("Email",email.ToString())
+                    new(ClaimTypes.Role,Designation),
+                    new("Id",UserId.ToString()),
+                    new("Email",email.ToString())
 
 
 
             };
-            if (GeneratingTokenFor == "Admins")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
+
+            AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
 
 
-            }
-            else if (GeneratingTokenFor == "Teachers")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
 
-
-            }
-            else if (GeneratingTokenFor == "Students")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
-
-
-            }
 
 
             if (AccessToken == null)
@@ -68,7 +55,7 @@ namespace LmsApp2.Api.Utilities
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!));
             var tokenHandler = new JwtSecurityTokenHandler();
 
-   
+
             var validationParams = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
