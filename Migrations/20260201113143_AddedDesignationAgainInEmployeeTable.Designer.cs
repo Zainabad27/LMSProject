@@ -3,6 +3,7 @@ using System;
 using LmsApp2.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LmsApp2.Api.Migrations
 {
     [DbContext(typeof(LmsDatabaseContext))]
-    partial class LmsDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260201113143_AddedDesignationAgainInEmployeeTable")]
+    partial class AddedDesignationAgainInEmployeeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,7 +318,10 @@ namespace LmsApp2.Api.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Employeedesignation")
-                        .HasColumnType("text");
+                          .HasMaxLength(130)
+                        .HasColumnType("character varying(130)");
+
+
 
                     b.Property<bool?>("Isactive")
                         .ValueGeneratedOnAdd()

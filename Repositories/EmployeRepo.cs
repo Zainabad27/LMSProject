@@ -15,10 +15,10 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
             IQueryable<SendTeachersToFrontend> Query = dbcontext
             .Employees
-            // .Where(emp => emp.Employeedesignation == "Teacher")
+            .Where(emp => emp.Employeedesignation == "Teacher")
             .Select(emp => new SendTeachersToFrontend
             {
                 TeacherId = emp.Employeeid,
@@ -44,10 +44,11 @@ namespace LmsApp2.Api.Repositories
         }
         public async Task<(Guid EmployeeId, Guid DocumentId)> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation, Dictionary<string, string> Docs)
         {
-           
+
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
             Employee employee = emp.To_DbModel(SchoolId);
-            // adding user to the Role(the designation) in identity
+
+
             var user = _userManager.FindByEmailAsync(emp.Email);
             if (user != null)
             {
@@ -70,6 +71,12 @@ namespace LmsApp2.Api.Repositories
                 throw new CustomException($"Error occured while registering Employee. {result.Errors.Select(e => e.Description)}");
             }
             // adding user into that role that is given in the Designations we will check it that if the role exists in the service class
+
+            bool roleExists = await _roleManager.RoleExistsAsync(designation);
+            if (!roleExists)
+            {
+                throw new CustomException("This Designation does not exists in the System.", 400);
+            }
             await _userManager.AddToRoleAsync(AddingUser, designation);
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
             Guid DocId = await AddEmployeeDocuments(EmployeeSavedInDatabase.Entity.Employeeid, Docs);
@@ -82,6 +89,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<Guid> AddEmployeeDocuments(Guid EmpId, Dictionary<string, string> Docs)
         {
+
             Employeedocument EmpDocs = new()
             {
                 Documentid = Guid.NewGuid(),
@@ -128,7 +136,7 @@ namespace LmsApp2.Api.Repositories
 
 
             user.RefreshToken = RefreshToken;
-            user.TokenExpiry = DateTime.Today.AddDays(3);
+            user.TokenExpiry = DateTime.UtcNow.AddDays(3);
 
 
 
@@ -147,17 +155,10 @@ namespace LmsApp2.Api.Repositories
 
 
         }
-
-
-
-
         public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
         }
-
-
-
         public async Task<Guid> GetEmployee(Guid EmployeeId)
         {
 
@@ -181,20 +182,6 @@ namespace LmsApp2.Api.Repositories
 
 
         }
-
-
-
-
-
-
-        public async Task<bool> ValidateEmployeeRefreshToken(Guid EmpId, string refreshToken)
-        {
-            throw new NotImplementedException();
-
-
-
-        }
-
         public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
         {
             var EmployeeInDatabase = await dbcontext.Employees.Include(e => e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
@@ -210,11 +197,11 @@ namespace LmsApp2.Api.Repositories
                 throw new CustomException("This Teacher is not Active Employee", 400);
 
             }
-            throw new Exception("This func is to be written later.");
-            // if (EmployeeInDatabase.Employeedesignation != "Teacher")
-            // {
-            //     throw new CustomException("This Employee is not a Teacher.", 400);
-            // }
+            // throw new Exception("This func is to be written later.");
+            if (EmployeeInDatabase.Employeedesignation != "Teacher")
+            {
+                throw new CustomException("This Employee is not a Teacher.", 400);
+            }
 
 
 
@@ -240,14 +227,12 @@ namespace LmsApp2.Api.Repositories
             return await dbcontext.Employees.Include(emp => emp.Employeeadditionaldocs).Where(emp => emp.Employeeid == employeeId).Select(emp => new SendEmployeeToFrontend
             {
                 EmployeeId = emp.Employeeid,
-                // Name = emp.Employeename,
-                // Role = emp.Employeedesignation,
+                Role = emp.Employeedesignation,
                 IsActive = emp.Isactive,
                 // ContactNumber = emp.Contact,
                 Address = emp.Address,
                 DateOfJoining = emp.Createdat.HasValue ? DateOnly.FromDateTime(emp.Createdat.Value) : null,
                 ProfilePictureUrl = emp.Employeedocuments != null ? emp.Employeedocuments.Photo ?? null : null,
-                // Email = emp.Employeeaccountinfo != null ? emp.Employeeaccountinfo.Email ?? null : null,
                 Documents = emp.Employeeadditionaldocs
                                             .Select(d => d.Documentpath)
                                             .ToList()
@@ -255,26 +240,10 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-
-
-        
-
         public async Task<bool> EmployeeEmailAlreadyExists(string email)
         {
             return await _userManager.FindByEmailAsync(email) == null;
         }
 
-        public async Task MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable)
-        {
-            var user = new AppUser
-            {
-                Email = emp.Email,
-                UserId_InMainTable = EmployeeIdOnEmployeesTable,
-
-
-            };
-
-
-        }
     }
 }

@@ -12,20 +12,13 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<(Guid EmployeeId, Guid DocumentId)> AddEmployee(EmployeeDto emp, Guid SchoolId, string designation, Dictionary<string, string> Docs);
 
-        public Task MakeEmployeeUserAccount(EmployeeDto emp, Guid EmployeeIdOnEmployeesTable);
-
         public Task<bool> EmployeeEmailAlreadyExists(string email);
 
        public  Task<Guid> AddEmployeeDocuments(Guid EmpId, Dictionary<string, string> Docs);
-        // public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployee(string email, string pass,string Designation);
+    
 
-        // public Task<Guid> PopulateEmployeeSession(Guid employeeId,string refreshToken);
+        // public Task<bool> ValidateEmployeeRefreshToken(Guid EmployeeId,string refreshToken);
 
-        // public Task<Guid> UpdateEmployeeSession(Guid EmployeeId,string refreshToken);
-
-        public Task<bool> ValidateEmployeeRefreshToken(Guid EmployeeId,string refreshToken);
-
-        // public Task<(Guid EmployeeAccountId, Guid EmployeeId)> AuthorizeEmployeeAsTeacher(string email, string pass);
        public Task<SendLoginDataToFrontend> AuthorizeEmployeeAndDesignation(string email, string pass, string designation);
 
         public Task<Guid> GetEmployee(Guid EmployeeId);

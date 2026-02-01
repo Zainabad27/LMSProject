@@ -19,6 +19,8 @@ namespace LmsApp2.Api.Mappers
 
                 Schoolid = SchoolId,
 
+                Employeedesignation=emp.EmployeeDesignation,
+
                 // Employeename = emp.EmployeeName,
 
                 // Contact = emp.Contact,

@@ -1,3 +1,4 @@
+using LmsApp2.Api.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace LmsApp2.Api.Identity
@@ -10,5 +11,11 @@ namespace LmsApp2.Api.Identity
         public string? RefreshToken { get; set; }
 
         public DateTime TokenExpiry { get; set; }
+
+
+
+
+
+        public virtual Employee? Employee { get; set; }
     }
 }

@@ -10,7 +10,7 @@ public partial class Employee
     public Guid? Schoolid { get; set; }
 
 
-    // public string? Employeedesignation { get; set; }
+    public string? Employeedesignation { get; set; }
 
     // public string? Contact { get; set; }
 

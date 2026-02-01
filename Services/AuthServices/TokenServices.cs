@@ -10,7 +10,7 @@ namespace LmsApp2.Api.Services.AuthServices
 {
     public class TokenServices(IJwtServices JwtServices, UserManager<AppUser> _userManager) : ITokenServices
     {
-        public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context,string Designation)
+        public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context, string Designation)
         {
 
 
@@ -21,7 +21,7 @@ namespace LmsApp2.Api.Services.AuthServices
                 throw new CustomException("Incorrect Password", 400);
 
             }
-                bool ValidToken=user.RefreshToken == RefreshTokenData.RefreshToken;
+            bool ValidToken = user.RefreshToken == RefreshTokenData.RefreshToken;
 
             if (!ValidToken)
             {
@@ -30,7 +30,7 @@ namespace LmsApp2.Api.Services.AuthServices
             }
 
 
-            if (user.TokenExpiry < DateTime.Now)
+            if (user.TokenExpiry <= DateTime.UtcNow)
             {
                 throw new CustomException("Refresh Token Expired.", 400);
             }
@@ -44,9 +44,15 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
 
-                user.RefreshToken=NewRefreshToken;
-                user.TokenExpiry=DateTime.UtcNow.AddDays(3);
+                user.RefreshToken = NewRefreshToken;
+                user.TokenExpiry = DateTime.UtcNow.AddDays(3);
 
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new CustomException("Error Occured in the Database while refreshing the RefreshToken.", 500);
+                }
                 context.Response.Cookies.Append("AccessToken", NewAccessToken, new CookieOptions
                 {
 
@@ -66,6 +72,10 @@ namespace LmsApp2.Api.Services.AuthServices
                 });
 
 
+
+
+
+
                 return user.UserId_InMainTable;
 
 
@@ -73,16 +83,6 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
             throw new Exception("Invalid Refresh Token");
-
-
-
-
-
-
-
-
-
-
         }
     }
 }
