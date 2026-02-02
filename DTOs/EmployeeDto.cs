@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LmsApp2.Api.DTOs
 {
-    public class EmployeeDto
+    public class EmployeeDto : IEntity
     {
         [Required]
 
-        public required string SchoolName    { get; set; }
+        public required string SchoolName { get; set; }
         [Required]
-        public  string EmployeeName  { get; set; }
+        public string EmployeeName { get; set; }
 
         [Required]
         public string EmployeeDesignation { get; set; }
@@ -22,7 +22,7 @@ namespace LmsApp2.Api.DTOs
         public required string Address { get; set; }
 
         [Required]
-        public  string Contact { get; set; }
+        public string Contact { get; set; }
 
 
         [Required]
@@ -41,12 +41,12 @@ namespace LmsApp2.Api.DTOs
         // [Required]
 
         public IFormFile Cnic_Front { get; set; }
-        
+
 
         // [Required]
         public IFormFile Cnic_Back { get; set; }
 
-        
+
 
     }
 }

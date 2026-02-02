@@ -8,7 +8,7 @@ using LMSProject.DTOs;
 
 namespace LmsApp2.Api.Services
 {
-    public class StudentService(IStudentRepo stdRepo, ISchoolRepo schRepo, IAssignmentRepo AssRepo, IClassRepo clsRepo, IFetchFileFromServer FetchFile, IWebHostEnvironment env) : IStudentService
+    public class StudentService(IStudentRepo stdRepo, IAssignmentRepo AssRepo, IClassRepo clsRepo, IFetchFileFromServer FetchFile, IWebHostEnvironment env) : IStudentService
     {
 
 
@@ -52,47 +52,47 @@ namespace LmsApp2.Api.Services
 
             return SubmissionId;
         }
-        public async Task<Guid> AddStudent(StudentDto std)
-        {
-            Guid SchoolId = await schRepo.GetSchoolByName(std.SchoolName);
+        // public async Task<Guid> AddStudent(StudentDto std)
+        // {
+        //     Guid SchoolId = await schRepo.GetSchoolByName(std.SchoolName);
 
-            if (SchoolId == Guid.Empty)
-            {
-                throw new CustomException("The School, Student is trying to register in, does not Exists.", 401);
-            }
-
-
-
-            Guid StudentId = await stdRepo.AddStudent(std, SchoolId);
+        //     if (SchoolId == Guid.Empty)
+        //     {
+        //         throw new CustomException("The School, Student is trying to register in, does not Exists.", 401);
+        //     }
 
 
-            if (StudentId == Guid.Empty)
-            {
-                throw new Exception("Some error Occured In the Database while Saving the Student Data.");
-
-            }
+ 
+        //     Guid StudentId = await stdRepo.AddStudent(std, SchoolId);
 
 
-            Guid AccountId = await stdRepo.MakeStudentAccount(std, StudentId);
+        //     if (StudentId == Guid.Empty)
+        //     {
+        //         throw new Exception("Some error Occured In the Database while Saving the Student Data.");
+
+        //     }
+
+
+        //     Guid AccountId = await stdRepo.MakeStudentAccount(std, StudentId);
 
 
 
 
-            var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
+        //     var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
 
 
-            string PhotoFilePathOnServer = await std.Photo.UploadToServer(DirectoryPath);
-            string CnicFrontFilePathOnServer = await std.Cnic_Front.UploadToServer(DirectoryPath);
-            string CnicBackFilePathOnServer = await std.Cnic_Back.UploadToServer(DirectoryPath);
+        //     string PhotoFilePathOnServer = await std.Photo.UploadToServer(DirectoryPath);
+        //     string CnicFrontFilePathOnServer = await std.Cnic_Front.UploadToServer(DirectoryPath);
+        //     string CnicBackFilePathOnServer = await std.Cnic_Back.UploadToServer(DirectoryPath);
 
 
-            Guid DocId = await stdRepo.AddStudentDocuments(StudentId, PhotoFilePathOnServer, CnicBackFilePathOnServer, CnicFrontFilePathOnServer);
+        //     Guid DocId = await stdRepo.AddStudentDocuments(StudentId, PhotoFilePathOnServer, CnicBackFilePathOnServer, CnicFrontFilePathOnServer);
 
-            await stdRepo.SaveChanges();
+        //     await stdRepo.SaveChanges();
 
-            return StudentId;
+        //     return StudentId;
 
-        }
+        // }
 
         public async Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId, Guid CourseId)
         {

@@ -11,7 +11,7 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<List<SendCoursesToFrontendDto>> GetStudentCourses(Guid StdId);
         public Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId);
 
-        public Task<Guid> AddStudent(StudentDto std);
+        // public Task<Guid> AddStudent(StudentDto std);
 
 
         public Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId, Guid CourseId);

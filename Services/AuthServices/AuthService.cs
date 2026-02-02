@@ -9,7 +9,7 @@ using LmsApp2.Api.UtilitiesInterfaces;
 namespace LmsApp2.Api.Services.AuthServices
 {
 
-    public class Login_Register_Service(IAuthRepo authRepo,IEmployeeRepo employeerepo,ISchoolRepo schoolrepo,IWebHostEnvironment env) : ILogin_Register
+    public class Login_Register_Service(IAuthRepo authRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : ILogin_Register
     {
         public async Task<Guid> AdminLogin(LoginDto LoginData, HttpContext context)
         {
@@ -83,7 +83,7 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
 
-             SendLoginDataToFrontend data=await authRepo.Login(LoginData.Email,LoginData.Password,"Student");
+            SendLoginDataToFrontend data = await authRepo.Login(LoginData.Email, LoginData.Password, "Student");
 
             // var (StdId, StdAccId) = await stdRepo.AuthorizeStudent(LoginData.Email, LoginData.Password);
             // string AccessToken = JwtServices.GenerateAccessToken(StdId, "Student", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
@@ -115,20 +115,20 @@ namespace LmsApp2.Api.Services.AuthServices
 
         }
 
-        public  async Task<Guid> RegisterEmployee(EmployeeDto emp, string Designation)
+        public async Task<Guid> RegisterEmployee(EmployeeDto emp, string Designation)
         {
-             Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
+            Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
             if (SchoolId == Guid.Empty)
             {
                 throw new Exception("School You are Registering For was not found in the Database.");
             }
 
 
-            bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
-            if (UserEmailAlreadyExists)
-            {
-                throw new Exception("This Email is Already in use, Please Enter a different email.");
-            }
+            // bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
+            // if (UserEmailAlreadyExists)
+            // {
+            //     throw new Exception("This Email is Already in use, Please Enter a different email.");
+            // } we are checking this inside repo function while Registering the Employee
 
 
             // now uploading the docs on the server.
@@ -157,15 +157,41 @@ namespace LmsApp2.Api.Services.AuthServices
 
             // this repo runction adds employee data in the main table, Asp.NetUsers,Upload docs path in DB, Assign Role all in a single transaction.
 
-            var (ReturnedEmpId, DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation, docs);
+            var (ReturnedEmpId, DocId) = await authRepo.RegisterEmployee(emp, SchoolId, Designation, docs);
 
             // await employeerepo.SaveChanges(); trasaction already commited inside this AddEmployee function.
             return ReturnedEmpId;
         }
 
-        public Task<Guid> RegisterStudent(StudentDto std)
+        public async Task<Guid> RegisterStudent(StudentDto std)
         {
-            throw new NotImplementedException();
+            Guid SchoolId = await schoolrepo.GetSchoolByName(std.SchoolName);
+
+            if (SchoolId == Guid.Empty)
+            {
+                throw new CustomException("The School, Student is trying to register in, does not Exists.", 401);
+            }
+
+
+            var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
+
+
+            string PhotoFilePathOnServer = await std.Photo.UploadToServer(DirectoryPath);
+            string CnicFrontFilePathOnServer = await std.Cnic_Front.UploadToServer(DirectoryPath);
+            string CnicBackFilePathOnServer = await std.Cnic_Back.UploadToServer(DirectoryPath);
+
+            Dictionary<string, string> docs = new()
+            {
+                {"cnicback",CnicBackFilePathOnServer},
+                {"cnicfront",CnicFrontFilePathOnServer},
+                {"photo",PhotoFilePathOnServer}
+            };
+
+
+            var (StudentId, DocId) = await authRepo.RegisterStudent(std, SchoolId, docs);
+
+
+            return StudentId;
         }
     }
 }

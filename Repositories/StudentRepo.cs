@@ -81,25 +81,25 @@ namespace LmsApp2.Api.Repositories
 
 
         }
-        public async Task<Guid> AddStudent(StudentDto std, Guid SchoolId)
-        {
-            Student Student = std.ToDbModel(SchoolId);
-            var S = await dbcontext.Students.AddAsync(Student);
+        // public async Task<Guid> AddStudent(StudentDto std, Guid SchoolId)
+        // {
+        //     Student Student = std.ToDbModel(SchoolId);
+        //     var S = await dbcontext.Students.AddAsync(Student);
 
-            return S.Entity.Studentid;
+        //     return S.Entity.Studentid;
 
 
-        }
+        // }
 
-        public async Task<Guid> MakeStudentAccount(StudentDto std, Guid StudentId)
-        {
-            throw new NotImplementedException();
+        // public async Task<Guid> MakeStudentAccount(StudentDto std, Guid StudentId)
+        // {
+        //     throw new NotImplementedException();
 
-            // Studentaccountinfo Acc = std.ToAccount(StudentId);
-            // var AccInDb = await dbcontext.Studentaccountinfos.AddAsync(Acc);
-            // return AccInDb.Entity.Accountid;
+        //     // Studentaccountinfo Acc = std.ToAccount(StudentId);
+        //     // var AccInDb = await dbcontext.Studentaccountinfos.AddAsync(Acc);
+        //     // return AccInDb.Entity.Accountid;
 
-        }
+        // }
 
 
         public async Task SaveChanges()
@@ -109,110 +109,110 @@ namespace LmsApp2.Api.Repositories
 
 
 
-        public async Task<(Guid StudentId, Guid AccountId)> AuthorizeStudent(string email, string Password)
-        {
-            throw new NotImplementedException();
+        // public async Task<(Guid StudentId, Guid AccountId)> AuthorizeStudent(string email, string Password)
+        // {
+        //     throw new NotImplementedException();
 
 
-            // var StudentAcc = await dbcontext.Studentaccountinfos.Where(std => std.Email == email).Select(std => std).FirstOrDefaultAsync();
-            // if (StudentAcc == null)
-            // {
+        //     // var StudentAcc = await dbcontext.Studentaccountinfos.Where(std => std.Email == email).Select(std => std).FirstOrDefaultAsync();
+        //     // if (StudentAcc == null)
+        //     // {
 
-            //     throw new Exception("Account was not Found in the Database.");
+        //     //     throw new Exception("Account was not Found in the Database.");
 
-            // }
-            // bool CorrectPassword = Password.VerifyHashedPassword(StudentAcc.Password);
-            // if (!CorrectPassword)
-            // {
-            //     throw new Exception("Invalid Password");
-            // }
-
-
-
-            // var Std = await dbcontext.Students.FirstOrDefaultAsync(std => std.Studentid == StudentAcc.Studentid);
-            // if (Std == null)
-            // {
-            //     throw new Exception("Student was not found in the Main Table");
-
-            // }
-
-            // if (!Std.Isactive)
-            // {
-
-            //     throw new Exception("Student not Active.");
-
-            // }
-
-
-            // return (Std.Studentid, StudentAcc.Accountid);
+        //     // }
+        //     // bool CorrectPassword = Password.VerifyHashedPassword(StudentAcc.Password);
+        //     // if (!CorrectPassword)
+        //     // {
+        //     //     throw new Exception("Invalid Password");
+        //     // }
 
 
 
-        }
+        //     // var Std = await dbcontext.Students.FirstOrDefaultAsync(std => std.Studentid == StudentAcc.Studentid);
+        //     // if (Std == null)
+        //     // {
+        //     //     throw new Exception("Student was not found in the Main Table");
 
-        public async Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
-        {
-            Studentdocument StdDocs = new Studentdocument()
-            {
-                Documentid = Guid.NewGuid(),
-                Studentid = StdId,
-                Createdat = DateTime.UtcNow,
-                Photo = PhotoPath,
-                Cnicbackorbform = CnicBackPath,
-                Cnicfrontorbform = CnicFrontPath,
+        //     // }
+
+        //     // if (!Std.Isactive)
+        //     // {
+
+        //     //     throw new Exception("Student not Active.");
+
+        //     // }
 
 
-
-            };
-
-            var DocsInDb = await dbcontext.Studentdocuments.AddAsync(StdDocs);
-
-            return StdDocs.Documentid;
-        }
+        //     // return (Std.Studentid, StudentAcc.Accountid);
 
 
 
-        public async Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken)
-        {
-            throw new NotImplementedException();
+        // }
 
-            // var IfSessionAlreadyExists = await dbcontext.Studentsessions.FirstOrDefaultAsync(sess => sess.Studentaccountid == StdAccId);
-
-
-            // if (IfSessionAlreadyExists != null)
-            // {
-
-            //     IfSessionAlreadyExists.Refreshtoken = RefreshToken;
-            //     IfSessionAlreadyExists.Expiresat = DateTime.UtcNow.AddDays(10);
-
-            //     return IfSessionAlreadyExists.Sessionid;
-
-
-            // }
-
-            // // if session does not exists.
-
-
-            // Studentsession StdSession = new()
-            // {
-            //     Sessionid = Guid.NewGuid(),
-            //     Studentaccountid = StdAccId,
-            //     Refreshtoken = RefreshToken,
-            //     Createdat = DateTime.UtcNow,
-            //     Expiresat = DateTime.UtcNow.AddDays(10),
-
-            // };
+        // public async Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath)
+        // {
+        //     Studentdocument StdDocs = new()
+        //     {
+        //         Documentid = Guid.NewGuid(),
+        //         Studentid = StdId,
+        //         Createdat = DateTime.UtcNow,
+        //         Photo = PhotoPath,
+        //         Cnicbackorbform = CnicBackPath,
+        //         Cnicfrontorbform = CnicFrontPath,
 
 
 
-            // await dbcontext.Studentsessions.AddAsync(StdSession);
+        //     };
+
+        //     var DocsInDb = await dbcontext.Studentdocuments.AddAsync(StdDocs);
+
+        //     return StdDocs.Documentid;
+        // }
 
 
-            // return StdSession.Sessionid;
+
+        // public async Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken)
+        // {
+        //     throw new NotImplementedException();
+
+        //     // var IfSessionAlreadyExists = await dbcontext.Studentsessions.FirstOrDefaultAsync(sess => sess.Studentaccountid == StdAccId);
+
+
+        //     // if (IfSessionAlreadyExists != null)
+        //     // {
+
+        //     //     IfSessionAlreadyExists.Refreshtoken = RefreshToken;
+        //     //     IfSessionAlreadyExists.Expiresat = DateTime.UtcNow.AddDays(10);
+
+        //     //     return IfSessionAlreadyExists.Sessionid;
+
+
+        //     // }
+
+        //     // // if session does not exists.
+
+
+        //     // Studentsession StdSession = new()
+        //     // {
+        //     //     Sessionid = Guid.NewGuid(),
+        //     //     Studentaccountid = StdAccId,
+        //     //     Refreshtoken = RefreshToken,
+        //     //     Createdat = DateTime.UtcNow,
+        //     //     Expiresat = DateTime.UtcNow.AddDays(10),
+
+        //     // };
+
+
+
+        //     // await dbcontext.Studentsessions.AddAsync(StdSession);
+
+
+        //     // return StdSession.Sessionid;
 
 
 
 
-        }
+        // }
     }
 }

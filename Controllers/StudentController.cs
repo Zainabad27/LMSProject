@@ -12,24 +12,7 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class StudentController(IStudentService StdService) : ControllerBase
     {
-        [HttpPost("RegisterStudent")]
-        [Consumes("multipart/form-data")]
-        [AllowAnonymous]
-        public async Task<IActionResult> AddStudent([FromForm] StudentDto stdData)
-        {
-
-
-
-            Guid StudentId = await StdService.AddStudent(stdData);
-
-
-
-            return Ok(new { AddedStudentId = StudentId });
-
-
-
-
-        }
+       
         [HttpGet("GetAssignments/{CourseId}")]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetAllAssignments([FromRoute] Guid CourseId)
