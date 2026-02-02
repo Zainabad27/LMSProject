@@ -27,7 +27,6 @@ namespace LmsApp2.Api.Controllers
             Pagination<SendTeachersToFrontend> TeachersList = await employeeServices.GetAllTeachers(page, pageSize);
 
             return Ok(TeachersList);    
-            // throw new NotImplementedException();
         }   
 
         [Authorize(Roles = "Admin")]
@@ -37,10 +36,10 @@ namespace LmsApp2.Api.Controllers
         {
             var u = User;
 
-            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
+            // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
 
 
-            return Ok(new { AddedEmployeeId = addedEmployeeId });
+            // return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
         [Authorize(Roles = "Admin")]
@@ -48,8 +47,8 @@ namespace LmsApp2.Api.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
         {
-            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");           
-            return Ok(new { AddedEmployeeId = addedEmployeeId });
+            // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");           
+            // return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
 

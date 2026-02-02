@@ -11,7 +11,7 @@ namespace LmsApp2.Api.Controllers
     [AllowAnonymous]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class Auth(ILoginService LoginService,UserManager<AppUser> _userManager) : ControllerBase
+    public class Auth(ILogin_Register LoginService) : ControllerBase
     {
         [HttpPost("Login/Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)

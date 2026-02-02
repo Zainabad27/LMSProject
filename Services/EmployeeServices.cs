@@ -118,52 +118,5 @@ namespace LmsApp2.Api.Services
 
 
         }
-        public async Task<Guid> AddEmployee(EmployeeDto emp, String Designation)
-        {
-            Guid SchoolId = await schoolrepo.GetSchoolByName(emp.SchoolName);
-            if (SchoolId == Guid.Empty)
-            {
-                throw new Exception("School You are Registering For was not found in the Database.");
-            }
-
-
-            bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
-            if (UserEmailAlreadyExists)
-            {
-                throw new Exception("This Email is Already in use, Please Enter a different email.");
-            }
-
-
-            // now uploading the docs on the server.
-
-            var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
-
-            if (!Directory.Exists(DirectoryPath))
-            {
-                throw new CustomException("Some Internal Server Error Occured while Saving the Employee Data on the server.", 500);
-
-            }
-
-
-            string PhotoFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
-            string CnicFrontFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
-            string CnicBackFilePathOnServer = await emp.photo.UploadToServer(DirectoryPath);
-
-            Dictionary<string, string> docs = new()
-            {
-                {"cnicback",CnicBackFilePathOnServer},
-                {"cnicfront",CnicFrontFilePathOnServer},
-                {"photo",PhotoFilePathOnServer}
-            };
-
-
-
-            // this repo runction adds employee data in the main table, Asp.NetUsers,Upload docs path in DB, Assign Role all in a single transaction.
-
-            var (ReturnedEmpId, DocId) = await employeerepo.AddEmployee(emp, SchoolId, Designation, docs);
-
-            // await employeerepo.SaveChanges(); trasaction already commited inside this AddEmployee function.
-            return ReturnedEmpId;
-        }
     }
 }
