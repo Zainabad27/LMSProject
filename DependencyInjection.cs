@@ -23,6 +23,7 @@ namespace LmsApp2.Api
             services.AddScoped<IStudentRepo, StudentRepo>();
             services.AddScoped<IClassRepo, ClassRepo>();
             services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IAuthRepo,AuthRepo>();
             
             services.AddScoped<IAssignmentRepo, AssignmentRepo>();
             services.AddScoped<IFetchFileFromServer, FetchFileFromServer>();

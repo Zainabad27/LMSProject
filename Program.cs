@@ -171,7 +171,7 @@ using (var scope = app.Services.CreateScope())
 
 
 
-    await SeedRoles.SeedData(_roleManager);
+    await SeedRoles.SeedData(_roleManager); // seeding the initial Roles.
     
 }
 

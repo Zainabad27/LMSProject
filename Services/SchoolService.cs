@@ -20,6 +20,8 @@ namespace LmsApp2.Api.Services
             // making a default Admin Account
 
             await schoolrepo.SeedInitialData(SchoolId);
+
+           await schoolrepo.SaveChanges();
             return SchoolId;
 
 

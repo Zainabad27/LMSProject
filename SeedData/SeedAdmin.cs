@@ -8,9 +8,9 @@ namespace LmsApp2.Api.SeedData
 {
     internal class SeedAdmin
     {
-        public static async Task SeedData(LmsDatabaseContext dbcontext,UserManager<AppUser> _userManager,Guid SchoolId)
+        public static async Task SeedData(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager, Guid SchoolId)
         {
-            using var transaction=await dbcontext.Database.BeginTransactionAsync();
+            using var transaction = await dbcontext.Database.BeginTransactionAsync();
             // we will check if the Employee Table is Empty then we will seend the initial admin
 
 
@@ -20,43 +20,47 @@ namespace LmsApp2.Api.SeedData
 
             if (!IsAdminPresent)
             {
-               Guid AdminId=Guid.NewGuid();
+                Guid AdminId = Guid.NewGuid();
 
 
                 Employee DefaultAdmin = new()
                 {
-                    Schoolid=SchoolId,
-                    Employeeid=AdminId,
-                    Createdat=DateTime.UtcNow,
-                    Isactive=true,
+                    Schoolid = SchoolId,
+                    Employeeid = AdminId,
+                    Createdat = DateTime.UtcNow,
+                    Isactive = true,
+                    Employeedesignation = "Admin",
 
 
-                    
+
                 };
 
 
                 AppUser DefaultAdminAccount = new()
                 {
-                    UserId_InMainTable=AdminId,
-                    UserName="DefaultAdmin",
-                    Email="Admin@Gmail.com",
+                    UserId_InMainTable = AdminId,
+                    UserName = "DefaultAdmin",
+                    Email = "Admin@Gmail.com",
                 };
 
 
-               var result=await  _userManager.CreateAsync(DefaultAdminAccount,"Admin@123");
-
-                if (!result.Succeeded)
+                var result = await _userManager.CreateAsync(DefaultAdminAccount, "Admin@123");
+                bool succ=result.Succeeded;
+                if (!succ)
                 {
-                    throw new CustomException("Problem Occured While Seeding the Initial Data into the DB",500);
+                    // Console.Error
+
+                    Console.WriteLine($"Error: {result.Errors.Select(e => e.Description)}");
+                    throw new CustomException("Problem Occured While Seeding the Initial Data into the DB", 500);
                 }
 
-                await _userManager.AddToRoleAsync(DefaultAdminAccount,"Admin");
+                await _userManager.AddToRoleAsync(DefaultAdminAccount, "Admin");
 
 
 
-               await  dbcontext.Employees.AddAsync(DefaultAdmin);
+                await dbcontext.Employees.AddAsync(DefaultAdmin);
 
-               await transaction.CommitAsync();
+                await transaction.CommitAsync();
 
 
 
