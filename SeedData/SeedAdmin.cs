@@ -12,17 +12,11 @@ namespace LmsApp2.Api.SeedData
         {
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
             // we will check if the Employee Table is Empty then we will seend the initial admin
+            Guid AdminId = Guid.NewGuid();
 
-
-
-            // seed the initial admin at the start of the App on if the Database is Empty(App starting for the very first time.)
             bool IsAdminPresent = await dbcontext.Employees.AnyAsync();
-
             if (!IsAdminPresent)
             {
-                Guid AdminId = Guid.NewGuid();
-
-
                 Employee DefaultAdmin = new()
                 {
                     Schoolid = SchoolId,
@@ -35,17 +29,30 @@ namespace LmsApp2.Api.SeedData
 
                 };
 
+                await dbcontext.Employees.AddAsync(DefaultAdmin);
 
+            }
+
+
+
+
+            // seed the initial admin Account at the start of the App on if the Database is Empty(App starting for the very first time.)
+
+            // _userManager.FindByIdAsync();
+            var DefaultAdminExists = await _userManager.FindByNameAsync("DefaultAdmin"+$"{SchoolId}");
+            IsAdminPresent = DefaultAdminExists != null;
+            if (!IsAdminPresent)
+            {
                 AppUser DefaultAdminAccount = new()
                 {
                     UserId_InMainTable = AdminId,
-                    UserName = "DefaultAdmin",
-                    Email = "Admin@Gmail.com",
+                    UserName = "DefaultAdmin"+$"{SchoolId}",
+                    Email = $"Admin{SchoolId}@gmail.com",
                 };
 
 
                 var result = await _userManager.CreateAsync(DefaultAdminAccount, "Admin@123");
-                bool succ=result.Succeeded;
+                bool succ = result.Succeeded;
                 if (!succ)
                 {
                     // Console.Error
@@ -58,7 +65,6 @@ namespace LmsApp2.Api.SeedData
 
 
 
-                await dbcontext.Employees.AddAsync(DefaultAdmin);
 
                 await transaction.CommitAsync();
 

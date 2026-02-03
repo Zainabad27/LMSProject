@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.SeedData;
@@ -11,6 +12,12 @@ namespace LmsApp2.Api.Services
 
         public async Task<Guid> AddSchool(SchoolDto SchoolData)
         {
+            // we will chek if that school already exists.
+            Guid Schoolid = await schoolrepo.GetSchoolByName(SchoolData.SchoolName);
+            if (Schoolid != Guid.Empty)
+            {
+                throw new CustomException("School name Already exists", 400);
+            }
             // when we add an school we make a default account of an Admin.
 
 
@@ -21,7 +28,7 @@ namespace LmsApp2.Api.Services
 
             await schoolrepo.SeedInitialData(SchoolId);
 
-           await schoolrepo.SaveChanges();
+            await schoolrepo.SaveChanges();
             return SchoolId;
 
 

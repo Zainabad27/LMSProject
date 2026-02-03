@@ -14,6 +14,7 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<Guid> AddSchool(SchoolDto sch)
         {
+            
 
 
             var res = await dbcontext.Schools.AddAsync(sch.To_DbModel());
