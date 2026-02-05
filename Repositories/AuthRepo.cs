@@ -32,7 +32,9 @@ namespace LmsApp2.Api.Repositories
                 throw new CustomException($"These Credentials are not of {designation}.", 400);
             }
 
-            string AccessToken = JwtServices.GenerateAccessToken(user.UserId_InMainTable, designation, email); // in access token we have put Employee Id in the Token payload not the Account Id.
+
+
+            string AccessToken = JwtServices.GenerateAccessToken(designation, user);
             string RefreshToken = JwtServices.GenerateRefreshToken();
 
 
@@ -42,10 +44,6 @@ namespace LmsApp2.Api.Repositories
 
 
             await transaction.CommitAsync();
-
-
-
-
 
             return new SendLoginDataToFrontend()
             {
@@ -144,9 +142,6 @@ namespace LmsApp2.Api.Repositories
                 Email = std.Email,
                 UserName = std.FirstName + " " + std.LastName,
                 PhoneNumber = std.Contact,
-
-
-
             };
 
 

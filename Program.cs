@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
 using LmsApp2.Api.SeedData;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,7 +86,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     // lock out settings
 
 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
@@ -94,22 +95,18 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 }).AddEntityFrameworkStores<LmsDatabaseContext>().AddDefaultTokenProviders();
 
-
-
-// Cookie settings  
-// builder.Services.ConfigureApplicationCookie(options =>
-// {
-//     options.Cookie.HttpOnly = true;
-//     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-//     options.SlidingExpiration = true;
-// });
-
-
 var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 var JwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
 {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+
+}).AddJwtBearer(options =>
+{
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -133,6 +130,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             }
             return Task.CompletedTask;
         },
+
+
+        OnTokenValidated = async context =>
+        {
+            UserManager<AppUser> _userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
+            var userId = context?.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tokenStamp = context?.Principal?.FindFirstValue("SecurityStamp");
+
+            var user = await _userManager.FindByIdAsync(userId!);
+
+            if (user == null || user.SecurityStamp != tokenStamp)
+            {
+                context?.Fail("Token no longer valid");
+            }
+
+
+
+        },
+
+
         OnChallenge = context =>
         {
             // Skip default logic
@@ -148,7 +165,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
 
-            return context.Response.WriteAsync("{\"error\": \"Unauthorized Access,You are not allowed to access this resource.\"}");
+            return context.Response.WriteAsync($"Unauthorized Access,{context?.Principal?.FindFirstValue(ClaimTypes.Role)} are not allowed to access this resource.");
         }
     };
 });
@@ -167,12 +184,12 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    RoleManager<IdentityRole> _roleManager=scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    RoleManager<IdentityRole> _roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
 
 
     await SeedRoles.SeedData(_roleManager); // seeding the initial Roles.
-    
+
 }
 
 // Configure the HTTP request pipeline.
@@ -207,9 +224,6 @@ app.UseRouting();
 
 
 app.UseAuthentication();
-
-
-//app.UseMiddleware<JwtVerify>(); // your custom JWT validation
 app.UseAuthorization();
 
 

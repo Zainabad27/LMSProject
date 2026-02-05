@@ -1,4 +1,5 @@
-﻿using LmsApp2.Api.UtilitiesInterfaces;
+﻿using LmsApp2.Api.Identity;
+using LmsApp2.Api.UtilitiesInterfaces;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,17 +8,19 @@ using System.Text;
 
 namespace LmsApp2.Api.Utilities
 {
-    public class JwtServices(IConfiguration config) : IJwtServices
+    public class JwtServices : IJwtServices
     {
-        public string GenerateAccessToken(Guid UserId, string Designation, string email)
+        public string GenerateAccessToken(string Designation, AppUser _user)
         {
             String GeneratingTokenFor = Designation + "s";
             string AccessToken = null!;
             var claims = new List<Claim> {
 
                     new(ClaimTypes.Role,Designation),
-                    new("Id",UserId.ToString()),
-                    new("Email",email.ToString())
+                    new(ClaimTypes.NameIdentifier,_user.Id),
+                    new("MainTableId",_user.UserId_InMainTable.ToString()),
+                    new("Email",_user.Email!.ToString()),
+                    new("SecurityStamp",_user.SecurityStamp)
 
 
 

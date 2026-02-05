@@ -39,7 +39,7 @@ namespace LmsApp2.Api.Services.AuthServices
 
             if (ValidToken)
             {
-                string NewAccessToken = JwtServices.GenerateAccessToken(user.UserId_InMainTable, Designation, RefreshTokenData.Email);
+                string NewAccessToken = JwtServices.GenerateAccessToken(Designation, user);
                 string NewRefreshToken = JwtServices.GenerateRefreshToken();
 
 
