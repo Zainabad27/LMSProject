@@ -49,49 +49,28 @@ namespace LmsApp2.Api.Controllers
 
         }
 
-
-
-
         [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
-        [HttpPost("AddAdmin")]
-        public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
+        [HttpPost("RegisterEmployee/{Designation}")]
+        public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp, [FromRoute] string Designation)
         {
-            var u = User;
+            if (Designation != "Admin" && Designation != "Teacher") return BadRequest();
 
-            Guid addedEmployeeId = await AuthService.RegisterEmployee(emp, "Admin");
+            Guid addedEmployeeId = await AuthService.RegisterEmployee(emp, Designation);
 
 
             return Ok(new { AddedEmployeeId = addedEmployeeId });
 
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPost("AddTeacher")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
-        {
-            Guid addedEmployeeId = await AuthService.RegisterEmployee(emp, "Teacher");
-            return Ok(new { AddedEmployeeId = addedEmployeeId });
-
-        }
-
 
         [HttpPost("RegisterStudent")]
         [Consumes("multipart/form-data")]
         [AllowAnonymous]
         public async Task<IActionResult> AddStudent([FromForm] StudentDto stdData)
         {
-
-
-
             Guid StudentId = await AuthService.RegisterStudent(stdData);
 
-
-
             return Ok(new { AddedStudentId = StudentId });
-
-
-
 
         }
     }

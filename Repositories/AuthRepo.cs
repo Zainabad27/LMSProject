@@ -4,13 +4,32 @@ using LmsApp2.Api.Identity;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
+using LmsApp2.Api.Utilities;
 using LmsApp2.Api.UtilitiesInterfaces;
 using Microsoft.AspNetCore.Identity;
+using Npgsql.Replication.PgOutput.Messages;
 
 namespace LmsApp2.Api.Repositories
 {
     internal class AuthRepo(UserManager<AppUser> _userManager, RoleManager<IdentityRole> _roleManager, LmsDatabaseContext dbcontext, IJwtServices JwtServices) : IAuthRepo
     {
+        public async Task<Guid> UploadDocuments(Guid EmpId, Dictionary<string, string> Docs)
+        {
+
+            Employeedocument EmpDocs = new()
+            {
+                Documentid = Guid.NewGuid(),
+                Employeeid = EmpId,
+                Cnicfront = Docs["cnicfront"],
+                Cnicback = Docs["cnicback"],
+                Photo = Docs["photo"],
+                Createdat = DateTime.UtcNow,
+            };
+            var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
+            return DocsSavedInDatabse.Entity.Documentid;
+
+
+        }
         public async Task<SendLoginDataToFrontend> Login(string email, string pass, string designation)
         {
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
@@ -97,48 +116,46 @@ namespace LmsApp2.Api.Repositories
             return (EmployeeSavedInDatabase.Entity.Employeeid, DocId);
         }
 
-
-
-        public async Task<Guid> UploadDocuments(Guid EmpId, Dictionary<string, string> Docs)
+        private async Task Rollback(AppUser _user)
         {
+            var UserExists = await _userManager.FindByEmailAsync(_user.Email!);
 
-            Employeedocument EmpDocs = new()
+            if (UserExists!=null)
             {
-                Documentid = Guid.NewGuid(),
-                Employeeid = EmpId,
-                Cnicfront = Docs["cnicfront"],
-                Cnicback = Docs["cnicback"],
-                Photo = Docs["photo"],
-                Createdat = DateTime.UtcNow,
-            };
-            var DocsSavedInDatabse = await dbcontext.Employeedocuments.AddAsync(EmpDocs);
-            return DocsSavedInDatabse.Entity.Documentid;
+                var result = await _userManager.DeleteAsync(_user);
+                if (!result.Succeeded)
+                {
+                    throw new CustomException("Problem Occured While Rolling back the orperation.", 500);
+                }
 
+            }
 
         }
-
-        public async Task SaveChanges()
-        {
-            await dbcontext.SaveChangesAsync();
-        }
-
         public async Task<(Guid StudentId, Guid DocId)> RegisterStudent(StudentDto std, Guid SchoolId, Dictionary<string, string> docs)
         {
 
 
-            using var transaction = await dbcontext.Database.BeginTransactionAsync();
+            // i have to delete the Photos From Server if Student is not registered.
+
+
+
+
+            // using var transaction = await dbcontext.Database.BeginTransactionAsync();
             var user = await _userManager.FindByEmailAsync(std.Email);
             if (user is not null)
             {
+                await docs.DeleteFileFromServer();
+
                 throw new CustomException("Email Already In use.", 400);
             }
 
-            Guid StdId = Guid.NewGuid();
+            Student StudentInMainTable = std.ToDbModel(SchoolId); // extension method from student mapper
+            // Guid StdId = Guid.NewGuid();
 
 
             AppUser studentAcc = new()
             {
-                UserId_InMainTable = StdId,
+                UserId_InMainTable = StudentInMainTable.Studentid,
                 Email = std.Email,
                 UserName = std.FirstName + " " + std.LastName,
                 PhoneNumber = std.Contact,
@@ -146,10 +163,15 @@ namespace LmsApp2.Api.Repositories
 
 
             var result = await _userManager.CreateAsync(studentAcc, std.Password);
+
+            // Console.WriteLine(result.Errors);
+
+
             if (!result.Succeeded)
             {
-                throw new CustomException($"Error occured while registering student. {result.Errors.Select(e => e.Description)}");
-
+                await docs.DeleteFileFromServer();
+                throw new CustomException(
+                 $"Error occurred while registering student. {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
 
 
@@ -158,6 +180,9 @@ namespace LmsApp2.Api.Repositories
 
             if (!StudentRoleExists)
             {
+                await docs.DeleteFileFromServer();
+                await Rollback(studentAcc);
+
                 throw new CustomException("Student Role Does not exists in the system.", 500);
             }
 
@@ -166,28 +191,43 @@ namespace LmsApp2.Api.Repositories
 
             if (!result2.Succeeded)
             {
+                await docs.DeleteFileFromServer();
+                await Rollback(studentAcc);
                 throw new CustomException("Error Occured while Saving the student in the Database.", 500);
             }
 
 
 
 
-            Student StudentInMainTable = std.ToDbModel(SchoolId); // extension method from student mapper
 
 
             await dbcontext.Students.AddAsync(StudentInMainTable);
-
-            Guid DocId = await UploadDocuments(StdId, docs);
-
-
-            await transaction.CommitAsync();
+           
+            Guid DocId = await UploadDocuments(StudentInMainTable.Studentid, docs);
+        //    Guid DocId= await UploadDocuments(Guid.NewGuid(),docs);
 
 
+            try
+            {
+                await dbcontext.SaveChangesAsync();
 
-            return (StdId, DocId);
 
+            }
+            catch (System.Exception)
+            {
+                await docs.DeleteFileFromServer();
+                await Rollback(studentAcc);
 
+                throw;
+            }
 
+            return (StudentInMainTable.Studentid, DocId);
+        }
+
+        public async Task SaveChanges()
+        {
+            await dbcontext.SaveChangesAsync();
+            
         }
     }
 

@@ -255,35 +255,7 @@ public partial class LmsDatabaseContext : IdentityDbContext<AppUser, IdentityRol
                 .HasConstraintName("employees_schoolid_fkey");
         });
 
-        // modelBuilder.Entity<Employeeaccountinfo>(entity =>
-        // {
-        //     entity.HasKey(e => e.Accountid).HasName("employeeaccountinfo_pkey");
-
-        //     entity.ToTable("employeeaccountinfo");
-
-        //     entity.HasIndex(e => e.Email, "employeeaccountinfo_email_key").IsUnique();
-
-        //     entity.HasIndex(e => e.Employeeid, "employeeaccountinfo_employeeid_key").IsUnique();
-
-        //     entity.Property(e => e.Accountid)
-        //         .ValueGeneratedNever()
-        //         .HasColumnName("accountid");
-        //     entity.Property(e => e.Createdat)
-        //         .HasDefaultValueSql("CURRENT_TIMESTAMP")
-        //         .HasColumnName("createdat");
-        //     entity.Property(e => e.Email)
-        //         .HasMaxLength(150)
-        //         .HasColumnName("email");
-        //     entity.Property(e => e.Employeeid).HasColumnName("employeeid");
-        //     entity.Property(e => e.Password)
-        //         .HasMaxLength(255)
-        //         .HasColumnName("password");
-
-        //     entity.HasOne(d => d.Employee).WithOne(p => p.Employeeaccountinfo)
-        //         .HasForeignKey<Employeeaccountinfo>(d => d.Employeeid)
-        //         .OnDelete(DeleteBehavior.Cascade)
-        //         .HasConstraintName("employeeaccountinfo_employeeid_fkey");
-        // });
+  
 
         modelBuilder.Entity<Employeeadditionaldoc>(entity =>
         {
@@ -345,17 +317,17 @@ public partial class LmsDatabaseContext : IdentityDbContext<AppUser, IdentityRol
                 .ValueGeneratedNever()
                 .HasColumnName("documentid");
             entity.Property(e => e.Cnicback)
-                .HasMaxLength(255)
+                .HasMaxLength(255)//<<<<====
                 .HasColumnName("cnicback");
             entity.Property(e => e.Cnicfront)
-                .HasMaxLength(255)
+                .HasMaxLength(255)//<<<<====
                 .HasColumnName("cnicfront");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("createdat");
             entity.Property(e => e.Employeeid).HasColumnName("employeeid");
             entity.Property(e => e.Photo)
-                .HasMaxLength(255)
+                .HasMaxLength(255)//<<<<====
                 .HasColumnName("photo");
 
             entity.HasOne(d => d.Employee).WithOne(p => p.Employeedocuments)

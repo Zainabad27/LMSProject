@@ -17,7 +17,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> GetAssigments([FromRoute] Guid CourseId)
         {
             var userClaims = User;
-            var TeacherId = userClaims.FindFirstValue("Id");
+            var TeacherId = userClaims.FindFirstValue("MainTableId");
              
              if (TeacherId == null)
              {
@@ -46,7 +46,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> AssignmentSubmission([FromBody] AssignmentSubmissionDto submission)
         {
             var UserClaims = User;
-            var StudentId = UserClaims.FindFirstValue("Id");
+            var StudentId = UserClaims.FindFirstValue("MainTableId");
 
             if (StudentId == null)
             {
@@ -74,14 +74,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> UploadAssigment([FromForm] AssignmentDto AssignmentData)
         {
             var UserClaims = User;
-            var TeacherId = UserClaims.FindFirstValue("Id");
-
-            if (TeacherId == null)
-            {
-                throw new CustomException("Unauthorized Access.", 403);
-
-            }
-
+            var TeacherId = UserClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
             Guid TId = Guid.Parse(TeacherId);
 
             Guid AssignmentId = await employeeService.UploadAssignment(AssignmentData, TId);

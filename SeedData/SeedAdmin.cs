@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Identity;
 using LmsApp2.Api.Models;
@@ -8,9 +9,9 @@ namespace LmsApp2.Api.SeedData
 {
     internal class SeedAdmin
     {
-        public static async Task SeedData(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager, Guid SchoolId)
+        public static async Task<AppUser?> SeedData(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager, Guid SchoolId)
         {
-            using var transaction = await dbcontext.Database.BeginTransactionAsync();
+            
             // we will check if the Employee Table is Empty then we will seend the initial admin
             Guid AdminId = Guid.NewGuid();
 
@@ -64,13 +65,11 @@ namespace LmsApp2.Api.SeedData
                 await _userManager.AddToRoleAsync(DefaultAdminAccount, "Admin");
 
 
-
-
-                await transaction.CommitAsync();
-
-
-
+                return DefaultAdminAccount;
             }
+
+
+            return null;
 
 
         }

@@ -123,14 +123,6 @@ namespace LmsApp2.Api.Services.AuthServices
                 throw new Exception("School You are Registering For was not found in the Database.");
             }
 
-
-            // bool UserEmailAlreadyExists = await employeerepo.EmployeeEmailAlreadyExists(emp.Email);
-            // if (UserEmailAlreadyExists)
-            // {
-            //     throw new Exception("This Email is Already in use, Please Enter a different email.");
-            // } we are checking this inside repo function while Registering the Employee
-
-
             // now uploading the docs on the server.
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Documents");
@@ -189,7 +181,6 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
             var (StudentId, DocId) = await authRepo.RegisterStudent(std, SchoolId, docs);
-
 
             return StudentId;
         }

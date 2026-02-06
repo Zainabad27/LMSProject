@@ -73,6 +73,9 @@ builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(E
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
+
+    options.User.AllowedUserNameCharacters =
+       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._- ";
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = true;

@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.Models;
 
 namespace LmsApp2.Api.RepositoriesInterfaces
@@ -7,7 +8,9 @@ namespace LmsApp2.Api.RepositoriesInterfaces
     {
 
 
-        public Task SeedInitialData(Guid SchoolId);
+        public Task Rollback(AppUser _user);
+
+        public Task<AppUser?> SeedInitialData(Guid SchoolId);
         public Task<Guid> AddSchool(SchoolDto sch);
 
         public Task<Guid> GetSchoolByName(string name);

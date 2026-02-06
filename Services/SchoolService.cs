@@ -7,7 +7,7 @@ using LmsApp2.Api.ServicesInterfaces;
 
 namespace LmsApp2.Api.Services
 {
-    public class SchoolService(ISchoolRepo schoolrepo, IEmployeeRepo empRepo) : ISchoolService
+    public class SchoolService(ISchoolRepo schoolrepo) : ISchoolService
     {
 
         public async Task<Guid> AddSchool(SchoolDto SchoolData)
@@ -26,9 +26,19 @@ namespace LmsApp2.Api.Services
 
             // making a default Admin Account
 
-            await schoolrepo.SeedInitialData(SchoolId);
+            var DefaultAdminAccount = await schoolrepo.SeedInitialData(SchoolId); // returns the defaulAdmin Account.
 
-            await schoolrepo.SaveChanges();
+
+            try
+            {
+                await schoolrepo.SaveChanges();
+            }
+            catch (System.Exception)
+            {
+                if (DefaultAdminAccount != null) await schoolrepo.Rollback(DefaultAdminAccount); // deletes the Identity Account Data if School Is not registered. (transaction Rollback).
+
+                throw;
+            }
             return SchoolId;
 
 
