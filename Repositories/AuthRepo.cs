@@ -116,21 +116,21 @@ namespace LmsApp2.Api.Repositories
             return (EmployeeSavedInDatabase.Entity.Employeeid, DocId);
         }
 
-        private async Task Rollback(AppUser _user)
-        {
-            var UserExists = await _userManager.FindByEmailAsync(_user.Email!);
+        // private async Task Rollback(AppUser _user)
+        // {
+        //     var UserExists = await _userManager.FindByEmailAsync(_user.Email!);
 
-            if (UserExists!=null)
-            {
-                var result = await _userManager.DeleteAsync(_user);
-                if (!result.Succeeded)
-                {
-                    throw new CustomException("Problem Occured While Rolling back the orperation.", 500);
-                }
+        //     if (UserExists!=null)
+        //     {
+        //         var result = await _userManager.DeleteAsync(_user);
+        //         if (!result.Succeeded)
+        //         {
+        //             throw new CustomException("Problem Occured While Rolling back the orperation.", 500);
+        //         }
 
-            }
+        //     }
 
-        }
+        // }
         public async Task<(Guid StudentId, Guid DocId)> RegisterStudent(StudentDto std, Guid SchoolId, Dictionary<string, string> docs)
         {
 
@@ -140,7 +140,7 @@ namespace LmsApp2.Api.Repositories
 
 
 
-            // using var transaction = await dbcontext.Database.BeginTransactionAsync();
+            using var transaction = await dbcontext.Database.BeginTransactionAsync();
             var user = await _userManager.FindByEmailAsync(std.Email);
             if (user is not null)
             {
@@ -181,7 +181,7 @@ namespace LmsApp2.Api.Repositories
             if (!StudentRoleExists)
             {
                 await docs.DeleteFileFromServer();
-                await Rollback(studentAcc);
+                // await Rollback(studentAcc);
 
                 throw new CustomException("Student Role Does not exists in the system.", 500);
             }
@@ -192,7 +192,7 @@ namespace LmsApp2.Api.Repositories
             if (!result2.Succeeded)
             {
                 await docs.DeleteFileFromServer();
-                await Rollback(studentAcc);
+                // await Rollback(studentAcc);
                 throw new CustomException("Error Occured while Saving the student in the Database.", 500);
             }
 
@@ -202,24 +202,12 @@ namespace LmsApp2.Api.Repositories
 
 
             await dbcontext.Students.AddAsync(StudentInMainTable);
-           
+
             Guid DocId = await UploadDocuments(StudentInMainTable.Studentid, docs);
-        //    Guid DocId= await UploadDocuments(Guid.NewGuid(),docs);
+            //    Guid DocId= await UploadDocuments(Guid.NewGuid(),docs);
 
-
-            try
-            {
-                await dbcontext.SaveChangesAsync();
-
-
-            }
-            catch (System.Exception)
-            {
-                await docs.DeleteFileFromServer();
-                await Rollback(studentAcc);
-
-                throw;
-            }
+            await dbcontext.SaveChangesAsync();
+            await transaction.CommitAsync();
 
             return (StudentInMainTable.Studentid, DocId);
         }
@@ -227,7 +215,7 @@ namespace LmsApp2.Api.Repositories
         public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
-            
+
         }
     }
 
