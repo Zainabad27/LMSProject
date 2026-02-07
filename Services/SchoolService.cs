@@ -23,22 +23,6 @@ namespace LmsApp2.Api.Services
 
             Guid SchoolId = await schoolrepo.AddSchool(SchoolData);
 
-
-            // making a default Admin Account
-
-            var DefaultAdminAccount = await schoolrepo.SeedInitialData(SchoolId); // returns the defaulAdmin Account.
-
-
-            try
-            {
-                await schoolrepo.SaveChanges();
-            }
-            catch (System.Exception)
-            {
-                if (DefaultAdminAccount != null) await schoolrepo.Rollback(DefaultAdminAccount); // deletes the Identity Account Data if School Is not registered. (transaction Rollback).
-
-                throw;
-            }
             return SchoolId;
 
 

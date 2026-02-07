@@ -13,7 +13,28 @@ namespace LmsApp2.Api.Repositories
 {
     internal class AuthRepo(UserManager<AppUser> _userManager, RoleManager<IdentityRole> _roleManager, LmsDatabaseContext dbcontext, IJwtServices JwtServices) : IAuthRepo
     {
-        public async Task<Guid> UploadDocuments(Guid EmpId, Dictionary<string, string> Docs)
+        private async Task<Guid> UploadStudentDocuments(Guid StdId, Dictionary<string, string> Docs)
+        {
+            Studentdocument StdDocs = new()
+            {
+
+                Documentid = Guid.NewGuid(),
+                Studentid = StdId,
+                Cnicfrontorbform = Docs["cnicfront"],
+                Cnicbackorbform = Docs["cnicback"],
+                Photo = Docs["photo"],
+                Createdat = DateTime.UtcNow
+
+
+            };
+
+
+
+            await dbcontext.Studentdocuments.AddAsync(StdDocs);
+
+            return StdDocs.Documentid;
+        }
+        private async Task<Guid> UploadEmployeeDocuments(Guid EmpId, Dictionary<string, string> Docs)
         {
 
             Employeedocument EmpDocs = new()
@@ -77,10 +98,14 @@ namespace LmsApp2.Api.Repositories
         public async Task<(Guid EmployeeId, Guid DocId)> RegisterEmployee(EmployeeDto emp, Guid SchoolId, string designation, Dictionary<string, string> Docs)
         {
             using var transaction = await dbcontext.Database.BeginTransactionAsync();
-            Employee employee = emp.To_DbModel(SchoolId);
+            Employee employee = emp.To_DbModel(SchoolId,designation);
 
 
-            var user = _userManager.FindByEmailAsync(emp.Email);
+
+            string LMAI=emp.Email;
+
+
+            var user =await  _userManager.FindByEmailAsync(emp.Email);
             if (user != null)
             {
                 throw new CustomException("Email Already in Use.", 400);
@@ -99,7 +124,7 @@ namespace LmsApp2.Api.Repositories
 
             if (!result.Succeeded)
             {
-                throw new CustomException($"Error occured while registering Employee. {result.Errors.Select(e => e.Description)}");
+                throw new CustomException($"Error occured while registering Employee. {string.Join(" ",result.Errors.Select(e => e.Description))}");
             }
             // adding user into that role that is given in the Designations we will check it that if the role exists in the service class
 
@@ -110,27 +135,18 @@ namespace LmsApp2.Api.Repositories
             }
             await _userManager.AddToRoleAsync(AddingUser, designation);
             var EmployeeSavedInDatabase = await dbcontext.Employees.AddAsync(employee);
-            Guid DocId = await UploadDocuments(EmployeeSavedInDatabase.Entity.Employeeid, Docs);
+            Guid DocId = await UploadEmployeeDocuments(EmployeeSavedInDatabase.Entity.Employeeid, Docs);
 
+
+
+
+
+            await dbcontext.SaveChangesAsync();
             await transaction.CommitAsync();
             return (EmployeeSavedInDatabase.Entity.Employeeid, DocId);
         }
 
-        // private async Task Rollback(AppUser _user)
-        // {
-        //     var UserExists = await _userManager.FindByEmailAsync(_user.Email!);
 
-        //     if (UserExists!=null)
-        //     {
-        //         var result = await _userManager.DeleteAsync(_user);
-        //         if (!result.Succeeded)
-        //         {
-        //             throw new CustomException("Problem Occured While Rolling back the orperation.", 500);
-        //         }
-
-        //     }
-
-        // }
         public async Task<(Guid StudentId, Guid DocId)> RegisterStudent(StudentDto std, Guid SchoolId, Dictionary<string, string> docs)
         {
 
@@ -203,8 +219,7 @@ namespace LmsApp2.Api.Repositories
 
             await dbcontext.Students.AddAsync(StudentInMainTable);
 
-            Guid DocId = await UploadDocuments(StudentInMainTable.Studentid, docs);
-            //    Guid DocId= await UploadDocuments(Guid.NewGuid(),docs);
+            Guid DocId = await UploadStudentDocuments(StudentInMainTable.Studentid, docs);
 
             await dbcontext.SaveChangesAsync();
             await transaction.CommitAsync();

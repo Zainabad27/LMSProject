@@ -13,34 +13,33 @@ namespace LmsApp2.Api.Repositories
 {
     public class SchoolRepo(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager) : ISchoolRepo
     {
-
-
-
-        public async Task Rollback(AppUser _user)
-        {
-            bool UserExists = (await _userManager.FindByIdAsync(_user.Id)) != null;
-            if (UserExists)
-            {
-                var result = await _userManager.DeleteAsync(_user);
-                if (!result.Succeeded)
-                {
-                    throw new CustomException("Problem Occured While Rolling back the orperation.", 500);
-                }
-
-            }
-
-        }
+  
         public async Task<Guid> AddSchool(SchoolDto sch)
         {
+
+
+
+            using var transaction = await dbcontext.Database.BeginTransactionAsync();
 
 
 
             var res = await dbcontext.Schools.AddAsync(sch.To_DbModel());
 
 
-            School Schoolsaved = res.Entity;
 
-            return Schoolsaved.Schoolid;
+            // seeding the initial admin when school is beind made 
+
+
+             await SeedAdmin.SeedData(dbcontext, _userManager, res.Entity.Schoolid);
+
+            await dbcontext.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+
+
+
+
+            return res.Entity.Schoolid;
 
 
 
@@ -48,10 +47,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<Guid> GetSchoolByName(string name)
         {
-
             return await dbcontext.Schools.Where(sch => sch.Schoolname == name).Select(sch => sch.Schoolid).FirstOrDefaultAsync();
-
-
         }
 
         public async Task SaveChanges()
@@ -59,12 +55,5 @@ namespace LmsApp2.Api.Repositories
             await dbcontext.SaveChangesAsync();
         }
 
-        public async Task<AppUser?> SeedInitialData(Guid SchoolId)
-        {
-
-            var DefaultAdminAccount = await SeedAdmin.SeedData(dbcontext, _userManager, SchoolId);
-            return DefaultAdminAccount;
-
-        }
     }
 }

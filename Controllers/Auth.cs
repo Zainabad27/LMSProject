@@ -52,9 +52,9 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
         [HttpPost("RegisterEmployee/{Designation}")]
-        public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp, [FromRoute] string Designation)
+        public async Task<IActionResult> AddEmployee([FromForm] EmployeeDto emp, [FromRoute] string Designation)
         {
-            if (Designation != "Admin" && Designation != "Teacher") return BadRequest();
+            if (Designation != "Admin" && Designation != "Teacher") return BadRequest("Invalid Designation for Employee Registeration.");
 
             Guid addedEmployeeId = await AuthService.RegisterEmployee(emp, Designation);
 

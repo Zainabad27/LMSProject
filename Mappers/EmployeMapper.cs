@@ -8,7 +8,7 @@ namespace LmsApp2.Api.Mappers
     {
 
 
-        public static Employee To_DbModel(this EmployeeDto emp, Guid SchoolId)
+        public static Employee To_DbModel(this EmployeeDto emp, Guid SchoolId, string Designation)
         {
 
 
@@ -19,7 +19,7 @@ namespace LmsApp2.Api.Mappers
 
                 Schoolid = SchoolId,
 
-                Employeedesignation=emp.EmployeeDesignation,
+                Employeedesignation = Designation,
 
                 // Employeename = emp.EmployeeName,
 
