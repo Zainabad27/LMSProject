@@ -1,12 +1,15 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Services
 {
-    public class EmployeeServices(IEmployeeRepo employeerepo, IClassRepo ClsRepo, IAssignmentRepo assrepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : IEmployeeService
+    public class EmployeeServices(IEmployeeRepo employeerepo, RoleManager<IdentityRole> _roleManager, UserManager<AppUser> _userManager, IClassRepo ClsRepo, IAssignmentRepo assrepo, IWebHostEnvironment env) : IEmployeeService
     {
         public async Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId)
         {
@@ -98,19 +101,40 @@ namespace LmsApp2.Api.Services
         public async Task<Guid> AssignCourseToTeacher(Guid TeacherId, Guid CourseId)
         {
 
+
             // first we have to check if that Teacher and Course Both exists 
             // then in course we have to just put that teacher's id then that course is assigned to that teacher.
 
 
-            Guid TeacherIdReturned = await employeerepo.GetEmployee(TeacherId);
-            if (TeacherId == Guid.Empty)
+            Guid EmployeeIdReturned = await employeerepo.GetEmployee(TeacherId);
+            if (EmployeeIdReturned == Guid.Empty)
             {
                 throw new CustomException("Teacher Does not Exists in the Database.", 400);
             }
 
+
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserId_InMainTable == EmployeeIdReturned);
+            if (user is null)
+            {
+                throw new CustomException("Teacher Account Does not exists in Identity.", 500);
+            }
+
+
+            bool IsTeacher = await _userManager.IsInRoleAsync(user, "Teacher");
+
+
+            if (!IsTeacher)
+            {
+                throw new CustomException("Invalid Employee Id.(Not A Techcher)", 400);
+            }
+
+
+
+
             // while assigning the course from dbmodel we are also checking in a single query that if coure exists or not if not then throwing error.
 
-            Guid CourseIdReturned = await employeerepo.AssignCourse(TeacherIdReturned, CourseId);
+            Guid CourseIdReturned = await employeerepo.AssignCourse(user.UserId_InMainTable, CourseId);
 
             await employeerepo.SaveChanges();
 

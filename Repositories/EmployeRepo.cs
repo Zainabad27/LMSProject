@@ -171,7 +171,7 @@ namespace LmsApp2.Api.Repositories
             if (EmployeeInDatabase.Isactive == false)
             {
 
-                throw new CustomException("This Employee is Not Active Currently.", 400);
+                throw new CustomException("This Employee is not Active Currently.", 400);
 
 
             }
