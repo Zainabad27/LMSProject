@@ -15,14 +15,14 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize)
         {
-            // throw new NotImplementedException();
             IQueryable<SendTeachersToFrontend> Query = dbcontext
             .Employees
             .Where(emp => emp.Employeedesignation == "Teacher")
+            .Include(emp => emp.Courses)
             .Select(emp => new SendTeachersToFrontend
             {
                 TeacherId = emp.Employeeid,
-                // TeacherName = emp.Employeename,
+                TeacherName = emp.EmployeeName,
                 IsActive = emp.Isactive,
             });
             return await Pagination<SendTeachersToFrontend>.CreateAsync(Query, pageNumber, pageSize);
@@ -170,10 +170,7 @@ namespace LmsApp2.Api.Repositories
 
             if (EmployeeInDatabase.Isactive == false)
             {
-
                 throw new CustomException("This Employee is not Active Currently.", 400);
-
-
             }
 
 
@@ -229,6 +226,7 @@ namespace LmsApp2.Api.Repositories
                 EmployeeId = emp.Employeeid,
                 Role = emp.Employeedesignation,
                 IsActive = emp.Isactive,
+                Name = emp.EmployeeName,
                 // ContactNumber = emp.Contact,
                 Address = emp.Address,
                 DateOfJoining = emp.Createdat.HasValue ? DateOnly.FromDateTime(emp.Createdat.Value) : null,

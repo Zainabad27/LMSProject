@@ -9,11 +9,17 @@ namespace LmsApp2.Api.DTOs
 
         public bool? IsActive { get; set; }
 
-        // public string? Email { get; set; }
+        public ICollection<CourseData> course = [];
+    }
 
 
-        // public string? PhoneNumber { get; set; }
 
-        // public string? Address { get; set; }
+    public class CourseData
+    {
+        public string? CourseName { get; set; }
+
+        public string? CourseClass { get; set; }
+
+
     }
 }

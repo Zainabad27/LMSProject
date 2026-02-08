@@ -15,13 +15,11 @@ namespace LmsApp2.Api.Mappers
             return new Employee()
             {
                 Employeeid = Guid.NewGuid(),
-
+                EmployeeName = emp.EmployeeName,
 
                 Schoolid = SchoolId,
 
                 Employeedesignation = Designation,
-
-                // Employeename = emp.EmployeeName,
 
                 // Contact = emp.Contact,
 
@@ -45,7 +43,7 @@ namespace LmsApp2.Api.Mappers
 
                 SchoolName = Schoolname,
 
-                // EmployeeName = emp.Employeename,
+                EmployeeName = emp.EmployeeName ?? "",
 
                 // Contact = emp.Contact!,
 

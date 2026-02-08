@@ -314,6 +314,9 @@ namespace LmsApp2.Api.Migrations
                         .HasColumnName("createdat")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("text");
+
                     b.Property<string>("Employeedesignation")
                         .HasColumnType("text");
 
@@ -794,6 +797,9 @@ namespace LmsApp2.Api.Migrations
                     b.Property<Guid?>("Schoolid")
                         .HasColumnType("uuid")
                         .HasColumnName("schoolid");
+
+                    b.Property<string>("StudentName")
+                        .HasColumnType("text");
 
                     b.HasKey("Studentid")
                         .HasName("students_pkey");
