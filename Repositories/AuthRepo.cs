@@ -102,7 +102,7 @@ namespace LmsApp2.Api.Repositories
 
 
 
-            string LMAI=emp.Email;
+            // string LMAI=emp.Email;
 
 
             var user =await  _userManager.FindByEmailAsync(emp.Email);
