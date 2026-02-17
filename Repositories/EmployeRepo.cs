@@ -115,7 +115,6 @@ namespace LmsApp2.Api.Repositories
                 Role = emp.Employeedesignation,
                 IsActive = emp.Isactive,
                 Name = emp.EmployeeName,
-                // ContactNumber = emp.Contact,
                 Address = emp.Address,
                 DateOfJoining = emp.Createdat.HasValue ? DateOnly.FromDateTime(emp.Createdat.Value) : null,
                 ProfilePictureUrl = emp.Employeedocuments != null ? emp.Employeedocuments.Photo ?? null : null,

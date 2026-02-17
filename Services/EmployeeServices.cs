@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.Services
 {
-    public class EmployeeServices(IEmployeeRepo employeerepo, RoleManager<IdentityRole> _roleManager, UserManager<AppUser> _userManager, IClassRepo ClsRepo, IAssignmentRepo assrepo, IWebHostEnvironment env) : IEmployeeService
+    public class EmployeeServices(IEmployeeRepo employeerepo, UserManager<AppUser> _userManager, IClassRepo ClsRepo, IAssignmentRepo assrepo, IWebHostEnvironment env) : IEmployeeService
     {
         public async Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId)
         {
             var Employee = await employeerepo.GetEmployeeById(EmployeeId) ?? throw new CustomException("No Active/Previous Employee Found With This Id", 400);
-
+                Employee.Documents=["No Additional Documents Found."];
             return Employee;
         }
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize)
@@ -119,6 +119,8 @@ namespace LmsApp2.Api.Services
             {
                 throw new CustomException("Teacher Account Does not exists in Identity.", 500);
             }
+
+
 
 
             bool IsTeacher = await _userManager.IsInRoleAsync(user, "Teacher");

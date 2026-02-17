@@ -3,6 +3,7 @@ using System;
 using LmsApp2.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LmsApp2.Api.Migrations
 {
     [DbContext(typeof(LmsDatabaseContext))]
-    partial class LmsDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260217044823_FixedIsActiveInDatabase")]
+    partial class FixedIsActiveInDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

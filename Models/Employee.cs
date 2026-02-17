@@ -12,12 +12,9 @@ public partial class Employee
     public string? EmployeeName { get; set; }
 
     public string? Employeedesignation { get; set; }
-
-    // public string? Contact { get; set; }
-
     public string? Address { get; set; }
 
-    public bool? Isactive { get; set; }
+    public bool Isactive { get; set; }
 
     public string? Religion { get; set; }
 

@@ -4,6 +4,7 @@ namespace LmsApp2.Api.DTOs
 {
     public class SendEmployeeToFrontend
     {
+
         public Guid EmployeeId { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
@@ -15,8 +16,8 @@ namespace LmsApp2.Api.DTOs
 
         public DateOnly? DateOfJoining { get; set; }
 
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
 
-        public ICollection<string> Documents = [];
+        public ICollection<string> Documents { get; set; } = ["No Additional Documents Found."];
     }
 }

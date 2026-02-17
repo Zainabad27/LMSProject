@@ -17,6 +17,9 @@ namespace LmsApp2.Api.Controllers
         {
             var emp = await employeeServices.GetEmployeeById(EmployeeId);
 
+
+            Console.WriteLine(emp); 
+
             return Ok(emp);
         }   
 
