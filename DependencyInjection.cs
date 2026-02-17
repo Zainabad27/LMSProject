@@ -18,11 +18,12 @@ namespace LmsApp2.Api
             services.AddScoped<IEmployeeRepo, EmployeRepo>();
             services.AddScoped<IEmployeeService, EmployeeServices>();
             services.AddScoped<IJwtServices, JwtServices>();
-            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<ILogin_Register, Login_Register_Service>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IStudentRepo, StudentRepo>();
             services.AddScoped<IClassRepo, ClassRepo>();
             services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IAuthRepo,AuthRepo>();
             
             services.AddScoped<IAssignmentRepo, AssignmentRepo>();
             services.AddScoped<IFetchFileFromServer, FetchFileFromServer>();

@@ -1,47 +1,27 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.RepositoriesInterfaces;
+using LmsApp2.Api.SeedData;
 using LmsApp2.Api.ServicesInterfaces;
 
 namespace LmsApp2.Api.Services
 {
-    public class SchoolService(ISchoolRepo schoolrepo, IEmployeeRepo empRepo) : ISchoolService
+    public class SchoolService(ISchoolRepo schoolrepo) : ISchoolService
     {
 
         public async Task<Guid> AddSchool(SchoolDto SchoolData)
         {
+            // we will chek if that school already exists.
+            Guid Schoolid = await schoolrepo.GetSchoolByName(SchoolData.SchoolName);
+            if (Schoolid != Guid.Empty)
+            {
+                throw new CustomException("School name Already exists", 400);
+            }
             // when we add an school we make a default account of an Admin.
 
 
             Guid SchoolId = await schoolrepo.AddSchool(SchoolData);
-
-
-            // making a default Admin Account
-
-            EmployeeDto DefalutAdminAccount = new EmployeeDto()
-            {
-                SchoolName = SchoolData.SchoolName,
-                EmployeeName = "Admin",
-             
-                Email = "Admin@gmail.com",
-                Password = "Admin@123",
-                Address = "No Address",
-                Contact = "No Contact",
-
-                // files fields are dummy.
-
-                photo = new FormFile(new MemoryStream(), 0, 0, "photo", "photo.jpg"),
-                Cnic_Front = new FormFile(new MemoryStream(), 0, 0, "cnicFront", "cnicFront.jpg"),
-                Cnic_Back = new FormFile(new MemoryStream(), 0, 0, "cnicBack", "cnicBack.jpg")
-
-
-
-            };
-
-            Guid DefaultAdminId = await empRepo.AddEmployee(DefalutAdminAccount, SchoolId,"Admin");
-            await empRepo.MakeEmployeeUserAccount(DefalutAdminAccount, DefaultAdminId);
-
-            await empRepo.SaveChanges();
 
             return SchoolId;
 

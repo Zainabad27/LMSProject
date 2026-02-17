@@ -12,29 +12,12 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class StudentController(IStudentService StdService) : ControllerBase
     {
-        [HttpPost("RegisterStudent")]
-        [Consumes("multipart/form-data")]
-        [AllowAnonymous]
-        public async Task<IActionResult> AddStudent([FromForm] StudentDto stdData)
-        {
-
-
-
-            Guid StudentId = await StdService.AddStudent(stdData);
-
-
-
-            return Ok(new { AddedStudentId = StudentId });
-
-
-
-
-        }
+       
         [HttpGet("GetAssignments/{CourseId}")]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetAllAssignments([FromRoute] Guid CourseId)
         {
-            var Id = User.FindFirstValue("Id");
+            var Id = User.FindFirstValue("MainTableId");
             if (Id == null)
             {
                 throw new CustomException("Unauthorized Access.");
@@ -43,8 +26,6 @@ namespace LmsApp2.Api.Controllers
             Guid StdId = Guid.Parse(Id);
 
             List<AssignmentResponse> AllAssignments = await StdService.GetAllAssignments(StdId, CourseId);
-
-            //List<File> Files = new List<File>();
 
             if (AllAssignments.Count == 0)
             {
@@ -58,7 +39,7 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> DownloadAssignment([FromRoute] Guid AssignmentId)
         {
-            var Id = User.FindFirstValue("Id");
+            var Id = User.FindFirstValue("MainTableId");
             if (Id == null)
             {
                 throw new CustomException("Unauthorized Access.");
@@ -87,12 +68,7 @@ namespace LmsApp2.Api.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetAllCourses()
         {
-            var Id = User.FindFirstValue("Id");
-            if (Id == null)
-            {
-                throw new CustomException("Unauthorized Access.");
-            }
-
+            var Id = User.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.");
             Guid StdId = Guid.Parse(Id);
 
             List<SendCoursesToFrontendDto> Courses = await StdService.GetStudentCourses(StdId);

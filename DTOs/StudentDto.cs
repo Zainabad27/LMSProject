@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LmsApp2.Api.DTOs
 {
-    public class StudentDto
+    public class StudentDto : IEntity
     {
         [Required]
         public string SchoolName { get; set; }

@@ -22,6 +22,84 @@ namespace LmsApp2.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LmsApp2.Api.Identity.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("Employeeid")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId_InMainTable")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Employeeid");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("LmsApp2.Api.Models.Assignment", b =>
                 {
                     b.Property<Guid>("Assignmentid")
@@ -230,29 +308,19 @@ namespace LmsApp2.Api.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("address");
 
-                    b.Property<string>("Contact")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("contact");
-
                     b.Property<DateTime?>("Createdat")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("createdat")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("text");
+
                     b.Property<string>("Employeedesignation")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("employeedesignation");
+                        .HasColumnType("text");
 
-                    b.Property<string>("Employeename")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("employeename");
-
-                    b.Property<bool?>("Isactive")
+                    b.Property<bool>("Isactive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
@@ -277,50 +345,7 @@ namespace LmsApp2.Api.Migrations
 
                     b.HasIndex("Schoolid");
 
-                    b.HasIndex(new[] { "Contact" }, "employees_contact_key")
-                        .IsUnique();
-
                     b.ToTable("employees", (string)null);
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Employeeaccountinfo", b =>
-                {
-                    b.Property<Guid>("Accountid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("accountid");
-
-                    b.Property<DateTime?>("Createdat")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("createdat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("email");
-
-                    b.Property<Guid?>("Employeeid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("employeeid");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("password");
-
-                    b.HasKey("Accountid")
-                        .HasName("employeeaccountinfo_pkey");
-
-                    b.HasIndex(new[] { "Email" }, "employeeaccountinfo_email_key")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Employeeid" }, "employeeaccountinfo_employeeid_key")
-                        .IsUnique();
-
-                    b.ToTable("employeeaccountinfo", (string)null);
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Employeeadditionaldoc", b =>
@@ -527,41 +552,6 @@ namespace LmsApp2.Api.Migrations
                     b.HasIndex("Employeeid");
 
                     b.ToTable("employeefinances", (string)null);
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Employeesession", b =>
-                {
-                    b.Property<Guid>("Sessionid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("sessionid");
-
-                    b.Property<DateTime?>("Createdat")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("createdat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<Guid?>("Employeeaccountid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("employeeaccountid");
-
-                    b.Property<DateTime>("Expiresat")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expiresat");
-
-                    b.Property<string>("Refreshtoken")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("refreshtoken");
-
-                    b.HasKey("Sessionid")
-                        .HasName("employeesessions_pkey");
-
-                    b.HasIndex(new[] { "Employeeaccountid" }, "employeesessions_employeeaccountid_key")
-                        .IsUnique();
-
-                    b.ToTable("employeesessions", (string)null);
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Exam", b =>
@@ -808,11 +798,8 @@ namespace LmsApp2.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("schoolid");
 
-                    b.Property<string>("Studentname")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("studentname");
+                    b.Property<string>("StudentName")
+                        .HasColumnType("text");
 
                     b.HasKey("Studentid")
                         .HasName("students_pkey");
@@ -822,46 +809,6 @@ namespace LmsApp2.Api.Migrations
                     b.HasIndex("Schoolid");
 
                     b.ToTable("students", (string)null);
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Studentaccountinfo", b =>
-                {
-                    b.Property<Guid>("Accountid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("accountid");
-
-                    b.Property<DateTime?>("Createdat")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("createdat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("password");
-
-                    b.Property<Guid?>("Studentid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("studentid");
-
-                    b.HasKey("Accountid")
-                        .HasName("studentaccountinfo_pkey");
-
-                    b.HasIndex(new[] { "Email" }, "studentaccountinfo_email_key")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Studentid" }, "studentaccountinfo_studentid_key")
-                        .IsUnique();
-
-                    b.ToTable("studentaccountinfo", (string)null);
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Studentadditionaldoc", b =>
@@ -1093,38 +1040,145 @@ namespace LmsApp2.Api.Migrations
                     b.ToTable("studentfinances", (string)null);
                 });
 
-            modelBuilder.Entity("LmsApp2.Api.Models.Studentsession", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<Guid>("Sessionid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("sessionid");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("Createdat")
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("createdat")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("Expiresat")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expiresat");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Refreshtoken")
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("refreshtoken");
+                        .HasColumnType("text");
 
-                    b.Property<Guid?>("Studentaccountid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("studentaccountid");
+                    b.HasKey("Id");
 
-                    b.HasKey("Sessionid")
-                        .HasName("studentsessions_pkey");
+                    b.HasIndex("RoleId");
 
-                    b.HasIndex("Studentaccountid");
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
 
-                    b.ToTable("studentsessions", (string)null);
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("LmsApp2.Api.Identity.AppUser", b =>
+                {
+                    b.HasOne("LmsApp2.Api.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("Employeeid");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Assignment", b =>
@@ -1222,17 +1276,6 @@ namespace LmsApp2.Api.Migrations
                     b.Navigation("School");
                 });
 
-            modelBuilder.Entity("LmsApp2.Api.Models.Employeeaccountinfo", b =>
-                {
-                    b.HasOne("LmsApp2.Api.Models.Employee", "Employee")
-                        .WithOne("Employeeaccountinfo")
-                        .HasForeignKey("LmsApp2.Api.Models.Employeeaccountinfo", "Employeeid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("employeeaccountinfo_employeeid_fkey");
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("LmsApp2.Api.Models.Employeeadditionaldoc", b =>
                 {
                     b.HasOne("LmsApp2.Api.Models.Employee", "Employee")
@@ -1275,16 +1318,6 @@ namespace LmsApp2.Api.Migrations
                         .HasConstraintName("employeefinances_employeeid_fkey");
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Employeesession", b =>
-                {
-                    b.HasOne("LmsApp2.Api.Models.Employeeaccountinfo", "Employeeaccount")
-                        .WithOne("Employeesession")
-                        .HasForeignKey("LmsApp2.Api.Models.Employeesession", "Employeeaccountid")
-                        .HasConstraintName("employeesessions_employeeaccountid_fkey");
-
-                    b.Navigation("Employeeaccount");
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Exam", b =>
@@ -1374,17 +1407,6 @@ namespace LmsApp2.Api.Migrations
                     b.Navigation("School");
                 });
 
-            modelBuilder.Entity("LmsApp2.Api.Models.Studentaccountinfo", b =>
-                {
-                    b.HasOne("LmsApp2.Api.Models.Student", "Student")
-                        .WithOne("Studentaccountinfo")
-                        .HasForeignKey("LmsApp2.Api.Models.Studentaccountinfo", "Studentid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("studentaccountinfo_studentid_fkey");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("LmsApp2.Api.Models.Studentadditionaldoc", b =>
                 {
                     b.HasOne("LmsApp2.Api.Models.Student", "Student")
@@ -1437,15 +1459,55 @@ namespace LmsApp2.Api.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("LmsApp2.Api.Models.Studentsession", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("LmsApp2.Api.Models.Studentaccountinfo", "Studentaccount")
-                        .WithMany("Studentsessions")
-                        .HasForeignKey("Studentaccountid")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("studentsessions_studentaccountid_fkey");
+                        .IsRequired();
+                });
 
-                    b.Navigation("Studentaccount");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("LmsApp2.Api.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("LmsApp2.Api.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LmsApp2.Api.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("LmsApp2.Api.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Assignment", b =>
@@ -1477,8 +1539,6 @@ namespace LmsApp2.Api.Migrations
 
                     b.Navigation("Courses");
 
-                    b.Navigation("Employeeaccountinfo");
-
                     b.Navigation("Employeeadditionaldocs");
 
                     b.Navigation("Employeeattendances");
@@ -1490,11 +1550,6 @@ namespace LmsApp2.Api.Migrations
                     b.Navigation("Exams");
 
                     b.Navigation("Studentfinances");
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Employeeaccountinfo", b =>
-                {
-                    b.Navigation("Employeesession");
                 });
 
             modelBuilder.Entity("LmsApp2.Api.Models.Exam", b =>
@@ -1526,8 +1581,6 @@ namespace LmsApp2.Api.Migrations
 
                     b.Navigation("Examresults");
 
-                    b.Navigation("Studentaccountinfo");
-
                     b.Navigation("Studentadditionaldocs");
 
                     b.Navigation("Studentattendances");
@@ -1535,11 +1588,6 @@ namespace LmsApp2.Api.Migrations
                     b.Navigation("Studentdocument");
 
                     b.Navigation("Studentfinances");
-                });
-
-            modelBuilder.Entity("LmsApp2.Api.Models.Studentaccountinfo", b =>
-                {
-                    b.Navigation("Studentsessions");
                 });
 #pragma warning restore 612, 618
         }

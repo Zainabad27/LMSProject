@@ -11,17 +11,17 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<Guid> SubmitAssignment(AssignmentSubmissionDto Submission, Guid StudentId, string SubmissionFilePathOnServer);
         public Task<Student?> GetStudent(Guid StudentId);
         public Task<Guid?> GetStudentClass(Guid StdId);
-        public Task<(Guid StudentId, Guid AccountId)> AuthorizeStudent(string email, string Password);
+        // public Task<(Guid StudentId, Guid AccountId)> AuthorizeStudent(string email, string Password);
 
-        public Task<Guid> AddStudent(StudentDto std, Guid SchoolId);
+        // public Task<Guid> AddStudent(StudentDto std, Guid SchoolId);
 
-        public Task<Guid> MakeStudentAccount(StudentDto std, Guid StudentId);
+        // public Task<Guid> MakeStudentAccount(StudentDto std, Guid StudentId);
 
-        public Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
+        // public Task<Guid> AddStudentDocuments(Guid StdId, string PhotoPath, string CnicBackPath, string CnicFrontPath);
 
         public Task SaveChanges();
 
-        public Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken);
+        // public Task<Guid> PopulateStudentSession(Guid StdAccId, string RefreshToken);
 
     }
 }

@@ -99,7 +99,7 @@ namespace LmsApp2.Api.Repositories
         {
 
             return await dbcontext.Classes
-             .Where(cls => (cls.Schoolid == SchoolId && cls.Classsection == ClassSection && cls.Classgrade == ClassGrade))
+             .Where(cls => cls.Schoolid == SchoolId && cls.Classsection == ClassSection && cls.Classgrade == ClassGrade)
              .Select(cls => cls.Classid)
              .FirstOrDefaultAsync();
 
@@ -194,7 +194,7 @@ namespace LmsApp2.Api.Repositories
             .Select(std=>new SendStudentsToFrontendDto
             {
                 StudentId = std.Studentid,
-                StudentName = std.Studentname,
+                StudentName = std.StudentName,
                 Gender= std.Gender,
                 IsActive=std.Isactive,
               

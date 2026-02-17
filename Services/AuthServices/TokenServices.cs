@@ -1,27 +1,58 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.UtilitiesInterfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace LmsApp2.Api.Services.AuthServices
 {
-    public class TokenServices(IEmployeeRepo empRepo, IJwtServices JwtServices) : ITokenServices
+    public class TokenServices(IJwtServices JwtServices, UserManager<AppUser> _userManager) : ITokenServices
     {
-        public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context)
+        public async Task<Guid> RefreshAccesToken(RefreshAccessTokenDto RefreshTokenData, HttpContext context, string Designation)
         {
-            var (AccountId, EmployeeId) = await empRepo.AuthorizeEmployee(RefreshTokenData.Email, RefreshTokenData.Password);
 
-            bool ValidToken = await empRepo.ValidateEmployeeRefreshToken(EmployeeId, RefreshTokenData.RefreshToken);
+
+            var user = await _userManager.FindByEmailAsync(RefreshTokenData.Email) ?? throw new CustomException("Invalid Email Given", 400);
+            bool IsPassCorrect = await _userManager.CheckPasswordAsync(user, RefreshTokenData.Password);
+            if (!IsPassCorrect)
+            {
+                throw new CustomException("Incorrect Password", 400);
+
+            }
+            bool ValidToken = user.RefreshToken == RefreshTokenData.RefreshToken;
+
+            if (!ValidToken)
+            {
+                throw new CustomException("Invalid Refresh Token", 400);
+
+            }
+
+
+            if (user.TokenExpiry <= DateTime.UtcNow)
+            {
+                throw new CustomException("Refresh Token Expired.", 400);
+            }
+
 
 
             if (ValidToken)
             {
-                string NewAccessToken = JwtServices.GenerateAccessToken(EmployeeId, "Admin", RefreshTokenData.Email);
+                string NewAccessToken = JwtServices.GenerateAccessToken(Designation, user);
                 string NewRefreshToken = JwtServices.GenerateRefreshToken();
 
-                await empRepo.UpdateEmployeeSession(EmployeeId, NewRefreshToken);
-                await empRepo.SaveChanges();
 
+
+                user.RefreshToken = NewRefreshToken;
+                user.TokenExpiry = DateTime.UtcNow.AddDays(3);
+
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new CustomException("Error Occured in the Database while refreshing the RefreshToken.", 500);
+                }
                 context.Response.Cookies.Append("AccessToken", NewAccessToken, new CookieOptions
                 {
 
@@ -41,23 +72,17 @@ namespace LmsApp2.Api.Services.AuthServices
                 });
 
 
-                return EmployeeId;
+
+
+
+
+                return user.UserId_InMainTable;
 
 
             }
 
 
             throw new Exception("Invalid Refresh Token");
-
-
-
-
-
-
-
-
-
-
         }
     }
 }

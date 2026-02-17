@@ -1,11 +1,12 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using LmsApp2.Api.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace LmsApp2.Api.UtilitiesInterfaces
 {
     public interface IJwtServices
     {
-        public string GenerateAccessToken(Guid UserId, string Designation, string email);
+        public string GenerateAccessToken(string Designation,AppUser _user);
 
         public string GenerateRefreshToken();
 

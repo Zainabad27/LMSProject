@@ -9,15 +9,12 @@ public partial class Employee
 
     public Guid? Schoolid { get; set; }
 
-    public string Employeename { get; set; } = null!;
+    public string? EmployeeName { get; set; }
 
     public string? Employeedesignation { get; set; }
-
-    public string? Contact { get; set; }
-
     public string? Address { get; set; }
 
-    public bool? Isactive { get; set; }
+    public bool Isactive { get; set; }
 
     public string? Religion { get; set; }
 
@@ -27,15 +24,14 @@ public partial class Employee
 
     public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
 
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+    public virtual ICollection<Course> Courses { get; set; } = [];
 
-    public virtual Employeeaccountinfo? Employeeaccountinfo { get; set; }
 
     public virtual ICollection<Employeeadditionaldoc> Employeeadditionaldocs { get; set; } = [];
 
     public virtual ICollection<Employeeattendance> Employeeattendances { get; set; } = [];
 
-    public virtual Employeedocument? Employeedocuments { get; set; } 
+    public virtual Employeedocument? Employeedocuments { get; set; }
 
     public virtual ICollection<Employeefinance> Employeefinances { get; set; } = [];
 

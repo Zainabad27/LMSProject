@@ -10,12 +10,12 @@ namespace LmsApp2.Api.Controllers
     public class RefreshAccessToken(ITokenServices TokenService) : ControllerBase
     {
 
-        [HttpPost]
-        public async Task<IActionResult> RefreshAccesstoken([FromBody] RefreshAccessTokenDto RefreshTokenData)
+        [HttpPost("{designation}")]
+        public async Task<IActionResult> RefreshAccesstoken([FromBody] RefreshAccessTokenDto RefreshTokenData,[FromRoute] string designation)
         {
 
             var context = HttpContext;
-            Guid EmployeeId = await TokenService.RefreshAccesToken(RefreshTokenData, context);
+            await TokenService.RefreshAccesToken(RefreshTokenData, context,designation);
 
 
 

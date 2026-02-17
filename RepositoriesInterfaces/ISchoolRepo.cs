@@ -1,4 +1,5 @@
 ﻿using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.Models;
 
 namespace LmsApp2.Api.RepositoriesInterfaces

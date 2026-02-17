@@ -18,13 +18,9 @@ namespace LmsApp2.Api.Controllers
             var emp = await employeeServices.GetEmployeeById(EmployeeId);
 
 
-            Console.WriteLine($"this is the employee data from Service: =====>>>> {emp}");
-
+            Console.WriteLine(emp); 
 
             return Ok(emp);
-
-
-
         }   
 
         [Authorize(Roles = "Admin")]
@@ -34,47 +30,30 @@ namespace LmsApp2.Api.Controllers
             Pagination<SendTeachersToFrontend> TeachersList = await employeeServices.GetAllTeachers(page, pageSize);
 
             return Ok(TeachersList);    
-            // throw new NotImplementedException();
         }   
 
+        // [Authorize(Roles = "Admin")]
+        // [Consumes("multipart/form-data")]
+        // [HttpPost("AddAdmin")]
+        // public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
+        // {
+        //     var u = User;
+
+        //     // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
 
 
+        //     // return Ok(new { AddedEmployeeId = addedEmployeeId });
 
-        [Authorize(Roles = "Admin")]
-        [Consumes("multipart/form-data")]
-        [HttpPost("AddAdmin")]
-        //[HttpPost]
-        public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
-        {
-            var u = User;
-            
+        // }
+        // [Authorize(Roles = "Admin")]
+        // [HttpPost("AddTeacher")]
+        // [Consumes("multipart/form-data")]
+        // public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
+        // {
+        //     // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");           
+        //     // return Ok(new { AddedEmployeeId = addedEmployeeId });
 
-            // Console.WriteLine($"this is the employee Data:=====>>>> {emp}");
-
-
-            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
-
-            var context = HttpContext;
-
-            Console.WriteLine(context);
-            return Ok(new { AddedEmployeeId = addedEmployeeId });
-
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPost("AddTeacher")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
-        {
-
-
-
-
-            Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");
-
-           
-            return Ok(new { AddedEmployeeId = addedEmployeeId });
-
-        }
+        // }
 
 
 

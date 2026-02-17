@@ -1,13 +1,20 @@
 using LmsApp2.Api;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
+
 //using LmsApp2.Api.Middlewares;
 using LmsApp2.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 using System.Text;
+using LmsApp2.Api.SeedData;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,13 +71,45 @@ builder.Services.AddDbContext<LmsDatabaseContext>(options => options.UseNpgsql(E
 ));
 
 
-// Console.WriteLine($"this is the env var bro: {Environment.GetEnvironmentVariable("DB_URL")}");
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+
+    options.User.AllowedUserNameCharacters =
+       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._- ";
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireDigit = true;
+
+
+
+
+    // lock out settings
+
+
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+
+
+
+}).AddEntityFrameworkStores<LmsDatabaseContext>().AddDefaultTokenProviders();
 
 var JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
 var JwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
 {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+
+}).AddJwtBearer(options =>
+{
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -94,6 +133,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             }
             return Task.CompletedTask;
         },
+
+
+        OnTokenValidated = async context =>
+        {
+            UserManager<AppUser> _userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
+            var userId = context?.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tokenStamp = context?.Principal?.FindFirstValue("SecurityStamp");
+
+            var user = await _userManager.FindByIdAsync(userId!);
+
+            if (user == null || user.SecurityStamp != tokenStamp)
+            {
+                context?.Fail("Token no longer valid");
+            }
+
+
+
+        },
+
+
         OnChallenge = context =>
         {
             // Skip default logic
@@ -109,7 +168,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
 
-            return context.Response.WriteAsync("{\"error\": \"Unauthorized Access,You are not allowed to access this resource.\"}");
+            return context.Response.WriteAsync($"Unauthorized Access,{context?.Principal?.FindFirstValue(ClaimTypes.Role)} are not allowed to access this resource.");
         }
     };
 });
@@ -122,6 +181,19 @@ builder.Services.AddDI();
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
 var app = builder.Build();
+
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    RoleManager<IdentityRole> _roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+
+
+    await SeedRoles.SeedData(_roleManager); // seeding the initial Roles.
+
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -155,9 +227,6 @@ app.UseRouting();
 
 
 app.UseAuthentication();
-
-
-//app.UseMiddleware<JwtVerify>(); // your custom JWT validation
 app.UseAuthorization();
 
 

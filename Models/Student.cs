@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-      
+
 namespace LmsApp2.Api.Models;
 
 public partial class Student
 {
     public Guid Studentid { get; set; }
 
-    public string Studentname { get; set; } = null!;
-
+    public string? StudentName { get; set; }
     public string? Guardianname { get; set; }
 
     public string? Guardiancontact { get; set; }
@@ -43,7 +42,6 @@ public partial class Student
 
     public virtual School? School { get; set; }
 
-    public virtual Studentaccountinfo? Studentaccountinfo { get; set; }
 
     public virtual ICollection<Studentadditionaldoc> Studentadditionaldocs { get; set; } = new List<Studentadditionaldoc>();
 

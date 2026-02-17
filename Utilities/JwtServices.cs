@@ -1,4 +1,5 @@
-﻿using LmsApp2.Api.UtilitiesInterfaces;
+﻿using LmsApp2.Api.Identity;
+using LmsApp2.Api.UtilitiesInterfaces;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,39 +8,28 @@ using System.Text;
 
 namespace LmsApp2.Api.Utilities
 {
-    public class JwtServices(IConfiguration config) : IJwtServices
+    public class JwtServices : IJwtServices
     {
-        public string GenerateAccessToken(Guid UserId, string Designation, string email)
+        public string GenerateAccessToken(string Designation, AppUser _user)
         {
             String GeneratingTokenFor = Designation + "s";
             string AccessToken = null!;
             var claims = new List<Claim> {
 
-                    new Claim(ClaimTypes.Role,Designation),
-                    new Claim("Id",UserId.ToString()),
-                    new Claim("Email",email.ToString())
+                    new(ClaimTypes.Role,Designation),
+                    new(ClaimTypes.NameIdentifier,_user.Id),
+                    new("MainTableId",_user.UserId_InMainTable.ToString()),
+                    new("Email",_user.Email!.ToString()),
+                    new("SecurityStamp",_user.SecurityStamp)
 
 
 
             };
-            if (GeneratingTokenFor == "Admins")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
+
+            AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
 
 
-            }
-            else if (GeneratingTokenFor == "Teachers")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
 
-
-            }
-            else if (GeneratingTokenFor == "Students")
-            {
-                AccessToken = TokenGenerationForJwt(claims, 1, GeneratingTokenFor);
-
-
-            }
 
 
             if (AccessToken == null)
@@ -68,7 +58,7 @@ namespace LmsApp2.Api.Utilities
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!));
             var tokenHandler = new JwtSecurityTokenHandler();
 
-   
+
             var validationParams = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

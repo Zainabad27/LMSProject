@@ -5,18 +5,10 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IEmployeeService
     {
-
-         public Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId);
-         public Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize);
-        public Task<Guid> AddEmployee(EmployeeDto emp,string designation);
-
-
-        public Task<List<(Guid AssignmentId,string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId);
-
-
-        public Task<Guid> AssignCourseToTeacher(Guid TeacherId,Guid CourseId);
-
-
-        public Task<Guid> UploadAssignment(AssignmentDto assignmentData,Guid TeacherId);
+        public Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId);
+        public Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize);
+        public Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId);
+        public Task<Guid> AssignCourseToTeacher(Guid TeacherId, Guid CourseId);
+        public Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId);
     }
 }
