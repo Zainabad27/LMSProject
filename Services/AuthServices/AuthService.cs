@@ -1,15 +1,17 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Identity;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
 using LmsApp2.Api.UtilitiesInterfaces;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace LmsApp2.Api.Services.AuthServices
 {
 
-    public class Login_Register_Service(IAuthRepo authRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env) : ILogin_Register
+    public class Login_Register_Service(IAuthRepo authRepo, ISchoolRepo schoolrepo, IWebHostEnvironment env,SignInManager<AppUser> signInManager) : ILogin_Register
     {
         public async Task<Guid> AdminLogin(LoginDto LoginData, HttpContext context)
         {
@@ -47,16 +49,6 @@ namespace LmsApp2.Api.Services.AuthServices
 
             SendLoginDataToFrontend data = await authRepo.Login(LoginData.Email, LoginData.Password, "Teacher");
 
-            // custom auth code :  
-            // var (EmployeeAccountId, EmployeeId) = await empRepo.AuthorizeEmployee(LoginData.Email, LoginData.Password, "Teacher");
-            // string AccessToken = JwtServices.GenerateAccessToken(EmployeeId, "Teacher", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
-            // string RefreshToken = JwtServices.GenerateRefreshToken();
-            // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.
-
-
-            // Guid SessionId = await empRepo.PopulateEmployeeSession(EmployeeAccountId, RefreshToken);
-
-
             await authRepo.SaveChanges();
 
             var CookiesOptions = new CookieOptions
@@ -84,15 +76,6 @@ namespace LmsApp2.Api.Services.AuthServices
 
 
             SendLoginDataToFrontend data = await authRepo.Login(LoginData.Email, LoginData.Password, "Student");
-
-            // var (StdId, StdAccId) = await stdRepo.AuthorizeStudent(LoginData.Email, LoginData.Password);
-            // string AccessToken = JwtServices.GenerateAccessToken(StdId, "Student", LoginData.Email); // in access token we have put Employee Id in the Token payload not the Account Id.
-            // string RefreshToken = JwtServices.GenerateRefreshToken();
-            // // generated the access token now i have to generate refresh token and put the both refresh and access token into the database.
-
-
-            // Guid SessionId = await stdRepo.PopulateStudentSession(StdAccId, RefreshToken);
-
 
             await authRepo.SaveChanges();
 
@@ -183,6 +166,19 @@ namespace LmsApp2.Api.Services.AuthServices
             var (StudentId, DocId) = await authRepo.RegisterStudent(std, SchoolId, docs);
 
             return StudentId;
+        }
+
+        public async Task Logout(HttpContext context, Guid Id)
+        {
+            await authRepo.Logout(Id);
+            await authRepo.SaveChanges();
+           await signInManager.SignOutAsync();   
+
+
+            context.Response.Cookies.Delete("AccessToken");
+            context.Response.Cookies.Delete("RefreshToken");
+
+
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using LmsApp2.Api.DTOs;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
+using LmsApp2.Api.DTOs;
+using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Identity;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +16,19 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class Auth(ILogin_Register AuthService) : ControllerBase
     {
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+
+            var Id = User.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.",403);
+
+            Guid UserId = Guid.Parse(Id);
+
+            await AuthService.Logout(HttpContext, UserId);
+
+            return Ok("Logged out successfully.");
+
+        }
         [HttpPost("Login/Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
         {

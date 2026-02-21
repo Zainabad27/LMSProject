@@ -9,6 +9,7 @@ namespace LmsApp2.Api.ServicesInterfaces
 
         public Task<Guid> StudentLogin(LoginDto LoginData, HttpContext context);
 
+        public Task Logout(HttpContext context, Guid Id);
 
         public Task<Guid> RegisterEmployee(EmployeeDto emp, string designation);
 

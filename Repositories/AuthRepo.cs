@@ -7,6 +7,7 @@ using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.Utilities;
 using LmsApp2.Api.UtilitiesInterfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Npgsql.Replication.PgOutput.Messages;
 
 namespace LmsApp2.Api.Repositories
@@ -231,6 +232,14 @@ namespace LmsApp2.Api.Repositories
         {
             await dbcontext.SaveChangesAsync();
 
+        }
+
+        public async Task Logout(Guid Id)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserId_InMainTable == Id)?? throw new CustomException("Unauthorized Access.(User Not Found)", 403);
+            user.RefreshToken = null;
+            user.TokenExpiry = DateTime.MinValue;    
+            
         }
     }
 

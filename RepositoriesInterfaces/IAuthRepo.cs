@@ -14,6 +14,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<(Guid StudentId, Guid DocId)> RegisterStudent(StudentDto std, Guid SchoolId, Dictionary<string, string> docs);
 
+        public Task Logout(Guid Id);  
 
 
         public Task SaveChanges();
