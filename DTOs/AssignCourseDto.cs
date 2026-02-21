@@ -4,5 +4,6 @@
     {
        public Guid CourseId { get; set; } 
        public Guid TeacherId { get; set; }    
+        
     }
 }
