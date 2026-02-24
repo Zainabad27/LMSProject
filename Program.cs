@@ -21,10 +21,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-//// logging control.   
-//builder.Logging.ClearProviders();
-//builder.Logging.AddConsole();
-//builder.Logging.AddDebug();
+// logging control.   
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 //builder.Logging.AddFilter("Microsoft.AspNetCore.Watch", LogLevel.Warning);
 //builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);

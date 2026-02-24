@@ -1,12 +1,8 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
-using LmsApp2.Api.Identity;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LmsApp2.Api.Controllers

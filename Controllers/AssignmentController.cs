@@ -17,22 +17,12 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> GetAssigments([FromRoute] Guid CourseId)
         {
             var userClaims = User;
-            var TeacherId = userClaims.FindFirstValue("MainTableId");
-             
-             if (TeacherId == null)
-             {
-                 throw new CustomException("Unauthorized Access.", 403);
-
-             }
+            var TeacherId = userClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
+            Guid TId = Guid.Parse(TeacherId);
 
 
-             Guid TId = Guid.Parse(TeacherId);
-
-
-            List<(Guid,string)> AllAssignments= await employeeService.GetAssignmentsOfTeacher(TId, CourseId);
-
-
-
+            IEnumerable<SendteacherAssignmentsToFrontend> AllAssignments= await employeeService.GetAssignmentsOfTeacher(TId, CourseId);
+            
 
             return Ok(AllAssignments );
 
@@ -46,14 +36,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> AssignmentSubmission([FromBody] AssignmentSubmissionDto submission)
         {
             var UserClaims = User;
-            var StudentId = UserClaims.FindFirstValue("MainTableId");
-
-            if (StudentId == null)
-            {
-                throw new CustomException("Unauthorized Access.", 403);
-
-            }
-
+            var StudentId = UserClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
             Guid SId = Guid.Parse(StudentId);
 
 
@@ -64,8 +47,6 @@ namespace LmsApp2.Api.Controllers
 
 
         }
-
-
 
         [HttpPost("UploadAssignment")]
         [Consumes("multipart/form-data")]

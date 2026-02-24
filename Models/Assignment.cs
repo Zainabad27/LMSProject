@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LmsApp2.Api.Models;
+﻿namespace LmsApp2.Api.Models;
 
 public partial class Assignment
 {
+
     public Guid Assignmentid { get; set; }
 
     public Guid? Employeeid { get; set; }
@@ -30,4 +28,6 @@ public partial class Assignment
     public virtual Course Course { get; set; } = null!;
 
     public virtual Employee? Employee { get; set; }
+
+
 }

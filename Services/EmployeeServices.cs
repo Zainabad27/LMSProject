@@ -23,7 +23,7 @@ namespace LmsApp2.Api.Services
             return TeachersList;
 
         }
-        public async Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
+        public async Task< ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
         {
             // first we have to check that the teacher is assigned to that course or not
 
@@ -35,7 +35,7 @@ namespace LmsApp2.Api.Services
                 throw new CustomException("This Teacher is not assigned to this Course hence cannot fetch assignments for this Course.", 400);
             }
 
-            List<(Guid AssignmentId, string CourseName)> AssignmentsList;
+            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList;
 
             AssignmentsList = await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId);
 
@@ -50,6 +50,7 @@ namespace LmsApp2.Api.Services
         }
         public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId)
         {
+             
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
             // second we will check the class he is uploading assignment for does that course is assigned to that class or not
             // // we will also check if the employee id that has been given is the employee teacher as well.
@@ -86,8 +87,7 @@ namespace LmsApp2.Api.Services
 
             }
 
-
-            String AssignmentPathOnServer = await assignmentData.AssignmentFile.UploadToServer(DirectoryPath);
+            _ = await assignmentData.AssignmentFile.UploadToServer(DirectoryPath);
 
             Guid AssignmentId = await assrepo.UploadAssignment(assignmentData, $"Assignments/{assignmentData.AssignmentFile.FileName}", TeacherId, CourseName);
             await assrepo.SaveChanges();

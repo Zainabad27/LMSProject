@@ -69,14 +69,7 @@ namespace LmsApp2.Api.Repositories
         }
         public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
         {
-            var EmployeeInDatabase = await dbcontext.Employees.Include(e => e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
-
-            if (EmployeeInDatabase == null)
-            {
-                throw new CustomException("This Teacher does not exists in our database.", 400);
-
-
-            }
+            var EmployeeInDatabase = await dbcontext.Employees.Include(e => e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId) ?? throw new CustomException("This Teacher does not exists in our database.", 400);
             if (EmployeeInDatabase.Isactive != true)
             {
                 throw new CustomException("This Teacher is not Active Employee", 400);
@@ -90,7 +83,7 @@ namespace LmsApp2.Api.Repositories
 
 
 
-            List<Course> cc = EmployeeInDatabase.Courses.ToList();
+            List<Course> cc = [.. EmployeeInDatabase.Courses];
 
             foreach (Course C in EmployeeInDatabase.Courses)
             {

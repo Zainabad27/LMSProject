@@ -32,34 +32,6 @@ namespace LmsApp2.Api.Controllers
             return Ok(TeachersList);    
         }   
 
-        // [Authorize(Roles = "Admin")]
-        // [Consumes("multipart/form-data")]
-        // [HttpPost("AddAdmin")]
-        // public async Task<IActionResult> AddAdmin([FromForm] EmployeeDto emp)
-        // {
-        //     var u = User;
-
-        //     // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Admin");
-
-
-        //     // return Ok(new { AddedEmployeeId = addedEmployeeId });
-
-        // }
-        // [Authorize(Roles = "Admin")]
-        // [HttpPost("AddTeacher")]
-        // [Consumes("multipart/form-data")]
-        // public async Task<IActionResult> AddTeacher([FromForm] EmployeeDto emp)
-        // {
-        //     // Guid addedEmployeeId = await employeeServices.AddEmployee(emp, "Teacher");           
-        //     // return Ok(new { AddedEmployeeId = addedEmployeeId });
-
-        // }
-
-
-
-
-
-
         [HttpPost("AssignCourse")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCourseToATeacher([FromBody] AssignCourseDto assignCourse)

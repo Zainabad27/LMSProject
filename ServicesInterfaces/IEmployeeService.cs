@@ -7,7 +7,7 @@ namespace LmsApp2.Api.ServicesInterfaces
     {
         public Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId);
         public Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize);
-        public Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId);
+        public Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId);
         public Task<Guid> AssignCourseToTeacher(Guid TeacherId, Guid CourseId);
         public Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId);
     }

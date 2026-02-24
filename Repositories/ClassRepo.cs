@@ -60,12 +60,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<(bool, String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
         {
-            var ClassInDb = await dbcontext.Classes.FirstOrDefaultAsync(cls => cls.Classid == ClassId);
-            if (ClassInDb == null)
-            {
-                throw new CustomException("This Class Does Not Exists in our database", 400);
-
-            }
+            var ClassInDb = await dbcontext.Classes.Include(cls=>cls.Courses).FirstOrDefaultAsync(cls => cls.Classid == ClassId) ?? throw new CustomException("This Class Does Not Exists in our database", 400);
 
             foreach (Course C in ClassInDb.Courses)
             {
@@ -76,13 +71,7 @@ namespace LmsApp2.Api.Repositories
 
 
             }
-
-
             return (false, "No Course Found");
-
-
-
-
 
         }
         public async Task<Guid> AddClass(ClassDto Class, Guid SchoolId)

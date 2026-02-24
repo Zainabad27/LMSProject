@@ -9,39 +9,39 @@ namespace LmsApp2.Api.Repositories
 {
     public class AssignmentRepo(LmsDatabaseContext dbcontext) : IAssignmentRepo
     {
-        public async Task<List<(Guid AssignmentId, string CourseName)>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId)
+        public async Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId)
         {
             // return all the assignments uploaded by this teacher for this course. 
 
 
-         var Teacher= await  dbcontext.Employees.Include(emp => emp.Assignments).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId);
+            var Teacher = await dbcontext.Employees.Include(emp => emp.Assignments).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId) ?? throw new CustomException("Teacher was not found in the Database", 400);
+            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList = [];
 
-            if (Teacher == null)
-            {
-                throw new CustomException("Teacher was not found in the Database", 400);
-            }
-            List<(Guid AssignmentId, string AssignmentName)> AssignmentsList = new List<(Guid AssignmentId, string AssignmentName)>();
-
-           foreach(Assignment ass in Teacher.Assignments)
+            foreach (Assignment ass in Teacher.Assignments)
             {
                 if (ass.Courseid == CourseId)
                 {
-                    AssignmentsList.Add((ass.Assignmentid, ass.Coursename));
+                    // AssignmentsList.Add((ass.AssignmentId, ass.CourseName));
+                    AssignmentsList.Add(new SendteacherAssignmentsToFrontend
+                    {
+                        AssignmentId = ass.Assignmentid,
+                        CourseName = ass.Coursename
+                    });
                 }
 
-                
+
             }
 
 
             return AssignmentsList;
-            
+
         }
 
-        public async Task<string?> GetAssignmentPath(Guid AssignmentId) {
-        
-          return await dbcontext.Assignments.Where(ass=>ass.Assignmentid==AssignmentId).Select(ass=>ass.Assignmentquestion!=null? ass.Assignmentquestion.Content:null).FirstOrDefaultAsync();    
-        
-        
+        public async Task<string?> GetAssignmentPath(Guid AssignmentId)
+        {
+
+            return await dbcontext.Assignments.Where(ass => ass.Assignmentid == AssignmentId).Select(ass => ass.Assignmentquestion != null ? ass.Assignmentquestion.Content : null).FirstOrDefaultAsync();
+
         }
         public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, String FilePathOnServer, Guid TeacherId, String CourseName)
         {
@@ -60,15 +60,15 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> ValidAssignment(Guid AssignmentId)
         {
-            var ass=await dbcontext.Assignments.FirstOrDefaultAsync(ass=>ass.Assignmentid==AssignmentId);
-    
+            var ass = await dbcontext.Assignments.FirstOrDefaultAsync(ass => ass.Assignmentid == AssignmentId);
+
 
             if (ass == null)
             {
-                throw new CustomException("Assignment was not found in the Database",400);
+                throw new CustomException("Assignment was not found in the Database", 400);
             }
 
-            if(ass.Deadline < DateTime.UtcNow)
+            if (ass.Deadline < DateTime.UtcNow)
             {
                 throw new CustomException("Assignment deadline has passed.");
             }
@@ -82,11 +82,11 @@ namespace LmsApp2.Api.Repositories
 
             if (deadline <= DateTime.MinValue)
             {
-                throw new CustomException("Assignment deadline was not set.",400);
+                throw new CustomException("Assignment deadline was not set.", 400);
             }
 
 
-            return deadline;    
+            return deadline;
         }
 
 
