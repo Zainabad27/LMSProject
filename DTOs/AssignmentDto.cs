@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LmsApp2.Api.DTOs
 {
-    public class AssignmentDto 
-    { 
+    public class AssignmentDto
+    {
+        private DateOnly _deadline;
+
         [Required(ErrorMessage = "Enter the Course for which this assignment is destined.")]
         public Guid CourseId { get; set; }
 
@@ -20,7 +22,24 @@ namespace LmsApp2.Api.DTOs
         public int TotalMarks { get; set; }
 
         [Required(ErrorMessage = "Assignment Deadline date is Required.")]
-        public DateOnly Deadline { get; set; }
+        public DateOnly Deadline
+        {
+            get => this._deadline;
+            set
+            {
+
+                // if (value < DateOnly.FromDateTime(DateTime.Now))
+                // {
+                //     throw new ArgumentException("DeadLine cannot be in the past.");
+                // }
+                // else
+                // {
+                //     this._deadline = value;
+                // }
+
+
+            }
+        }
 
 
     }

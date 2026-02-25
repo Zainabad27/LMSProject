@@ -14,7 +14,7 @@ namespace LmsApp2.Api.Services
         public async Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId)
         {
             var Employee = await employeerepo.GetEmployeeById(EmployeeId) ?? throw new CustomException("No Active/Previous Employee Found With This Id", 400);
-                Employee.Documents=["No Additional Documents Found."];
+            Employee.Documents = ["No Additional Documents Found."];
             return Employee;
         }
         public async Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int PageNumber, int PageSize)
@@ -23,7 +23,7 @@ namespace LmsApp2.Api.Services
             return TeachersList;
 
         }
-        public async Task< ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
+        public async Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacher(Guid TeacherId, Guid CourseId)
         {
             // first we have to check that the teacher is assigned to that course or not
 
@@ -50,7 +50,7 @@ namespace LmsApp2.Api.Services
         }
         public async Task<Guid> UploadAssignment(AssignmentDto assignmentData, Guid TeacherId)
         {
-             
+
             // first we have to check the teacher is trying to upload the assignment for which course does he even teach it or not by course Id.
             // second we will check the class he is uploading assignment for does that course is assigned to that class or not
             // // we will also check if the employee id that has been given is the employee teacher as well.
@@ -75,7 +75,17 @@ namespace LmsApp2.Api.Services
 
             }
 
+            // check assignment deadline is it a valid deadline 
+
+
+            if (assignmentData.Deadline < DateOnly.FromDateTime(DateTime.Now)) throw new CustomException("Deadline Date Cannot Be a Past Date.", 400);
+
             // validations have finished now we can simply upload that assigment on the server and then in the DB with refrence of that class and that teacher.
+
+            if (env.WebRootPath == null)
+            {
+                throw new ArgumentNullException("wwwroot folder is not present.");
+            }
 
             var DirectoryPath = Path.Combine(env.WebRootPath, "Assignments");
 
