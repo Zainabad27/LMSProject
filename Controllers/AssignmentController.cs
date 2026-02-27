@@ -27,14 +27,15 @@ namespace LmsApp2.Api.Controllers
             return Ok(AllAssignments );
 
         }
+ 
 
-
-        [HttpPost("AssignmentSubmission")]
         [Consumes("multipart/form-data")]
+        [HttpPost("AssignmentSubmission")]
         [Authorize(Roles = "Student")]
 
-        public async Task<IActionResult> AssignmentSubmission([FromBody] AssignmentSubmissionDto submission)
+        public async Task<IActionResult> AssignmentSubmission([FromForm] AssignmentSubmissionDto submission)
         {
+            
             var UserClaims = User;
             var StudentId = UserClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
             Guid SId = Guid.Parse(StudentId);

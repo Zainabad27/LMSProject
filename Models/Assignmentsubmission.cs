@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LmsApp2.Api.Models;
 
 public partial class Assignmentsubmission
-{
+{ 
     public Guid Assignmentsubmissionid { get; set; }
 
     public string Content { get; set; } = null!;

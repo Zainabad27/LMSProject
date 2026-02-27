@@ -2,7 +2,7 @@
 
 public partial class Assignment
 {
-
+ 
     public Guid Assignmentid { get; set; }
 
     public Guid? Employeeid { get; set; }

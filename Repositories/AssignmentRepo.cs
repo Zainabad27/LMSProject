@@ -13,7 +13,6 @@ namespace LmsApp2.Api.Repositories
         {
             // return all the assignments uploaded by this teacher for this course. 
 
-
             var Teacher = await dbcontext.Employees.Include(emp => emp.Assignments).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId) ?? throw new CustomException("Teacher was not found in the Database", 400);
             ICollection<SendteacherAssignmentsToFrontend> AssignmentsList = [];
 
@@ -35,7 +34,9 @@ namespace LmsApp2.Api.Repositories
 
             return AssignmentsList;
 
-        }
+        } 
+
+        
 
         public async Task<string?> GetAssignmentPath(Guid AssignmentId)
         {
@@ -60,14 +61,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<bool> ValidAssignment(Guid AssignmentId)
         {
-            var ass = await dbcontext.Assignments.FirstOrDefaultAsync(ass => ass.Assignmentid == AssignmentId);
-
-
-            if (ass == null)
-            {
-                throw new CustomException("Assignment was not found in the Database", 400);
-            }
-
+            var ass = await dbcontext.Assignments.FirstOrDefaultAsync(ass => ass.Assignmentid == AssignmentId) ?? throw new CustomException("Assignment was not found in the Database", 400);
             if (ass.Deadline < DateTime.UtcNow)
             {
                 throw new CustomException("Assignment deadline has passed.");
