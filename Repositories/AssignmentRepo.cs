@@ -1,4 +1,5 @@
-﻿using LmsApp2.Api.DTOs;
+﻿using System.Data;
+using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
 using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
@@ -91,6 +92,20 @@ namespace LmsApp2.Api.Repositories
             return ClassId;
 
 
+        }
+
+
+        public async Task GetAssignmentSubmission(Guid AssignmentId)
+        {
+            throw new NotImplementedException();
+            // await dbcontext.Assignments.Select(ass=>new
+            // {
+
+            // }).FirstOrDefaultAsync(ass=>ass.Assignmentid == AssignmentId);
+
+
+
+          
         }
 
 
