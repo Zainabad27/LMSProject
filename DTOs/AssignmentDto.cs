@@ -34,7 +34,7 @@ namespace LmsApp2.Api.DTOs
                 // }
                 // else
                 // {
-                //     this._deadline = value;
+                    this._deadline = value;
                 // }
 
 
