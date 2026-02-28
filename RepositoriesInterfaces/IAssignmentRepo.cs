@@ -13,6 +13,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<Guid?> GetAssignmentClass(Guid AssignmentId);
 
+         public Task<List<AssignmentsubmissionResponse>> GetAllSubmittedAssignmentOfStudentForACourse(Guid studentId, Guid CourseId);
+
 
         public Task<DateTime> GetAssignmentDeadline(Guid AssignmentId);
 

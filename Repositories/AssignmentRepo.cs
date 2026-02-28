@@ -35,9 +35,9 @@ namespace LmsApp2.Api.Repositories
 
             return AssignmentsList;
 
-        } 
+        }
 
-        
+
 
         public async Task<string?> GetAssignmentPath(Guid AssignmentId)
         {
@@ -94,20 +94,42 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-
-        public async Task GetAssignmentSubmission(Guid AssignmentId)
+        public async Task<List<AssignmentsubmissionResponse>> GetAllSubmittedAssignmentOfStudentForACourse(Guid studentId, Guid CourseId)
         {
-            throw new NotImplementedException();
-            // await dbcontext.Assignments.Select(ass=>new
-            // {
+            ICollection<Assignmentsubmission> SubmittedAssignments = await dbcontext.Assignmentsubmissions.Include(sub => sub.Assignment).Where(subm => subm.Studentid == studentId && subm.Assignment != null && subm.Assignment.Courseid == CourseId).ToListAsync();
 
-            // }).FirstOrDefaultAsync(ass=>ass.Assignmentid == AssignmentId);
+            List<AssignmentsubmissionResponse> ResponseList = [];
 
 
 
-          
+            foreach (Assignmentsubmission ass in SubmittedAssignments)
+            {
+                ResponseList.Add(new AssignmentsubmissionResponse
+                {
+                    AssignmentId = ass.Assignmentid,
+                    SubmissionId = ass.Assignmentsubmissionid,
+                    SubmissionFilePathOnServer = ass.Content,
+                    MarksObtained = ass.Marksscored,
+                    SubmittedAt = ass.Createdat,
+
+                });
+
+
+
+            }
+
+
+
+            return ResponseList;
+
         }
 
+        public async Task<bool> IsAssignmentSubmitted(Guid AssignmentId, Guid studentId)
+        {
+            var result = await dbcontext.Assignmentsubmissions.Where(sub => sub.Assignmentid == AssignmentId && sub.Studentid == studentId).FirstOrDefaultAsync();
+
+            return result != null;
+        }
 
         public async Task SaveChanges()
         {

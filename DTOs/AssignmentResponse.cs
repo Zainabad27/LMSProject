@@ -12,6 +12,10 @@
 
         public bool IsSubmitted { get; set; } = false;
 
+        public Guid? SubmissionId  { get; set; }    
+
         public decimal MarksObtained { get; set; } = (decimal)0.0;
+
+        public string? SubmissionFilePath { get; set; }
     }
 }

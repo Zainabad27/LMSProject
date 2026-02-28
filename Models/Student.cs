@@ -32,7 +32,7 @@ public partial class Student
 
     public DateOnly Birthdate { get; set; }
 
-    public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = new List<Assignmentsubmission>();
+    public virtual ICollection<Assignmentsubmission> Assignmentsubmissions { get; set; } = [];
 
     public virtual Class? Class { get; set; }
 

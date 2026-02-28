@@ -1,5 +1,6 @@
 ﻿using LmsApp2.Api.DTOs;
 using LmsApp2.Api.Exceptions;
+using LmsApp2.Api.Repositories;
 using LmsApp2.Api.RepositoriesInterfaces;
 using LmsApp2.Api.ServicesInterfaces;
 using LmsApp2.Api.Utilities;
@@ -21,7 +22,7 @@ namespace LmsApp2.Api.Services
             // then we will check the deadline of the assignment is not passed.
 
             // then we will save the file on the server and save the path in the Db against that student and assignment.
-                // throw new CustomException("This Endpoint is still under development and will be available soon.", 503);
+            // throw new CustomException("This Endpoint is still under development and will be available soon.", 503);
             Guid? StudentClassId = await stdRepo.GetStudentClass(StudentId);
 
             Guid? AssignmentClassId = await AssRepo.GetAssignmentClass(Submission.AssignmentId) ?? throw new CustomException("No Assignment Found", 400);
@@ -47,7 +48,7 @@ namespace LmsApp2.Api.Services
 
             return SubmissionId;
         }
-     
+
 
         public async Task<List<AssignmentResponse>> GetAllAssignments(Guid StdId, Guid CourseId)
         {
@@ -59,8 +60,27 @@ namespace LmsApp2.Api.Services
 
 
             List<AssignmentResponse> AssignmentIdAndData = await clsRepo.GetAllAssignmentsOfClass(StdClass, CourseId);
+            // if assignment is submitted we are returning alot more info about the submission as well.
+            
+            List<AssignmentsubmissionResponse> AllSubmittedAssignmentForThisCourse = await AssRepo.GetAllSubmittedAssignmentOfStudentForACourse(StdId, CourseId);
 
+            for (int i = 0; i < AssignmentIdAndData.Count; i++)
+            {
+                for (int j = 0; j < AllSubmittedAssignmentForThisCourse.Count; j++)
+                {
+                    if (AssignmentIdAndData[i].AssignmentId == AllSubmittedAssignmentForThisCourse[j].AssignmentId)
+                    {
+                        AssignmentIdAndData[i].IsSubmitted = true;
+                        AssignmentIdAndData[i].MarksObtained = AllSubmittedAssignmentForThisCourse[j].MarksObtained ?? (decimal)0.0;
+                        AssignmentIdAndData[i].SubmissionId = AllSubmittedAssignmentForThisCourse[j].SubmissionId;
+                        AssignmentIdAndData[i].SubmissionFilePath = AllSubmittedAssignmentForThisCourse[j].SubmissionFilePathOnServer;
+                    }
+
+                }
+
+            }
             return AssignmentIdAndData;
+
 
         }
 
@@ -107,7 +127,7 @@ namespace LmsApp2.Api.Services
         {
             // first we have to  validtae that the student is real student and active in the system.
             // then we will fetch his class and then we will fetch all the courses assigned to that class.
-            var (IsStudentPresentAndActive,ClassId) = await stdRepo.ValidStudent(StdId);       
+            var (IsStudentPresentAndActive, ClassId) = await stdRepo.ValidStudent(StdId);
             if (!IsStudentPresentAndActive)
             {
                 throw new CustomException("No Active Student Found with this Id", 400);
@@ -124,23 +144,23 @@ namespace LmsApp2.Api.Services
             return CourseList;
         }
 
-        public async Task<Pagination<SendStudentsToFrontendDto>> GetAllStudentsOfClass(Guid ClassId,int PageNumber,int PageSize)
+        public async Task<Pagination<SendStudentsToFrontendDto>> GetAllStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
         {
             // first we will check if the class exists
             // then we will fetch all the students of that class and return to the caller.
-            Guid ClassID=await clsRepo.GetClass(ClassId);
-            if(ClassID==Guid.Empty)
+            Guid ClassID = await clsRepo.GetClass(ClassId);
+            if (ClassID == Guid.Empty)
             {
                 throw new CustomException("No Class Found with this Id", 400);
             }
 
-            Pagination<SendStudentsToFrontendDto> students = await clsRepo.GetStudentsOfClass(ClassID,PageNumber,PageSize);
+            Pagination<SendStudentsToFrontendDto> students = await clsRepo.GetStudentsOfClass(ClassID, PageNumber, PageSize);
 
 
-            if (students.Items.Count==0)
+            if (students.Items.Count == 0)
             {
                 throw new CustomException("No Students Found in this Class", 400);
-                
+
             }
 
 
