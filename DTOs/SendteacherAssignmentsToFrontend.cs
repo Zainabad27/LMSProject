@@ -6,5 +6,9 @@ namespace LmsApp2.Api.DTOs
 
         public string CourseName { get; set; } = string.Empty;
 
+        public DateTime Deadline { get; set; }  
+
+        public int TotalSubmissions { get; set; }    
+
     }
 }

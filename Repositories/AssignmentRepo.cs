@@ -5,6 +5,7 @@ using LmsApp2.Api.Mappers;
 using LmsApp2.Api.Models;
 using LmsApp2.Api.RepositoriesInterfaces;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Sdk;
 
 namespace LmsApp2.Api.Repositories
 {
@@ -12,33 +13,16 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId)
         {
-            // return all the assignments uploaded by this teacher for this course. 
-
-            var Teacher = await dbcontext.Employees.Include(emp => emp.Assignments).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId) ?? throw new CustomException("Teacher was not found in the Database", 400);
-            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList = [];
-
-            foreach (Assignment ass in Teacher.Assignments)
+            var assignments = await dbcontext.Assignments.Where(ass=>ass.Employeeid == TeacherId && ass.Courseid == CourseId).Select(ass=>new SendteacherAssignmentsToFrontend
             {
-                if (ass.Courseid == CourseId)
-                {
-                    // AssignmentsList.Add((ass.AssignmentId, ass.CourseName));
-                    AssignmentsList.Add(new SendteacherAssignmentsToFrontend
-                    {
-                        AssignmentId = ass.Assignmentid,
-                        CourseName = ass.Coursename
-                    });
-                }
+                AssignmentId = ass.Assignmentid,
+                CourseName = ass.Coursename,
+                Deadline = ass.Deadline,
+                TotalSubmissions = ass.Assignmentsubmissions.Count,
+            }).ToListAsync();
 
-
-            }
-
-
-            return AssignmentsList;
-
+            return assignments;
         }
-
-
-
         public async Task<string?> GetAssignmentPath(Guid AssignmentId)
         {
 
@@ -124,11 +108,25 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task<bool> IsAssignmentSubmitted(Guid AssignmentId, Guid studentId)
+        public async Task GetSubmission(Guid submissionid)
         {
-            var result = await dbcontext.Assignmentsubmissions.Where(sub => sub.Assignmentid == AssignmentId && sub.Studentid == studentId).FirstOrDefaultAsync();
+            var result = await dbcontext.Assignmentsubmissions.FirstOrDefaultAsync(sub => sub.Assignmentsubmissionid == submissionid) ?? throw new CustomException("Invalid submission Id.");
 
-            return result != null;
+            throw new NotImplementedException();
+        }
+        public async Task<GetAssignment> GetAssignment(Guid AssignmentId)
+        {
+            var result = await dbcontext.Assignments.FirstOrDefaultAsync(ass => ass.Assignmentid == AssignmentId) ?? throw new CustomException("Assignment Not Found.", 400);
+
+            return new GetAssignment()
+            {
+                AssignmentId = result.Assignmentid,
+                deadline = result.Deadline,
+                TotalMarks = result.Totalmarks,
+                upladedBy = result.Employeeid,
+                CourseId = result.Courseid
+            };
+
         }
 
         public async Task SaveChanges()

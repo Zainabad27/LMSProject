@@ -27,6 +27,21 @@ namespace LmsApp2.Api.Controllers
             return Ok(AllAssignments );
 
         }
+
+
+        [HttpPost("MarkAssignment")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> MarkAssignment([FromBody] MarkAssignmentDto MarkingData)
+        {
+            var userClaims = User;
+            var TId = userClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
+            Guid TeacherId = Guid.Parse(TId);
+
+            await employeeService.MarkAssignment(MarkingData, TeacherId);
+
+            return Ok(new { Message = "Assignment Marked Successfully" });
+            
+        }
  
 
         [Consumes("multipart/form-data")]

@@ -35,10 +35,7 @@ namespace LmsApp2.Api.Services
                 throw new CustomException("This Teacher is not assigned to this Course hence cannot fetch assignments for this Course.", 400);
             }
 
-            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList;
-
-            AssignmentsList = await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId);
-
+            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList= await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId);
 
             if (AssignmentsList.Count == 0)
             {
@@ -153,6 +150,22 @@ namespace LmsApp2.Api.Services
             return CourseIdReturned;
 
 
+        }
+
+        public async Task MarkAssignment(MarkAssignmentDto MarkingData, Guid TeacherId)
+        {
+            // we will check if the assignment was uploaded by this teacher or not 
+            // then we will check if the submission that is being marked is for the same assignment or not
+            GetAssignment assignment = await assrepo.GetAssignment(MarkingData.AssignmentId); 
+            if (assignment.upladedBy!=TeacherId) throw new CustomException("This Assignment was not uploaded by this Teacher hence you cannot mark this assignment.", 400);
+
+
+
+            await assrepo.GetSubmission(MarkingData.SubmissionId); 
+
+
+
+            throw new NotImplementedException();
         }
     }
 }
