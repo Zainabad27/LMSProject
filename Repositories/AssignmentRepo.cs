@@ -108,11 +108,12 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async Task GetSubmission(Guid submissionid)
+        public async Task<GetSubmissionFromDB> GetSubmission(Guid submissionid)
         {
+            // we are returning the dbEntity from the repo layer and then in service layer we are literally assigning it the grades and the remarks and ischecked flag.
             var result = await dbcontext.Assignmentsubmissions.FirstOrDefaultAsync(sub => sub.Assignmentsubmissionid == submissionid) ?? throw new CustomException("Invalid submission Id.");
 
-            throw new NotImplementedException();
+            return new GetSubmissionFromDB(result);
         }
         public async Task<GetAssignment> GetAssignment(Guid AssignmentId)
         {
@@ -133,21 +134,20 @@ namespace LmsApp2.Api.Repositories
         public async Task<ICollection<SendAllSubmissionsToFrontend>> GetAllSubmissions(Guid AssignemntIdParam)
         {
 
-           ICollection<SendAllSubmissionsToFrontend> result =    await dbcontext.Assignmentsubmissions.Where(ass => ass.Assignmentid == AssignemntIdParam).Select(ass => new SendAllSubmissionsToFrontend
+            ICollection<SendAllSubmissionsToFrontend> result = await dbcontext.Assignmentsubmissions.Where(ass => ass.Assignmentid == AssignemntIdParam).Select(ass => new SendAllSubmissionsToFrontend
             {
                 SubmissionFilePathOnServer = ass.Content,
                 StudentName = ass.Student != null ? ass.Student.StudentName : "Student name cannot be fetched currently",
                 SubmittedAt = ass.Createdat,
                 SubmissionId = ass.Assignmentsubmissionid,
-                MarksObtained=ass.Marksscored,
-                AssignmentId=AssignemntIdParam,
-                // IsChecked=ass.Marksscored!=null, // how to check if  the submission is already checked by the teacher or not.
-
+                MarksObtained = ass.Marksscored,
+                AssignmentId = AssignemntIdParam,
+                IsChecked = ass.Isgraded,
             }).ToListAsync();
 
 
-            return result;  
-        
+            return result;
+
 
         }
 

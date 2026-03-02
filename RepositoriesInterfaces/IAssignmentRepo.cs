@@ -18,7 +18,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<List<AssignmentsubmissionResponse>> GetAllSubmittedAssignmentOfStudentForACourse(Guid studentId, Guid CourseId);
         public Task<GetAssignment> GetAssignment(Guid AssignmentId);
 
-        public Task GetSubmission(Guid submissionid);
+        public Task<GetSubmissionFromDB> GetSubmission(Guid submissionid);
         public Task<DateTime> GetAssignmentDeadline(Guid AssignmentId);
         public Task<bool> ValidAssignment(Guid AssignmentId);
 
