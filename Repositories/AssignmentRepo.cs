@@ -13,7 +13,7 @@ namespace LmsApp2.Api.Repositories
     {
         public async Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId)
         {
-            var assignments = await dbcontext.Assignments.Where(ass=>ass.Employeeid == TeacherId && ass.Courseid == CourseId).Select(ass=>new SendteacherAssignmentsToFrontend
+            var assignments = await dbcontext.Assignments.Where(ass => ass.Employeeid == TeacherId && ass.Courseid == CourseId).Select(ass => new SendteacherAssignmentsToFrontend
             {
                 AssignmentId = ass.Assignmentid,
                 CourseName = ass.Coursename,
@@ -125,7 +125,29 @@ namespace LmsApp2.Api.Repositories
                 TotalMarks = result.Totalmarks,
                 upladedBy = result.Employeeid,
                 CourseId = result.Courseid
+
             };
+
+        }
+
+        public async Task<ICollection<SendAllSubmissionsToFrontend>> GetAllSubmissions(Guid AssignemntIdParam)
+        {
+
+           ICollection<SendAllSubmissionsToFrontend> result =    await dbcontext.Assignmentsubmissions.Where(ass => ass.Assignmentid == AssignemntIdParam).Select(ass => new SendAllSubmissionsToFrontend
+            {
+                SubmissionFilePathOnServer = ass.Content,
+                StudentName = ass.Student != null ? ass.Student.StudentName : "Student name cannot be fetched currently",
+                SubmittedAt = ass.Createdat,
+                SubmissionId = ass.Assignmentsubmissionid,
+                MarksObtained=ass.Marksscored,
+                AssignmentId=AssignemntIdParam,
+                // IsChecked=ass.Marksscored!=null, // how to check if  the submission is already checked by the teacher or not.
+
+            }).ToListAsync();
+
+
+            return result;  
+        
 
         }
 

@@ -35,7 +35,7 @@ namespace LmsApp2.Api.Services
                 throw new CustomException("This Teacher is not assigned to this Course hence cannot fetch assignments for this Course.", 400);
             }
 
-            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList= await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId);
+            ICollection<SendteacherAssignmentsToFrontend> AssignmentsList = await assrepo.GetAssignmentsOfTeacherForACourse(TeacherId, CourseId);
 
             if (AssignmentsList.Count == 0)
             {
@@ -156,16 +156,38 @@ namespace LmsApp2.Api.Services
         {
             // we will check if the assignment was uploaded by this teacher or not 
             // then we will check if the submission that is being marked is for the same assignment or not
-            GetAssignment assignment = await assrepo.GetAssignment(MarkingData.AssignmentId); 
-            if (assignment.upladedBy!=TeacherId) throw new CustomException("This Assignment was not uploaded by this Teacher hence you cannot mark this assignment.", 400);
+            GetAssignment assignment = await assrepo.GetAssignment(MarkingData.AssignmentId);
+            if (assignment.upladedBy != TeacherId) throw new CustomException("This Assignment was not uploaded by this Teacher hence you cannot mark this assignment.", 400);
 
 
 
-            await assrepo.GetSubmission(MarkingData.SubmissionId); 
+            await assrepo.GetSubmission(MarkingData.SubmissionId);
 
 
 
             throw new NotImplementedException();
         }
+
+        public async Task<ICollection<SendAllSubmissionsToFrontend>> GetAssignmentSubmissions(Guid AssignmentId, Guid TeacherId)
+        {
+            // we will check if the assignment was uploaded by this teacher or not 
+            GetAssignment assignment = await assrepo.GetAssignment(AssignmentId);
+            // if assignment not found then it will throw error from repo layer itself so we dont have to check that here again.
+
+
+
+            if (assignment.upladedBy != TeacherId) throw new CustomException("This Assignment was not uploaded by this Teacher hence you cannot see the submissions for this assignment.", 400);
+
+            ICollection<SendAllSubmissionsToFrontend> SubmissionsList = await assrepo.GetAllSubmissions(AssignmentId);
+
+            if (SubmissionsList.Count == 0)
+            {
+                throw new CustomException("No Submissions were found for this Assignment.", 404);
+            }
+
+            return SubmissionsList;
+
+        }
+
     }
 }

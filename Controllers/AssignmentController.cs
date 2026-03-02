@@ -5,13 +5,30 @@ using LMSProject.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
- 
+
 namespace LmsApp2.Api.Controllers
 {
     [Route("api/v1/[controller]s")]
     [ApiController]
     public class AssignmentController(IEmployeeService employeeService, IStudentService stdService) : ControllerBase
     {
+        [HttpGet("GetSubmissions/{AssignmentId}")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> GetAssignmentSubmissions([FromRoute] Guid AssignmentId)
+        {
+            var userClaims = User;
+            var TeacherId = userClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
+            Guid TId = Guid.Parse(TeacherId);
+
+
+            IEnumerable<SendAllSubmissionsToFrontend> AllSubmissions = await employeeService.GetAssignmentSubmissions(AssignmentId, TId);
+
+            return Ok(AllSubmissions);
+
+        }
+
+
+
         [HttpGet("GetAssignments/{CourseId}")]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> GetAssigments([FromRoute] Guid CourseId)
@@ -21,10 +38,10 @@ namespace LmsApp2.Api.Controllers
             Guid TId = Guid.Parse(TeacherId);
 
 
-            IEnumerable<SendteacherAssignmentsToFrontend> AllAssignments= await employeeService.GetAssignmentsOfTeacher(TId, CourseId);
-            
+            IEnumerable<SendteacherAssignmentsToFrontend> AllAssignments = await employeeService.GetAssignmentsOfTeacher(TId, CourseId);
 
-            return Ok(AllAssignments );
+
+            return Ok(AllAssignments);
 
         }
 
@@ -40,9 +57,9 @@ namespace LmsApp2.Api.Controllers
             await employeeService.MarkAssignment(MarkingData, TeacherId);
 
             return Ok(new { Message = "Assignment Marked Successfully" });
-            
+
         }
- 
+
 
         [Consumes("multipart/form-data")]
         [HttpPost("AssignmentSubmission")]
@@ -50,7 +67,7 @@ namespace LmsApp2.Api.Controllers
 
         public async Task<IActionResult> AssignmentSubmission([FromForm] AssignmentSubmissionDto submission)
         {
-            
+
             var UserClaims = User;
             var StudentId = UserClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
             Guid SId = Guid.Parse(StudentId);
@@ -82,4 +99,3 @@ namespace LmsApp2.Api.Controllers
         }
     }
 }
- 

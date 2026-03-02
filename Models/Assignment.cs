@@ -29,5 +29,5 @@ public partial class Assignment
 
     public virtual Employee? Employee { get; set; }
 
-
+ 
 }

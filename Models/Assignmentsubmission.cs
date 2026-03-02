@@ -11,6 +11,8 @@ public partial class Assignmentsubmission
 
     public decimal? Marksscored { get; set; }
 
+    public bool Isgraded { get; set; }  
+
     public Guid? Studentid { get; set; }
 
     public Guid? Assignmentid { get; set; }
@@ -19,5 +21,6 @@ public partial class Assignmentsubmission
 
     public virtual Assignment? Assignment { get; set; }
 
-    public virtual Student? Student { get; set; }
+    public virtual Student? Student { get; set; } 
+    
 }

@@ -4,6 +4,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IAssignmentRepo
     {
+
+        public Task<ICollection<SendAllSubmissionsToFrontend>> GetAllSubmissions(Guid AssignemntIdParam);
         public Task<ICollection<SendteacherAssignmentsToFrontend>> GetAssignmentsOfTeacherForACourse(Guid TeacherId, Guid CourseId);
         public Task<string?> GetAssignmentPath(Guid AssignmentId);
 
@@ -16,7 +18,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
         public Task<List<AssignmentsubmissionResponse>> GetAllSubmittedAssignmentOfStudentForACourse(Guid studentId, Guid CourseId);
         public Task<GetAssignment> GetAssignment(Guid AssignmentId);
 
-         public Task GetSubmission(Guid submissionid);
+        public Task GetSubmission(Guid submissionid);
         public Task<DateTime> GetAssignmentDeadline(Guid AssignmentId);
         public Task<bool> ValidAssignment(Guid AssignmentId);
 
