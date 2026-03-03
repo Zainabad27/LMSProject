@@ -22,6 +22,7 @@ namespace LmsApp2.Api.Controllers
             {
                 throw new CustomException("Unauthorized Access.");
             }
+            
 
             Guid StdId = Guid.Parse(Id);
 

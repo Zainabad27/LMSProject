@@ -21,7 +21,7 @@ namespace LmsApp2.Api.Repositories
 
             List<Assignment> AllAssignmentsOfClass = await dbcontext.Assignments.Where(ass => ass.Classid == ClassId && ass.Courseid == CourseId).ToListAsync();
 
-            List<AssignmentResponse> Assignments = new List<AssignmentResponse>();
+            List<AssignmentResponse> Assignments = [];
 
 
 
