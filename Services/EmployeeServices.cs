@@ -152,7 +152,7 @@ namespace LmsApp2.Api.Services
 
         }
 
-        public async Task MarkAssignment(MarkAssignmentDto MarkingData, Guid TeacherId)
+        public async Task<bool> MarkAssignment(MarkAssignmentDto MarkingData, Guid TeacherId)
         {
             // we will check if the assignment was uploaded by this teacher or not 
             // then we will check if the submission that is being marked is for the same assignment or not
@@ -160,12 +160,22 @@ namespace LmsApp2.Api.Services
             if (assignment.upladedBy != TeacherId) throw new CustomException("This Assignment was not uploaded by this Teacher hence you cannot mark this assignment.", 400);
 
 
+            // so we have to check that the submission is for the same assignment that was given in the marking data
 
-            await assrepo.GetSubmission(MarkingData.SubmissionId);
+            GetSubmissionFromDB submission = await assrepo.GetSubmission(MarkingData.SubmissionId);
+
+            if(submission.SubmissionEntity.Assignmentid != MarkingData.AssignmentId)
+            {
+                throw new CustomException("This Submission does not belong to this Assignment hence you cannot mark this submission with this assignment.", 400);
+            }
+
+            submission.SubmissionEntity.Marksscored = MarkingData.Marks;
+            submission.SubmissionEntity.Isgraded=true;
+            
+            await assrepo.SaveChanges();
 
 
-
-            throw new NotImplementedException();
+            return true;
         }
 
         public async Task<ICollection<SendAllSubmissionsToFrontend>> GetAssignmentSubmissions(Guid AssignmentId, Guid TeacherId)

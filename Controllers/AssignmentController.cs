@@ -54,8 +54,11 @@ namespace LmsApp2.Api.Controllers
             var TId = userClaims.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
             Guid TeacherId = Guid.Parse(TId);
 
-            await employeeService.MarkAssignment(MarkingData, TeacherId);
-
+          bool checkedsuccessfully = await employeeService.MarkAssignment(MarkingData, TeacherId);
+            if (!checkedsuccessfully)
+            {
+                throw new CustomException("Failed to Mark Assignment.", 500);
+            }
             return Ok(new { Message = "Assignment Marked Successfully" });
 
         }

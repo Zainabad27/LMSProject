@@ -114,6 +114,7 @@ namespace LmsApp2.Api.Repositories
             var result = await dbcontext.Assignmentsubmissions.FirstOrDefaultAsync(sub => sub.Assignmentsubmissionid == submissionid) ?? throw new CustomException("Invalid submission Id.");
 
             return new GetSubmissionFromDB(result);
+            
         }
         public async Task<GetAssignment> GetAssignment(Guid AssignmentId)
         {
