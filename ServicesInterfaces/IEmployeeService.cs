@@ -5,6 +5,7 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IEmployeeService
     {
+        public Task<IEnumerable<SendCoursesToFrontendDto>> GetAllCourses(Guid TeacherId);
         public Task<ICollection<SendAllSubmissionsToFrontend>> GetAssignmentSubmissions(Guid AssignmentId, Guid TeacherId);
         public Task<bool> MarkAssignment(MarkAssignmentDto MarkingData, Guid TeacherId);
         public Task<SendEmployeeToFrontend> GetEmployeeById(Guid EmployeeId);

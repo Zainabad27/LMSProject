@@ -5,6 +5,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IEmployeeRepo
     {
+        
+        public Task<ICollection<SendCoursesToFrontendDto>> GetAllEmployeeCourses(Guid TeacherId);
         public Task<SendEmployeeToFrontend?> GetEmployeeById(Guid employeeId);
         public Task<Pagination<SendTeachersToFrontend>> GetAllTeachers(int pageNumber, int pageSize);
         public Task<bool> CheckTeacherAndHisCourses(Guid TeacherId,Guid CourseId);

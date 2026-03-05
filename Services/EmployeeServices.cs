@@ -57,7 +57,7 @@ namespace LmsApp2.Api.Services
 
             // second we have to save it in the database.
 
-
+            throw new NotImplementedException();    
             bool Teacher_TeachesThisCourse = await employeerepo.CheckTeacherAndHisCourses(TeacherId, assignmentData.CourseId);
             if (!Teacher_TeachesThisCourse)
             {
@@ -164,14 +164,14 @@ namespace LmsApp2.Api.Services
 
             GetSubmissionFromDB submission = await assrepo.GetSubmission(MarkingData.SubmissionId);
 
-            if(submission.SubmissionEntity.Assignmentid != MarkingData.AssignmentId)
+            if (submission.SubmissionEntity.Assignmentid != MarkingData.AssignmentId)
             {
                 throw new CustomException("This Submission does not belong to this Assignment hence you cannot mark this submission with this assignment.", 400);
             }
 
             submission.SubmissionEntity.Marksscored = MarkingData.Marks;
-            submission.SubmissionEntity.Isgraded=true;
-            
+            submission.SubmissionEntity.Isgraded = true;
+
             await assrepo.SaveChanges();
 
 
@@ -199,5 +199,11 @@ namespace LmsApp2.Api.Services
 
         }
 
+        public async Task<IEnumerable<SendCoursesToFrontendDto>> GetAllCourses(Guid TeacherId)
+        {
+
+            return await employeerepo.GetAllEmployeeCourses(TeacherId);
+
+        }
     }
 }

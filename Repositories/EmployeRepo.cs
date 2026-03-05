@@ -42,7 +42,7 @@ namespace LmsApp2.Api.Repositories
             return CourseInDb.Courseid;
 
         }
-      
+
         public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
@@ -65,6 +65,31 @@ namespace LmsApp2.Api.Repositories
 
             return EmployeeInDatabase.Employeeid;
 
+
+        }
+        public async Task<ICollection<SendCoursesToFrontendDto>> GetAllEmployeeCourses(Guid TeacherId)
+        {
+            var EmployeeInDatabase = await dbcontext.Employees.Include(e => e.Courses).FirstOrDefaultAsync(emp => emp.Employeeid == TeacherId) ?? throw new CustomException("This Teacher does not exists in our database.", 400);
+            if (EmployeeInDatabase.Isactive != true)
+            {
+                throw new CustomException("This Teacher is not Active Employee", 400);
+
+            }
+            // throw new Exception("This func is to be written later.");
+            if (EmployeeInDatabase.Employeedesignation != "Teacher")
+            {
+                throw new CustomException("This Employee is not a Teacher.", 400);
+            }
+
+
+            ICollection<SendCoursesToFrontendDto> CoursesList = [.. EmployeeInDatabase.Courses.Select(course => new SendCoursesToFrontendDto
+            {
+                CourseId = course.Courseid,
+                CourseName = course.CourseName,
+            })];
+
+
+            return CoursesList;
 
         }
         public async Task<bool> CheckTeacherAndHisCourses(Guid TeacherId, Guid CourseId)
