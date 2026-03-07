@@ -1,16 +1,16 @@
 import { useForm } from "react-hook-form";
-import { int, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "../ZodSchemas/LoginSchema";
+
+import { Link } from "react-router-dom";
 
 // 2. Extract the type from the schema
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
-interface LoginProps {
-  LoginFor: string;
-}
 
-const LoginPage = (LoginProps: LoginProps) => {
+
+const LoginPage = () => {
   const {
     register,
     handleSubmit,
@@ -20,7 +20,7 @@ const LoginPage = (LoginProps: LoginProps) => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    if (LoginProps.LoginFor === "Teacher") return;
+
   };
 
   return (
@@ -83,6 +83,15 @@ const LoginPage = (LoginProps: LoginProps) => {
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
+          {/* <p className="text-center text-sm text-gray-500 mt-4">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Create one here
+            </Link>
+          </p> */}
       </div>
     </div>
   );
