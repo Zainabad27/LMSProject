@@ -16,7 +16,7 @@ namespace LmsApp2.Api.Controllers
         public async Task<IActionResult> Logout()
         {
 
-            var Id = User.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.",403);
+            var Id = User.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
 
             Guid UserId = Guid.Parse(Id);
 
@@ -25,39 +25,71 @@ namespace LmsApp2.Api.Controllers
             return Ok("Logged out successfully.");
 
         }
-        [HttpPost("Login/Admin")]
-        public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
+        // [HttpPost("Login/Admin")]
+        // public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
+        // {
+        //     var context = HttpContext;
+
+        //     await AuthService.AdminLogin(request, context);
+        //     return Ok("Admin Logged in successfully.");
+
+        // }
+        // [HttpPost("Login/Teacher")]
+        // public async Task<IActionResult> LoginTeacher([FromBody] LoginDto request)
+        // {
+
+
+        //     await AuthService.TeacherLogin(request, HttpContext);
+
+
+
+        //     return Ok("Teacher Logged in successfully.");
+
+        // }
+        // [HttpPost("Login/Student")]
+        // public async Task<IActionResult> LoginStudent([FromBody] LoginDto request)
+        // {
+
+
+
+        //     await AuthService.StudentLogin(request, HttpContext);
+
+        //     return Ok("Student Logged in successfully.");
+
+
+
+
+        // }
+
+
+        [HttpPost("Login/{Role}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginDto request, [FromRoute] string Role)
         {
-            var context = HttpContext;
+            if (Role == "admin")
+            {
 
-            await AuthService.AdminLogin(request, context);
-            return Ok("Admin Logged in successfully.");
+                await AuthService.AdminLogin(request, HttpContext);
 
-        }
-        [HttpPost("Login/Teacher")]
-        public async Task<IActionResult> LoginTeacher([FromBody] LoginDto request)
-        {
+                return Ok("Admin Logged in successfully.");
 
+            }
+            else if (Role == "teacher")
+            {
+                await AuthService.TeacherLogin(request, HttpContext);
 
-            await AuthService.TeacherLogin(request, HttpContext);
+                return Ok("Teacher Logged in successfully.");
+            }
+            else if (Role == "student")
+            {
+                await AuthService.StudentLogin(request, HttpContext);
 
-
-
-            return Ok("Teacher Logged in successfully.");
-
-        }
-        [HttpPost("Login/Student")]
-        public async Task<IActionResult> LoginStudent([FromBody] LoginDto request)
-        {
-
-
-
-            await AuthService.StudentLogin(request, HttpContext);
-
-            return Ok("Student Logged in successfully.");
-
-
-
+                return Ok("Student Logged in successfully.");
+            }
+            else
+            {
+                return BadRequest("Invalid Role specified for login.");
+            }
 
         }
 

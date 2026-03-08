@@ -3,12 +3,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "../ZodSchemas/LoginSchema";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
+import { toast } from "../Toast";
 
 // 2. Extract the type from the schema
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -23,7 +26,31 @@ const LoginPage = () => {
   const roles = ["Student", "Teacher", "Admin"];
 
   const onSubmit = async (data: LoginFormInputs) => {
-    
+
+    try{
+      const response = await axios.post(`https://localhost:5240/api/v1/Auth/Login/${data.role}`, {
+        email: data.email,
+        password: data.password,
+      });
+
+      if(response.status === 200){ 
+        toast.success("Login successful!");
+        // Redirect or perform other actions on successful login
+        navigate("/app/dashboard"); 
+        
+        
+       }
+
+    }catch(error: AxiosError | any){
+      console.log("LOgin nahi ho raha hai");
+      toast.error("Login nahi ho raha hai");
+        console.error("Login failed:", error);
+
+        toast.error(error.response?.data?.message|| error.message || "Login failed. Please try again.");
+
+
+
+    }
   };
 
   return (
