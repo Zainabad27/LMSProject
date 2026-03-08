@@ -11,6 +11,7 @@ const loginSchema = z.object({
       /[^a-zA-Z0-9]/,
       "Password must contain at least one special character",
     ),
+    role:z.enum(["student", "teacher", "admin"], "Please select a role"),
 });
 
 export default loginSchema;

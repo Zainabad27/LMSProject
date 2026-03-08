@@ -8,19 +8,22 @@ import { Link } from "react-router-dom";
 // 2. Extract the type from the schema
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
-
-
 const LoginPage = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const selectedRole = watch("role"); // watch to highlight selected
 
+  const roles = ["Student", "Teacher", "Admin"];
+
+  const onSubmit = async (data: LoginFormInputs) => {
+    
   };
 
   return (
@@ -73,6 +76,41 @@ const LoginPage = () => {
                 {errors.password.message}
               </p>
             )}
+            <div style={{ display: "flex", gap: "20px" }}>
+              {roles.map((role) => (
+                <label
+                  key={role}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value={role.toLowerCase()}
+                    {...register("role", { required: "Select a role" })}
+                    style={{ display: "none" }}
+                  />
+                  {/* THE DOT */}
+                  <div
+                    style={{
+                      width: "18px",
+                      height: "18px",
+                      borderRadius: "50%",
+                      background:
+                        selectedRole === role.toLowerCase()
+                          ? "#3b82f6"
+                          : "transparent",
+                      border: "2px solid #3b82f6",
+                      transition: "background 0.2s",
+                    }}
+                  />
+                  {role}
+                </label>
+              ))}
+            </div>
           </div>
 
           <button
@@ -83,15 +121,15 @@ const LoginPage = () => {
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
-          {/* <p className="text-center text-sm text-gray-500 mt-4">
-            Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-blue-600 font-medium hover:underline"
-            >
-              Create one here
-            </Link>
-          </p> */}
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Create one here
+          </Link>
+        </p>
       </div>
     </div>
   );

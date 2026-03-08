@@ -6,13 +6,13 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const signupSchema = z
   .object({
-    schoolName: z.string().min(2, "School name must be at least 2 characters"),
-    employeeName: z.string().min(2, "Employee name must be at least 2 characters"),
+    schoolName: z.string().min(3, "School name must be at least 3 characters"),
+    employeeName: z.string().min(3, "Employee name must be at least 3 characters"),
     religion: z.string().optional(),
     nationality: z.string().optional(),
     contact: z
       .string()
-      .min(10, "Contact must be at least 10 digits")
+      .min(11, "Contact must be at least 11 digits")
       .regex(/^[0-9+\-\s()]+$/, "Invalid contact number"),
     email: z.string().email("Invalid email address"),
     password: z
