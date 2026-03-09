@@ -28,7 +28,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormInputs) => {
 
     try{
-      const response = await axios.post(`https://localhost:5240/api/v1/Auth/Login/${data.role}`, {
+      const response = await axios.post(`http://localhost:5240/api/v1/Auth/Login/${data.role}`, {
         email: data.email,
         password: data.password,
       });

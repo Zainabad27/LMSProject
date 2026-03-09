@@ -18,7 +18,17 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// 1. Define the policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5240") 
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 
 // logging control.   
@@ -188,11 +198,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     RoleManager<IdentityRole> _roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-
-
     await SeedRoles.SeedData(_roleManager); // seeding the initial Roles.
-
 }
 
 // Configure the HTTP request pipeline.
@@ -224,6 +230,8 @@ app.UseRouting();
 //    {
 //        appBuilder.UseMiddleware<JwtVerify>();
 //    });
+
+app.UseCors("AllowFrontend");
 
 
 app.UseAuthentication();
