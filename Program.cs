@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5240") 
+            policy.WithOrigins("http://localhost:5173") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -36,32 +36,10 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-//builder.Logging.AddFilter("Microsoft.AspNetCore.Watch", LogLevel.Warning);
-//builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
-//builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
-
-//builder.Logging.AddFilter("Default", LogLevel.Warning);
-
-
-
-
-
-
-
-// setting IForm Upload options
-
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartHeadersLengthLimit = 1024 * 1024; // 1 MB
+    options.MultipartHeadersLengthLimit = 5*1024 * 1024; // 5 MB
 });
-
-// model state validation 
-
-//builder.Services.Configure<ApiBehaviorOptions>(options =>
-//{
-//    options.SuppressModelStateInvalidFilter = false;
-//});
-
 
 
 // Add services to the container.

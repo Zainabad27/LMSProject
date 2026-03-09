@@ -26,30 +26,32 @@ const LoginPage = () => {
   const roles = ["Student", "Teacher", "Admin"];
 
   const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5240/api/v1/Auth/Login/${data.role}`,
+        {
+          email: data.email,
+          password: data.password,
+        },
+      );
 
-    try{
-      const response = await axios.post(`http://localhost:5240/api/v1/Auth/Login/${data.role}`, {
-        email: data.email,
-        password: data.password,
-      });
-
-      if(response.status === 200){ 
+      if (response.status === 200) {
         toast.success("Login successful!");
         // Redirect or perform other actions on successful login
-        navigate("/app/dashboard"); 
-        
-        
-       }
+        navigate("/app/dashboard");
+      }
+    } catch (error: AxiosError | any) {
+      
+      console.error("Login failed:", error);
+      console.error(error.response?.data?.message || error.message);
+      console.log("yeh hai detail bro.");
+      console.log(error.response?.data);
 
-    }catch(error: AxiosError | any){
-      console.log("LOgin nahi ho raha hai");
-      toast.error("Login nahi ho raha hai");
-        console.error("Login failed:", error);
-
-        toast.error(error.response?.data?.message|| error.message || "Login failed. Please try again.");
-
-
-
+      toast.error(
+        error.response?.data ||
+          error.message ||
+          "Login failed. Please try again.",
+      );
     }
   };
 
