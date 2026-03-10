@@ -1,9 +1,30 @@
+import axios, { AxiosError } from "axios";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "../../Toast";
+import { any } from "zod";
 
 const Header: React.FC = () => {
-  const handleLogout = () => {
+  const nav= useNavigate();
+  const handleLogout =async () => {
     // Logic for clearing tokens/state goes here
     console.log("Logged out");
+    try {
+    const result=await axios.post(  `http://localhost:5240/api/v1/Auth/Logout`);
+    if(result.status==200){
+      nav("/");
+
+    }
+      
+      
+    } catch (error: AxiosError|any) {
+      console.error(error)
+      toast.error(error.response?.data ||"Error Occured while logging out.");
+      
+    }
+
+
+
   };
 
   return (
