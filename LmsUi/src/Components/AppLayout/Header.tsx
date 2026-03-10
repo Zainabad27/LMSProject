@@ -2,7 +2,6 @@ import axios, { AxiosError } from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "../../Toast";
-import { any } from "zod";
 
 const Header: React.FC = () => {
   const nav= useNavigate();
