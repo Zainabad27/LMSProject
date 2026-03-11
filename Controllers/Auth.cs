@@ -25,41 +25,13 @@ namespace LmsApp2.Api.Controllers
             return Ok("Logged out successfully.");
 
         }
-        // [HttpPost("Login/Admin")]
-        // public async Task<IActionResult> LoginAdmin([FromBody] LoginDto request)
-        // {
-        //     var context = HttpContext;
-
-        //     await AuthService.AdminLogin(request, context);
-        //     return Ok("Admin Logged in successfully.");
-
-        // }
-        // [HttpPost("Login/Teacher")]
-        // public async Task<IActionResult> LoginTeacher([FromBody] LoginDto request)
-        // {
-
-
-        //     await AuthService.TeacherLogin(request, HttpContext);
-
-
-
-        //     return Ok("Teacher Logged in successfully.");
-
-        // }
-        // [HttpPost("Login/Student")]
-        // public async Task<IActionResult> LoginStudent([FromBody] LoginDto request)
-        // {
-
-
-
-        //     await AuthService.StudentLogin(request, HttpContext);
-
-        //     return Ok("Student Logged in successfully.");
-
-
-
-
-        // }
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetUser()
+        {
+            var UserRole = User.FindFirstValue(ClaimTypes.Role) ?? throw new CustomException("Unauthorized Access, please Login", 403);
+            return Ok(new ReturnUserDto(UserRole));
+        }
 
 
         [HttpPost("Login/{Role}")]

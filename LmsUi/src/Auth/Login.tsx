@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "../ZodSchemas/LoginSchema";
 
 import { Link, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import { toast } from "../Toast";
 import api from "../AxiosConfig";
 
@@ -28,13 +28,10 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {
-      const response = await api.post(
-        `/Auth/Login/${data.role}`,
-        {
-          email: data.email,
-          password: data.password,
-        },
-      );
+      const response = await api.post(`/Auth/Login/${data.role}`, {
+        email: data.email,
+        password: data.password,
+      });
 
       if (response.status === 200) {
         toast.success("Login successful!");
@@ -42,7 +39,6 @@ const LoginPage = () => {
         navigate("/app/dashboard");
       }
     } catch (error: AxiosError | any) {
-      
       console.error("Login failed:", error);
       console.error(error.response?.data?.message || error.message);
       console.log("yeh hai detail bro.");
@@ -147,6 +143,9 @@ const LoginPage = () => {
             type="submit"
             disabled={isSubmitting}
             className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition-colors hover:bg-blue-700 disabled:bg-blue-400"
+            style={{
+              cursor: "pointer",
+            }}
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
