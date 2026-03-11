@@ -1,29 +1,28 @@
 import { useState } from "react";
-import api from "../AxiosConfig"; 
+import api from "../AxiosConfig";
 
 interface User {
   role: string;
-  name?: string;
+  
 }
+const [user, setUser] = useState<User | null>(null);
 
-export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+export const useAuth = async () => {
 
   const fetchUser = async () => {
     try {
-      setLoading(true);
       // The browser sends the cookie automatically because of withCredentials: true
-      const response = await api.get<User>("/auth/me"); 
+      const response = await api.get<User>("/auth/me");
       setUser(response.data);
     } catch (error) {
       setUser(null);
     } finally {
-      setLoading(false);
+      setUser(null);
     }
   };
 
- 
 
-  return { user, loading, fetchUser };
+  await fetchUser();
+
+  return { user };
 };
