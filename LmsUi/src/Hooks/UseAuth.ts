@@ -3,7 +3,7 @@ import api from "../AxiosConfig";
 
 interface User {
   role: string;
-  
+  UserId:string
 }
 const [user, setUser] = useState<User | null>(null);
 

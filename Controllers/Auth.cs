@@ -29,8 +29,11 @@ namespace LmsApp2.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetUser()
         {
+
             var UserRole = User.FindFirstValue(ClaimTypes.Role) ?? throw new CustomException("Unauthorized Access, please Login", 403);
-            return Ok(new ReturnUserDto(UserRole));
+            var Id = User.FindFirstValue("MainTableId") ?? throw new CustomException("Unauthorized Access.", 403);
+
+            return Ok(new ReturnUserDto(UserRole, Id));
         }
 
 

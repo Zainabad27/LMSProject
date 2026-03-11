@@ -4,17 +4,15 @@ import api from "../AxiosConfig";
 
 const Dashboard = async () => {
   const nav = useNavigate();
-  const user = await useAuth();
-  if (user == null) {
+  const data = await useAuth();
+  if (data.user == null) {
     nav("/");
+  } else if (data.user?.role != "Admin") {
+    nav(`${data.user.role}Dashboard`);
   }
 
 
- // if the user is teacher then our dashboard includes Assignments, Courses, Classes 
-
-
-
- 
+  
 
   return (
     <>
