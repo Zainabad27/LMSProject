@@ -1,7 +1,8 @@
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "../../Toast";
+import api from "../../AxiosConfig";
 
 const Header: React.FC = () => {
   const nav= useNavigate();
@@ -9,7 +10,7 @@ const Header: React.FC = () => {
     // Logic for clearing tokens/state goes here
     console.log("Logged out");
     try {
-    const result=await axios.post(  `http://localhost:5240/api/v1/Auth/Logout`);
+    const result=await api.post(`/Auth/Logout`);
     if(result.status==200){
       nav("/");
 
