@@ -39,7 +39,7 @@ export default function SignupPage() {
   };
 
   const onSubmit = async (data: SignupFormData) => {
-   
+  console.log(data); 
 
   };
 

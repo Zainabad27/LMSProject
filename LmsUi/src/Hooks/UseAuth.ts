@@ -5,10 +5,10 @@ interface User {
   role: string;
   UserId:string
 }
-const [user, setUser] = useState<User | null>(null);
 
 export const useAuth = async () => {
-
+  const [user, setUser] = useState<User | null>(null);
+  
   const fetchUser = async () => {
     try {
       // The browser sends the cookie automatically because of withCredentials: true
