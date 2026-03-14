@@ -1,52 +1,16 @@
-import { useEffect, useState } from "react";
-import api from "../../AxiosConfig";
-import type { ClassDto } from "../../Dtos/GetClasses";
-import { toast } from "../../Toast";
 import ClassCard from "./ClassesCard";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import useClasses from "../../Hooks/UseClasses";
+import { useState } from "react";
+import api from "../../AxiosConfig";
+import AddClassCard from "./AddClassCard";
 
 interface ShowClassesProps {
-  courseId: string;
+  SchoolId: string;
 }
-
-type FetchState = "idle" | "loading" | "success" | "error";
-
-// ─── Custom Hook ──────────────────────────────────────────────────────────────
-
-const useClasses = (courseId: string) => {
-  const [classes, setClasses] = useState<ClassDto[]>([]);
-  const [fetchState, setFetchState] = useState<FetchState>("idle");
-
-  useEffect(() => {
-    if (!courseId) return;
-
-    const fetchClasses = async () => {
-      setFetchState("loading");
-      try {
-        const { data } = await api.get<ClassDto[]>(
-          `/Class/GetAllClasses/${courseId}`
-        );
-        setClasses(data);
-        setFetchState("success");
-      } catch (error: any) {
-        setFetchState("error");
-        toast.error(
-          error.response?.data?.message ??
-            "An error occurred while fetching classes."
-        );
-      }
-    };
-
-    fetchClasses();
-  }, [courseId]);
-
-  return { classes, fetchState };
-};
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-
+interface EmptyStateProps {
+  msg: string;
+  description?:string
+}
 
 const LoadingState = () => (
   <div className="flex justify-center items-center w-full py-16">
@@ -57,28 +21,48 @@ const LoadingState = () => (
   </div>
 );
 
-const EmptyState = () => (
+const EmptyState = (props: EmptyStateProps) => (
   <div className="flex flex-col justify-center items-center w-full py-16 gap-2">
-    <p className="text-sm font-medium text-gray-500">No classes found</p>
+    <p className="text-sm font-medium text-gray-500">{props.msg}</p>
     <p className="text-xs text-gray-400">
-      There are no classes available for this course.
+      {props.description}
     </p>
   </div>
 );
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 
-const ShowClasses = ({ courseId }: ShowClassesProps) => {
-  const { classes, fetchState } = useClasses(courseId);
+const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { classes, fetchState } = useClasses(SchoolId);
+
+  const onDelete = async (id: string) => {
+    if(window.confirm("Are you sure you want to delete this class?")) {
+        await api.delete(`classes/${id}`); // first have to write this api in the backend then i'll apply it here.
+    }
+  };
 
   if (fetchState === "loading") return <LoadingState />;
-  if (fetchState === "success" && classes.length === 0) return <EmptyState />;
+  if (fetchState === "error") return <EmptyState msg="Error occurred while fetching the Classes." />;
 
   return (
-    <div className="flex flex-wrap gap-4 p-5">
+    <div className="flex flex-wrap gap-6 p-6">
+      {/* Always show Add Card first */}
+      <AddClassCard onClick={() => setIsModalOpen(true)} />
+
       {classes.map((classItem) => (
-        <ClassCard key={classItem.classId} classItem={classItem} />
+        <ClassCard key={classItem.classId} classItem={classItem} onDelete={onDelete}/>
       ))}
+
+      {/* Logic for your Form Modal can go here or in the parent page */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+           <div className="bg-white p-8 rounded-2xl shadow-xl w-96">
+              <h2 className="text-xl font-bold mb-4">Add New Class</h2>
+              {/* Form Fields will go here */}
+              <button onClick={() => setIsModalOpen(false)} className="text-blue-600">Close</button>
+           </div>
+        </div>
+      )}
     </div>
   );
 };
