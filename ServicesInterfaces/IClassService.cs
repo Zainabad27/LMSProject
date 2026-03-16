@@ -4,6 +4,8 @@ namespace LmsApp2.Api.ServicesInterfaces
 {
     public interface IClassService
     {
+        public Task<bool> DeleteClass(Guid ClassId);
+
 
         public Task<Guid> EnrollStudent(EnrollClassDto EnrollmentData);
 

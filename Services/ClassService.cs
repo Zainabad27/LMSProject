@@ -11,7 +11,7 @@ namespace LmsApp2.Api.Services
 
         public async Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId)
         {
-            
+
             var ClassesInDb = await classRepo.GetAllClasses(SchoolId);
             return ClassesInDb;
         }
@@ -124,6 +124,22 @@ namespace LmsApp2.Api.Services
             Guid AddedCourseId = await classRepo.AddCourse(courseData);
             await classRepo.SaveChanges();
             return AddedCourseId;
+        }
+
+        public async Task<bool> DeleteClass(Guid ClassId)
+        {
+            // first we have to find if the class even exists.
+            Guid ClsIdFromDB = await classRepo.GetClass(ClassId);
+            if (ClsIdFromDB.Equals(Guid.Empty)) throw new CustomException("This Class Does not Exists in the Database.");
+
+           int rowsdeleted= await classRepo.DeleteClass(ClsIdFromDB);
+            if (rowsdeleted < 1)
+            {
+                throw new CustomException("Could not delete the Class.",500);
+            }
+
+
+            return true;
         }
     }
 }

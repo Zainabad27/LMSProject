@@ -11,6 +11,16 @@ namespace LmsApp2.Api.Controllers
     {
 
 
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("Delete/{classId}")]
+        public async Task<IActionResult> DeleteClass([FromRoute] Guid classId)
+        {
+            bool ClassDeleted = await ClassServices.DeleteClass(classId);
+            if (ClassDeleted) return Ok("Class Deleted Successfully.");
+            return Ok("Class Could  not be deleted.");
+
+        }
+
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAllClasses/{SchoolId}")]
@@ -20,7 +30,7 @@ namespace LmsApp2.Api.Controllers
             var Classes = await ClassServices.GetAllClasses(SchoolId);
 
             return Ok(Classes);
-            
+
         }
 
 
@@ -40,7 +50,7 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("AddCourse")]
         public async Task<IActionResult> AddCourse([FromBody] CourseDto CourseData)
         {
-           
+
 
             Guid CourseId = await ClassServices.AddCourse(CourseData);
 
@@ -54,10 +64,10 @@ namespace LmsApp2.Api.Controllers
         [HttpPost("AssignCourseToClass")]
         public async Task<IActionResult> AssignCourseToClass([FromBody] AssignCourseToClassDto Data)
         {
-           await ClassServices.AssignCourseToAClass(Data.ClassId, Data.CourseId);   
+            await ClassServices.AssignCourseToAClass(Data.ClassId, Data.CourseId);
 
 
-            return Ok(new { Message = "Course Assigned to Class Successfully" }); 
+            return Ok(new { Message = "Course Assigned to Class Successfully" });
 
         }
 
@@ -72,7 +82,7 @@ namespace LmsApp2.Api.Controllers
 
 
             //await HttpContext.Response.WriteAsync("Student Enrolled Successfuly.");
-            return Ok(new { ClassId = Classid });   
+            return Ok(new { ClassId = Classid });
 
 
 

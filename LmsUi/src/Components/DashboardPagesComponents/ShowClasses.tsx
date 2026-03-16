@@ -38,7 +38,14 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
 
   const onDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this class?")) {
-      await api.delete(`classes/${id}`); // first have to write this api in the backend then i'll apply it here.
+      try {
+        const response = await api.delete(`Class/Delete/${id}`);
+        toast.success(response.data);
+        console.log(`Class with id: ${id} was Deleted.`);
+      } catch (error) {
+        console.error(error);
+        toast.error("Coul not delete the Class.");
+      }
     }
   };
 
@@ -57,7 +64,7 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
       // refreshClasses(); // Trigger your hook to re-fetch
     } catch (error) {
       console.error("Failed to create class", error);
-      toast.error("Failed to Add new Class")
+      toast.error("Failed to Add new Class");
     }
   };
 

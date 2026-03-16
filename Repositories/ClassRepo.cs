@@ -60,7 +60,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<(bool, String)> CheckClassAndItsCourses(Guid ClassId, Guid CourseId)
         {
-            var ClassInDb = await dbcontext.Classes.Include(cls=>cls.Courses).FirstOrDefaultAsync(cls => cls.Classid == ClassId) ?? throw new CustomException("This Class Does Not Exists in our database", 400);
+            var ClassInDb = await dbcontext.Classes.Include(cls => cls.Courses).FirstOrDefaultAsync(cls => cls.Classid == ClassId) ?? throw new CustomException("This Class Does Not Exists in our database", 400);
 
             foreach (Course C in ClassInDb.Courses)
             {
@@ -101,9 +101,10 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+
         public async Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId)
         {
-            var classes = await dbcontext.Schools.Include(sch=>sch.Classes).ThenInclude(cls=>cls.Students).Where(sch => sch.Schoolid == SchoolId).Select(sch => sch.Classes).FirstOrDefaultAsync();
+            var classes = await dbcontext.Schools.Include(sch => sch.Classes).ThenInclude(cls => cls.Students).Where(sch => sch.Schoolid == SchoolId).Select(sch => sch.Classes).FirstOrDefaultAsync();
             if (classes == null)
             {
                 throw new CustomException("School Not Found", 404);
@@ -124,7 +125,7 @@ namespace LmsApp2.Api.Repositories
                 });
 
 
-                
+
             }
 
 
@@ -176,27 +177,34 @@ namespace LmsApp2.Api.Repositories
 
         }
 
-        public async  Task<Pagination<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
+        public async Task<Pagination<SendStudentsToFrontendDto>> GetStudentsOfClass(Guid ClassId, int PageNumber, int PageSize)
         {
             IQueryable<SendStudentsToFrontendDto> query = dbcontext.Students
             .Where(std => std.Classid == ClassId)
-            .Select(std=>new SendStudentsToFrontendDto
+            .Select(std => new SendStudentsToFrontendDto
             {
                 StudentId = std.Studentid,
                 StudentName = std.StudentName,
-                Gender= std.Gender,
-                IsActive=std.Isactive,
-              
+                Gender = std.Gender,
+                IsActive = std.Isactive,
+
             });
 
-              return await  Pagination<SendStudentsToFrontendDto>.CreateAsync(query, PageNumber, PageSize);
-        
+            return await Pagination<SendStudentsToFrontendDto>.CreateAsync(query, PageNumber, PageSize);
+
         }
 
 
-          public async Task SaveChanges()
+        public async Task SaveChanges()
         {
             await dbcontext.SaveChangesAsync();
+        }
+
+        public async Task<int> DeleteClass(Guid ClsId)
+        {
+            int RowsDeleted = await dbcontext.Classes.Where(cls => cls.Classid == ClsId).ExecuteDeleteAsync();
+            return RowsDeleted;
+
         }
     }
 }
