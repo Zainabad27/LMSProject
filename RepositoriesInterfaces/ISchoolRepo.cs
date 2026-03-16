@@ -10,6 +10,7 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 
         public Task<Guid> GetSchoolByName(string name);
 
+        public Task<ICollection<SendCoursesToFrontendDto>> getallcourses(Guid schoolId);
 
         public Task SaveChanges();
     }

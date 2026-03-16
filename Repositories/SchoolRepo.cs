@@ -45,6 +45,17 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<ICollection<SendCoursesToFrontendDto>> getallcourses(Guid schoolId)
+        {
+            return await dbcontext.Courses.Select(crs=>new SendCoursesToFrontendDto
+            {
+                CourseId=crs.Courseid,
+                CourseName=crs.CourseName
+
+            }).ToListAsync();
+            
+        }
+
         public async Task<Guid> GetSchoolByName(string name)
         {
             return await dbcontext.Schools.Where(sch => sch.Schoolname == name).Select(sch => sch.Schoolid).FirstOrDefaultAsync();

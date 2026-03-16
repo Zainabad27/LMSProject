@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import type { ClassDto } from "../Dtos/GetClasses";
 import { toast } from "../Toast";
 import api from "../AxiosConfig";
+import type { CourseDto } from "../Dtos/GetCourses";
 
 type FetchState = "idle" | "loading" | "success" | "error";
 
-const useClasses = (SchoolId: string) => {
-  const [classes, setClasses] = useState<ClassDto[]>([]);
+const useClasses = (courseId: string) => {
+  const [classes, setClasses] = useState<CourseDto[]>([]);
   const [fetchState, setFetchState] = useState<FetchState>("idle");
 
   useEffect(() => {
-    if (!SchoolId) return;
+    if (!courseId) return;
 
     const fetchClasses = async () => {
       setFetchState("loading");
       try {
-        const { data } = await api.get<ClassDto[]>(
-          `/Class/GetAllClasses/${SchoolId}`,
+        const { data } = await api.get<CourseDto[]>(
+          `/Class/GetAllClasses/${courseId}`,
         );
         setClasses(data);
         setFetchState("success");
@@ -30,7 +30,7 @@ const useClasses = (SchoolId: string) => {
     };
 
     fetchClasses();
-  }, [SchoolId]);
+  }, [courseId]);
 
   return { classes, fetchState };
 };

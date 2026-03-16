@@ -5,5 +5,7 @@ namespace LmsApp2.Api.ServicesInterfaces
     public interface ISchoolService
     {
         public Task<Guid> AddSchool(SchoolDto SchoolData);
+
+        public Task<IEnumerable<SendCoursesToFrontendDto>> GetAllCourses(Guid schoolId);
     }
 }
