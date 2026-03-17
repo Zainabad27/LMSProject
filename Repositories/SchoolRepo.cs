@@ -50,7 +50,8 @@ namespace LmsApp2.Api.Repositories
             return await dbcontext.Courses.Select(crs=>new SendCoursesToFrontendDto
             {
                 CourseId=crs.Courseid,
-                CourseName=crs.CourseName
+                CourseName=crs.CourseName,
+                Board=crs.Boardordepartment
 
             }).ToListAsync();
             
