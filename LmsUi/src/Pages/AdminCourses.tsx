@@ -1,3 +1,4 @@
+import ShowCourses from "../Components/DashboardPagesComponents/ShowCourses";
 
 
 const AdminCoursePage = () => {
@@ -7,6 +8,7 @@ const AdminCoursePage = () => {
     <div className="p-6">
       <div className="flex flex-wrap gap-6">
         {/* Existing Classes Components */}
+        <ShowCourses SchoolId="a14afb86-1e22-4daf-b94c-b70a70e77421"/>
         
       </div>
     </div>

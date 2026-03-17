@@ -5,6 +5,7 @@ import AppLayout from "./Components/AppLayout/Layout";
 import Dashboard from "./App/AdminDashboard";
 import Assignments from "./App/Assignments";
 import AdminClassesPage from "./Pages/AdminClasses";
+import AdminCoursePage from "./Pages/AdminCourses";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/App/Assignments" element={<Assignments />} />
 
           <Route path="Admin/Classes" element={<AdminClassesPage />} />
+          <Route path="Admin/Courses" element={<AdminCoursePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

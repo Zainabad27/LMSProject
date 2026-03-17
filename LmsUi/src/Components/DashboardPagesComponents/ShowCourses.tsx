@@ -1,14 +1,14 @@
-import ClassCard from "./ClassesCard";
-import useClasses from "../../Hooks/UseClasses";
+import useCourses from "../../Hooks/UseCourses";
 import { useState } from "react";
 import api from "../../AxiosConfig";
-import AddClassCard from "./AddItemCard";
+import AddCourseCard from "./AddItemCard";
 import { useForm } from "react-hook-form";
 import { X } from "lucide-react";
-import type { ClassFormData } from "../../ZodSchemas/AddAClassForm";
 import { toast } from "../../Toast";
+import CourseCard from "./CourseCard";
+import type { CourseFormData } from "../../ZodSchemas/AddCourseForm";
 
-interface ShowClassesProps {
+interface ShowCoursesProps {
   SchoolId: string;
 }
 interface EmptyStateProps {
@@ -32,39 +32,31 @@ const EmptyState = (props: EmptyStateProps) => (
   </div>
 );
 
-const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
+const ShowCourses = ({ SchoolId }: ShowCoursesProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { classes, fetchState } = useClasses(SchoolId);
+  const { courses, fetchState } = useCourses(SchoolId);
 
   const onDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this class?")) {
-      try {
-        const response = await api.delete(`Class/Delete/${id}`);
-        toast.success(response.data);
-        console.log(`Class with id: ${id} was Deleted.`);
-      } catch (error) {
-        console.error(error);
-        toast.error("Coul not delete the Class.");
-      }
+    if (window.confirm("Are you sure you want to delete this Course?")) {
+      // have to write course delete Api.
     }
   };
 
-  const onSubmit = async (data: ClassFormData) => {
+  const onSubmit = async (data: CourseFormData) => {
     try {
       // Sending data to your backend
       // Note: You might need to include SchoolId here depending on your API
-      await api.post("/Class/AddClass", {
-        schoolName: data.schoolName,
-        classGrade: data.classGrade,
-        classSection: data.classSection,
+      await api.post("/Class/AddCourse", {
+        CourseName: data.CourseName,
+        BoardOrDepartment: data.BoardOrDepartment,
       });
 
       setIsModalOpen(false);
       reset(); // Clear form
       // refreshClasses(); // Trigger your hook to re-fetch
     } catch (error) {
-      console.error("Failed to create class", error);
-      toast.error("Failed to Add new Class");
+      console.error("Failed to create Course", error);
+      toast.error("Failed to Add new Course");
     }
   };
 
@@ -73,25 +65,24 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ClassFormData>({
-    defaultValues: {
-      schoolName: "PSM", // Setting your default as requested
-    },
-  });
+  } = useForm<CourseFormData>();
 
   if (fetchState === "loading") return <LoadingState />;
   if (fetchState === "error")
-    return <EmptyState msg="Error occurred while fetching the Classes." />;
+    return <EmptyState msg="Error occurred while fetching the Courses." />;
 
   return (
     <div className="flex flex-wrap gap-6 p-6">
       {/* Always show Add Card first */}
-      <AddClassCard onClick={() => setIsModalOpen(true)} text="Add a new Class" />
+      <AddCourseCard
+        onClick={() => setIsModalOpen(true)}
+        text="Add a new Course"
+      />
 
-      {classes.map((classItem) => (
-        <ClassCard
-          key={classItem.classId}
-          classItem={classItem}
+      {courses.map((courseItem) => (
+        <CourseCard
+          key={courseItem.courseId}
+          CourseItem={courseItem}
           onDelete={onDelete}
         />
       ))}
@@ -102,7 +93,7 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-800">Add New Class</h2>
+              <h2 className="text-xl font-bold text-gray-800">Add New Course</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -115,18 +106,18 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
               {/* School Name */}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
-                  School Name
+                  Course Name
                 </label>
                 <input
-                  {...register("schoolName", {
-                    required: "School name is required",
+                  {...register("CourseName", {
+                    required: "Course name is required",
                   })}
                   className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                  placeholder="e.g. PSM"
+                  placeholder="e.g. Calculus"
                 />
-                {errors.schoolName && (
+                {errors.CourseName && (
                   <p className="text-red-500 text-[10px] mt-1">
-                    {errors.schoolName.message}
+                    {errors.CourseName.message}
                   </p>
                 )}
               </div>
@@ -135,28 +126,14 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
                 {/* Class Grade */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
-                    Class Grade
+                    Board Or Department
                   </label>
                   <input
-                    {...register("classGrade", {
-                      required: "Grade is required",
+                    {...register("BoardOrDepartment", {
+                      required: "Board is essential for adding a new course",
                     })}
                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="e.g. 10"
-                  />
-                </div>
-
-                {/* Class Section */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
-                    Section
-                  </label>
-                  <input
-                    {...register("classSection", {
-                      required: "Section is required",
-                    })}
-                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="e.g. C"
+                    placeholder="e.g. Sindh"
                   />
                 </div>
               </div>
@@ -175,7 +152,7 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
                   disabled={isSubmitting}
                   className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-100 transition-all disabled:opacity-50"
                 >
-                  {isSubmitting ? "Saving..." : "Create Class"}
+                  {isSubmitting ? "Saving..." : "Create Course"}
                 </button>
               </div>
             </form>
@@ -186,4 +163,4 @@ const ShowClasses = ({ SchoolId }: ShowClassesProps) => {
   );
 };
 
-export default ShowClasses;
+export default ShowCourses;

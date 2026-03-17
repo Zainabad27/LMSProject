@@ -5,34 +5,34 @@ import type { CourseDto } from "../Dtos/GetCourses";
 
 type FetchState = "idle" | "loading" | "success" | "error";
 
-const useClasses = (courseId: string) => {
-  const [classes, setClasses] = useState<CourseDto[]>([]);
+const useCourses = (schoolId: string) => {
+  const [courses, setCourses] = useState<CourseDto[]>([]);
   const [fetchState, setFetchState] = useState<FetchState>("idle");
 
   useEffect(() => {
-    if (!courseId) return;
+    if (!schoolId) return;
 
-    const fetchClasses = async () => {
+    const fetchCourses = async () => {
       setFetchState("loading");
       try {
         const { data } = await api.get<CourseDto[]>(
-          `/Class/GetAllClasses/${courseId}`,
+          `/Schools/GetAllCourses/${schoolId}`,
         );
-        setClasses(data);
+        setCourses(data);
         setFetchState("success");
       } catch (error: any) {
         setFetchState("error");
         toast.error(
           error.response?.data?.message ||
-            "An error occurred while fetching classes.",
+            "An error occurred while fetching courses.",
         );
       }
     };
 
-    fetchClasses();
-  }, [courseId]);
+    fetchCourses();
+  }, [schoolId]);
 
-  return { classes, fetchState };
+  return { courses, fetchState };
 };
 
-export default useClasses;
+export default useCourses;
