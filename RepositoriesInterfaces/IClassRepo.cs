@@ -6,6 +6,8 @@ namespace LmsApp2.Api.RepositoriesInterfaces
 {
     public interface IClassRepo
     {
+         public  Task<int> DeleteCourse(Guid couseid);
+         public Task<Guid> GetCourse(Guid CourseId);
         public Task<int> DeleteClass(Guid ClsId);
         public Task<Pagination<SendStudentsToFrontendDto>>  GetStudentsOfClass(Guid ClassId,int PageNumber,int PageSize);
         public Task<List<SendAllClassesToFrontendDto>> GetAllClasses(Guid SchoolId);

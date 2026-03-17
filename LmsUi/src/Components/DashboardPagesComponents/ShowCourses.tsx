@@ -38,7 +38,15 @@ const ShowCourses = ({ SchoolId }: ShowCoursesProps) => {
 
   const onDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this Course?")) {
-      // have to write course delete Api.
+     try {
+       await api.delete(`Class/Course/Delete/${id}`);
+       toast.success("Course Deleted Successfully.");
+      
+     } catch (error) {
+      console.error("Could not delete the Course",error);
+      toast.error("Could not Delete the Course Right now.");
+      
+     }
     }
   };
 

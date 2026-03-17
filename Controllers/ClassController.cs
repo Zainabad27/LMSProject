@@ -1,4 +1,5 @@
-﻿using LmsApp2.Api.DTOs;
+﻿using System.Security.AccessControl;
+using LmsApp2.Api.DTOs;
 using LmsApp2.Api.ServicesInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,16 @@ namespace LmsApp2.Api.Controllers
     [ApiController]
     public class ClassController(IClassService ClassServices) : ControllerBase
     {
+        [Authorize(Roles ="Admin")]
+        [HttpDelete("Course/Delete/{courseId}")]
+        public async Task<IActionResult> DeleteCourse([FromRoute] Guid courseId)
+        {
+            bool CourseDeleted = await ClassServices.DeleteCourse(courseId);
+            if(!CourseDeleted) throw new Exception("Course Can't be Deleted.");
+
+            return Ok("Course Deleted Successfully.");
+            
+        }
 
 
         [Authorize(Roles = "Admin")]

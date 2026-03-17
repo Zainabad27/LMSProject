@@ -149,6 +149,19 @@ namespace LmsApp2.Api.Repositories
 
         }
 
+        public async Task<Guid> GetCourse(Guid CourseId)
+        {
+          return await dbcontext.Courses.Where(crs=>crs.Courseid==CourseId).Select(crs=>crs.Courseid).FirstOrDefaultAsync();
+        }
+
+
+        public async Task<int> DeleteCourse(Guid couseid)
+        {
+              int RowsDeleted = await dbcontext.Courses.Where(crs => crs.Courseid == couseid).ExecuteDeleteAsync();
+            return RowsDeleted;
+            
+        }
+
 
 
         public async Task<Guid> GetACourse(Guid ClassId, string CourseName, string boardOrDepartment)

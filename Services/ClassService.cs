@@ -141,5 +141,18 @@ namespace LmsApp2.Api.Services
 
             return true;
         }
+
+        public async Task<bool> DeleteCourse(Guid CourseId)
+        {
+            Guid CourseIdFromDb=await classRepo.GetCourse(CourseId);
+            if(CourseIdFromDb.Equals(Guid.Empty)) throw new CustomException("No course Found.",400);
+
+              int rowsdeleted= await classRepo.DeleteCourse(CourseIdFromDb);
+            if (rowsdeleted < 1)
+            {
+                throw new CustomException("Could not delete the Course.",500);
+            }
+            return true;
+        }
     }
 }
