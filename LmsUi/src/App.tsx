@@ -6,6 +6,7 @@ import Dashboard from "./App/AdminDashboard";
 import Assignments from "./App/Assignments";
 import AdminClassesPage from "./Pages/AdminClasses";
 import AdminCoursePage from "./Pages/AdminCourses";
+import ManageEmployees from "./Pages/AdminEmployees";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
 
           <Route path="Admin/Classes" element={<AdminClassesPage />} />
           <Route path="Admin/Courses" element={<AdminCoursePage />} />
+          <Route path="Admin/Employee" element={<ManageEmployees />} />
         </Route>
       </Routes>
     </BrowserRouter>
