@@ -2,6 +2,7 @@
 {
     public interface IFetchFileFromServer
     {
+        
         public byte[] FetchFile(string Path);
     }
 }

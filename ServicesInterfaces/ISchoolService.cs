@@ -7,5 +7,7 @@ namespace LmsApp2.Api.ServicesInterfaces
         public Task<Guid> AddSchool(SchoolDto SchoolData);
 
         public Task<IEnumerable<SendCoursesToFrontendDto>> GetAllCourses(Guid schoolId);
+
+        public Task<IEnumerable<SendTeachersToFrontend>> GetAllTeachers(Guid SchoolId);
     }
 }

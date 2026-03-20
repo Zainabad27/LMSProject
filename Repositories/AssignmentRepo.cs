@@ -110,6 +110,7 @@ namespace LmsApp2.Api.Repositories
 
         public async Task<GetSubmissionFromDB> GetSubmission(Guid submissionid)
         {
+            
             // we are returning the dbEntity from the repo layer and then in service layer we are literally assigning it the grades and the remarks and ischecked flag.
             var result = await dbcontext.Assignmentsubmissions.FirstOrDefaultAsync(sub => sub.Assignmentsubmissionid == submissionid) ?? throw new CustomException("Invalid submission Id.");
 

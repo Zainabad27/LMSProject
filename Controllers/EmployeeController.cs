@@ -30,15 +30,6 @@ namespace LmsApp2.Api.Controllers
             return Ok(emp);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet("GetAllTeachers")]
-        public async Task<IActionResult> GetAllTeachers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            Pagination<SendTeachersToFrontend> TeachersList = await employeeServices.GetAllTeachers(page, pageSize);
-
-            return Ok(TeachersList);
-        }
-
         [HttpPost("AssignCourse")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCourseToATeacher([FromBody] AssignCourseDto assignCourse)

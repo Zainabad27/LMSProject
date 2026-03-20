@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LmsApp2.Api.SeedData
 {
+    
     internal class SeedAdmin
     {
         public static async Task<AppUser?> SeedData(LmsDatabaseContext dbcontext, UserManager<AppUser> _userManager, Guid SchoolId)

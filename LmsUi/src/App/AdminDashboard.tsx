@@ -1,6 +1,7 @@
 import { BookOpen, Users, Settings, School, BookCopy, PanelRightOpenIcon } from "lucide-react";
 import DialogBox from "../Components/DashboardComponents/DialogBox";
 
+
 const Dashboard = async () => {
   return (
     <div className="p-8 bg-slate-50 min-h-screen">

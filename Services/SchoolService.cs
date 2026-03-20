@@ -33,5 +33,11 @@ namespace LmsApp2.Api.Services
             ICollection<SendCoursesToFrontendDto> allCourses = await schoolrepo.getallcourses(schoolId);
             return allCourses;
         }
+
+        public Task<IEnumerable<SendTeachersToFrontend>> GetAllTeachers(Guid SchoolId)
+        {
+            
+            throw new NotImplementedException();
+        }
     }
 }

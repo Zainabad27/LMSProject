@@ -14,6 +14,7 @@ namespace LmsApp2.Api
         {
             services.AddScoped<ISchoolService, SchoolService>();
 
+
             services.AddScoped<ISchoolRepo, SchoolRepo>();
             services.AddScoped<IEmployeeRepo, EmployeRepo>();
             services.AddScoped<IEmployeeService, EmployeeServices>();

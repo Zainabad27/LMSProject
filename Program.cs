@@ -18,6 +18,7 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // 1. Define the policy
 builder.Services.AddCors(options =>
 {

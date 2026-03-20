@@ -14,6 +14,7 @@ namespace LmsApp2.Api.Controllers
     {
         [HttpGet("GetSubmissions/{AssignmentId}")]
         [Authorize(Roles = "Teacher")]
+        
         public async Task<IActionResult> GetAssignmentSubmissions([FromRoute] Guid AssignmentId)
         {
             var userClaims = User;

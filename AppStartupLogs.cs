@@ -7,6 +7,7 @@
             var logger = app.Services.GetRequiredService<ILogger<WebApplication>>();
             logger.LogWarning("{AppName} started ", app.Environment.ApplicationName);
         }
+        
     }
 
 }
